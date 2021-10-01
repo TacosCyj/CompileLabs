@@ -149,7 +149,7 @@ void lexicalAnalysis(){
 			}
 			if((pmove + 1) != NULL){
 				char *pcheck = pmove + 1;
-				if((*pmove == '(' && (isdigit(*pcheck) || isalpha(*pcheck) || *pcheck == '_')) || (*pmove == '}' && *pcheck == ';')) pcheck == NULL;
+				if(((*pmove == '(' || *pmove == '{') && (isdigit(*pcheck) || isalpha(*pcheck) || *pcheck == '_')) || (*pmove == '}' && *pcheck == ';')) pcheck == NULL;
 				else if(*pcheck != ' ' && *pcheck != '\t' && *pcheck != '\n' && *pcheck != '\0'){
 				        printf("%c -> %c", *pmove, *(pmove + 1));
 					printf("Err");
