@@ -51,6 +51,7 @@ void lexicalAnalysis(){
 				break;
 			}
 			else if(*pmove != ' ' && *pmove != '\n' && *pmove != '\t' && *pmove != ')' && *pmove != ';' && *pmove != '\0'){
+				printf("%c -> %c, *pmove, *(pmove + 1));
 			        printf("Err");
 				exit(0);
 			}
@@ -85,6 +86,7 @@ void lexicalAnalysis(){
 				break;
 			}
 			else if(*pmove != ' ' && *pmove != '\n' && *pmove != '\t' && *pmove != ')' && *pmove != ';' && *pmove != '\0'){
+				printf("%c -> %c, *pmove, *(pmove + 1));
 				printf("Err");
 				exit(0);
 			}
@@ -148,6 +150,7 @@ void lexicalAnalysis(){
 			if((pmove + 1) != NULL && strcmp(ans_each, "LPar") != 0){
 				char *pcheck = pmove + 1;
 				if(*pcheck != ' ' && *pcheck != '\t' && *pcheck != '\n' && *pcheck != '\0'){
+				        printf("%c -> %c, *pmove, *(pmove + 1));
 					printf("Err");
 					exit(0);
 				}
