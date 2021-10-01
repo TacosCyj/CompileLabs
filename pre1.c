@@ -86,6 +86,7 @@ void lexicalAnalysis(){
 				break;
 			}
 			else if(*pmove != ' ' && *pmove != '\n' && *pmove != '\t' && *pmove != ')' && *pmove != ';'){
+				printf("->%c", *pmove);
 				printf("Err");
 				exit(0);
 			}
