@@ -86,12 +86,12 @@ void lexicalAnalysis(){
 				}	
 				break;
 			}
-			else if(*pmove != ' ' && *pmove != '\n' && *pmove != '\t' && *pmove != ')' && *pmove != ';' && *pmove != '\0' && *pmove != '=' && *pmove != '(' && *pmove != '}'){
+			/*else if(*pmove != ' ' && *pmove != '\n' && *pmove != '\t' && *pmove != ')' && *pmove != ';' && *pmove != '\0' && *pmove != '=' && *pmove != '(' && *pmove != '}'){
 				printf("%c -> %c", *pmove, *(pmove + 1));
 				printf("->%s", ans_each);
 				printf("Err");
 				exit(0);
-			}
+			}*/
 			else{
 				flag = judgeIsReserve(ans_each);
 				if(flag == 6){
@@ -151,17 +151,6 @@ void lexicalAnalysis(){
 					default: printf("Err"); exit(0);
 				}
 			}
-			/*if((pmove + 1) != NULL){
-				char *pcheck = pmove + 1;
-				if(((*pmove == '(' || *pmove == '{') && (isdigit(*pcheck) || isalpha(*pcheck) || *pcheck == '_' || *pcheck == ')' || *pcheck == '}')) 
-				|| (*pmove == '}' && *pcheck == ';') || *pmove == '=') pcheck == NULL;
-				else if(*pcheck != ' ' && *pcheck != '\t' && *pcheck != '\n' && *pcheck != '\0'){
-				        printf("%c -> %c", *pmove, *(pmove + 1));
-				        printf("->%s", ans_each);
-					printf("Err");
-					exit(0);
-				}
-			}*/
 			len_temp = strlen(ans_each);
 			ans_each[len_temp] = '\n';
 			strcat(ans, ans_each);
