@@ -150,6 +150,7 @@ void lexicalAnalysis(){
 			if((pmove + 1) != NULL && strcmp(ans_each, "LPar") != 0){
 				char *pcheck = pmove + 1;
 				if(*pcheck != ' ' && *pcheck != '\t' && *pcheck != '\n'){
+					printf("->%c", *pcheck);
 					printf("Err");
 					exit(0);
 				}
