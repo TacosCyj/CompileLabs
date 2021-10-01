@@ -51,6 +51,7 @@ void lexicalAnalysis(){
 				break;
 			}
 			else if(*pmove != ' ' && *pmove != '\n' && *pmove != '\t' && *pmove != ')' && *pmove != ';'){
+			        printf("->%c", *pmove);
 				printf("Err");
 				exit(0);
 			}
@@ -139,7 +140,7 @@ void lexicalAnalysis(){
 					case '}': strcpy(ans_each, "RBrace"); break;
 					case '+': strcpy(ans_each, "Plus"); break;
 					case '*': strcpy(ans_each, "Mult"); break;
-					case '/': strcpy(ans_each, "div"); break;
+					case '/': strcpy(ans_each, "Div"); break;
 					case '<': strcpy(ans_each, "Lt"); break;
 					case '>': strcpy(ans_each, "Gt"); break;
 					default: printf("Err"); exit(0);
