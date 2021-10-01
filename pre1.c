@@ -151,16 +151,17 @@ void lexicalAnalysis(){
 					default: printf("Err"); exit(0);
 				}
 			}
-			if((pmove + 1) != NULL){
+			/*if((pmove + 1) != NULL){
 				char *pcheck = pmove + 1;
-				if(((*pmove == '(' || *pmove == '{') && (isdigit(*pcheck) || isalpha(*pcheck) || *pcheck == '_' || *pcheck == ')')) || (*pmove == '}' && *pcheck == ';') || *pmove == '=') pcheck == NULL;
+				if(((*pmove == '(' || *pmove == '{') && (isdigit(*pcheck) || isalpha(*pcheck) || *pcheck == '_' || *pcheck == ')' || *pcheck == '}')) 
+				|| (*pmove == '}' && *pcheck == ';') || *pmove == '=') pcheck == NULL;
 				else if(*pcheck != ' ' && *pcheck != '\t' && *pcheck != '\n' && *pcheck != '\0'){
 				        printf("%c -> %c", *pmove, *(pmove + 1));
 				        printf("->%s", ans_each);
 					printf("Err");
 					exit(0);
 				}
-			}
+			}*/
 			len_temp = strlen(ans_each);
 			ans_each[len_temp] = '\n';
 			strcat(ans, ans_each);
