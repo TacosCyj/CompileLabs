@@ -50,12 +50,6 @@ void lexicalAnalysis(){
 				strcat(ans, ans_each);
 				break;
 			}
-			/*else if(*pmove != ' ' && *pmove != '\n' && *pmove != '\t' && *pmove != ')' && *pmove != ';' && *pmove != '\0' && isalpha(*pmove) == 0 && *pmove != '}'){
-				printf("%c -> %c\n", *pmove, *(pmove + 1));
-				printf("->%s", ans_each);
-			        printf("Err");
-				exit(0);
-			}*/
 			else{
 				len_temp = strlen(ans_each);
 				ans_each[len_temp++] = ')';
@@ -86,12 +80,6 @@ void lexicalAnalysis(){
 				}	
 				break;
 			}
-			/*else if(*pmove != ' ' && *pmove != '\n' && *pmove != '\t' && *pmove != ')' && *pmove != ';' && *pmove != '\0' && *pmove != '=' && *pmove != '(' && *pmove != '}'){
-				printf("%c -> %c", *pmove, *(pmove + 1));
-				printf("->%s", ans_each);
-				printf("Err");
-				exit(0);
-			}*/
 			else{
 				flag = judgeIsReserve(ans_each);
 				if(flag == 6){
