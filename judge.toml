@@ -1,5 +1,8 @@
 [jobs.lexer]
+
 image = { source = "dockerfile", path = "." }
+
 run = [
   "./pre1 $input",
+  "cat $input | ./pre1"
 ]
