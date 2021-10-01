@@ -50,7 +50,7 @@ void lexicalAnalysis(){
 				strcat(ans, ans_each);
 				break;
 			}
-			else if(*pmove != ' ' && *pmove != '\n' && *pmove != '\t' && *pmove != ')' && *pmove != ';' && *pmove != '\0'){
+			else if(*pmove != ' ' && *pmove != '\n' && *pmove != '\t' && *pmove != ')' && *pmove != ';' && *pmove != '\0' && isalpha(*pmove) == 0){
 				printf("%c -> %c\n", *pmove, *(pmove + 1));
 				printf("->%s", ans_each);
 			        printf("Err");
