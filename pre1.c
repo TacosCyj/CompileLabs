@@ -31,7 +31,7 @@ int judgeIsReserve(char s[]){
 
 void lexicalAnalysis(){
 	char* pmove = readfile, *pp;
-	char ans_each[LEN], temp_judge[LEN];
+	char ans_each[LEN] = {0}, temp_judge[LEN];
 	int len_each = 0, len_temp, flag;
 	while(pmove != NULL && *pmove != '\0'){
 		if(*pmove == '\n') break;
@@ -120,8 +120,6 @@ void lexicalAnalysis(){
 				pmove = pback;
 				if(n % 2 == 0){
 					n /= 2;
-					strcpy(ans_each, "Eq");
-					n--;
 					while(n--){
 						strcat(ans_each, "Eq");
 						if(n >= 1) ans_each[strlen(ans_each)] = '\n';
@@ -130,8 +128,6 @@ void lexicalAnalysis(){
 				else{
 					n -= 1;
 					n /= 2;
-					strcpy(ans_each, "Eq");
-					n--;
 					while(n--){
 						strcat(ans_each, "Eq");
 						ans_each[strlen(ans_each)] = '\n';
