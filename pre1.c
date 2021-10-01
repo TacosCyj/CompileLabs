@@ -51,7 +51,8 @@ void lexicalAnalysis(){
 				break;
 			}
 			else if(*pmove != ' ' && *pmove != '\n' && *pmove != '\t' && *pmove != ')' && *pmove != ';' && *pmove != '\0'){
-				printf("%c -> %c", *pmove, *(pmove + 1));
+				printf("%c -> %c\n", *pmove, *(pmove + 1));
+				printf("->%s", ans_each);
 			        printf("Err");
 				exit(0);
 			}
