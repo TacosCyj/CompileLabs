@@ -165,17 +165,19 @@ int main(int argc, char* argv[]){
 	int i, j;
 	if(argc > 1){
 		strcpy(input_file, argv[1]);
+		fp_r = fopen(input_file, "r");
+		while(fgets(readfile, LEN, fp_r)){
+			lexicalAnalysis();
+			printf("%s", ans);
+			memset(ans, 0, sizeof(ans));
+		}
 	}
 	else{
-		gets(input_file);
-	}
-	printf("%s", input_file);
-	fp_r = fopen(input_file, "r");
-	if(fp_r == NULL){printf("No Such File"); exit(0);}
-	while(fgets(readfile, LEN, fp_r)){
-		lexicalAnalysis();
-		printf("%s", ans);
-		memset(ans, 0, sizeof(ans));
+		while(fgets(readfile, LEN, stdin)){
+			lexicalAnalysis();
+			printf("%s", ans);
+			memset(ans, 0, sizeof(ans));
+		}
 	}
 	return 0;
 } 
