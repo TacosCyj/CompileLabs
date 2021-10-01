@@ -147,9 +147,10 @@ void lexicalAnalysis(){
 					default: printf("Err"); exit(0);
 				}
 			}
-			if((pmove + 1) != NULL && strcmp(ans_each, "LPar") != 0){
+			if((pmove + 1) != NULL){
 				char *pcheck = pmove + 1;
-				if(*pcheck != ' ' && *pcheck != '\t' && *pcheck != '\n' && *pcheck != '\0'){
+				if((*pmove == '(' && (isdigit(*pcheck) || isalpha(*pcheck) || *pcheck == '_')) || (*pmove == '}' && *pcheck == ';')) pcheck == NULL;
+				else if(*pcheck != ' ' && *pcheck != '\t' && *pcheck != '\n' && *pcheck != '\0'){
 				        printf("%c -> %c", *pmove, *(pmove + 1));
 					printf("Err");
 					exit(0);
