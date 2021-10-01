@@ -122,6 +122,7 @@ void lexicalAnalysis(){
 					n /= 2;
 					while(n--){
 						strcat(ans_each, "Eq");
+						if(n > 1) ans_each[strlen(ans_each)] = '\n';
 					}
 				}
 				else{
@@ -129,6 +130,7 @@ void lexicalAnalysis(){
 					n /= 2;
 					while(n--){
 						strcat(ans_each, "Eq");
+						ans_each[strlen(ans_each)] = '\n';
 					}
 					strcat(ans_each, "Assign");
 				}
