@@ -33,7 +33,7 @@ void lexicalAnalysis(){
 	char* pmove = readfile, *pp;
 	char ans_each[LEN], temp_judge[LEN];
 	int len_each = 0, len_temp, flag;
-	while(pmove != NULL){
+	while(pmove != NULL && *pmove != '\0'){
 		if(*pmove == '\n') break;
 		if(*pmove == ' ' || *pmove == '\t') pmove++;
 		else if(isdigit(*pmove)){
