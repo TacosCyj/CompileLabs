@@ -167,7 +167,7 @@ int main(int argc, char* argv[]){
 		strcpy(input_file, argv[1]);
 	}
 	else{
-		scanf("%s", input_file);
+		gets(input_file);
 	}
 	printf("%s", input_file);
 	fp_r = fopen(input_file, "r");
