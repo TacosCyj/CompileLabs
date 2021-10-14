@@ -15,7 +15,6 @@ FILE* fp_r, *fp_w;
 int symbol;
 char* pmove;
 
-
 void IdentAnalysis();
 void LBarAnalysis();
 void RBarAnalysis();
@@ -94,43 +93,16 @@ void CheckNumber(){
 
 /*消除单行注释功能*/
 void getsym(){
-    if(pmove == NULL) return;
+    if(*pmove == '#') return;
     int loc = 0;
     symbol = -1;
     memset(token, 0, sizeof(token));
     while(*pmove == ' ' || *pmove == '\t' || *pmove == '\n') pmove++;
-    if(*pmove == '/'){
-        int flag = 0;
-        char* pp = pmove + 1;
-        if(*pp == '/'){
-            while(*pp != '\n'){
-                pp++;
-                if(pp == NULL) break;
-            }
-            pmove = pp;
-            getsym();
-        }
-        else if(*pp == '*'){
-            char* pmove_temp = pmove;
-            while(*pp != '/' || *pmove_temp != '*'){
-                pp++;
-                pmove_temp++;
-                if(*pp == '#'){
-                    flag = 1;
-                    break;
-                }
-            }
-            if(flag == 1) error();
-            pmove = pp + 1;
-            getsym();
-        }
-        else error();
-    }
-    else if(isdigit(*pmove)){
+    if(isdigit(*pmove)){
         while(isdigit(*pmove) || (loc == 1 && (*pmove == 'x' || *pmove == 'X')) || (loc > 1 && isalpha(*pmove))){
             token[loc++] = *pmove;
             pmove++;
-            if(pmove == NULL) break;
+            if(*pmove == '#') break;
         }
         CheckNumber();
         symbol = 10;
@@ -139,7 +111,7 @@ void getsym(){
         while(isalpha(*pmove)){
             token[loc++] = *pmove;
             pmove++;
-            if(pmove == NULL) break;
+            if(*pmove == '#') break;
         }
         if(strcmp(token, "int") == 0) symbol = 11;
         else if(strcmp(token, "main") == 0) symbol = 12;
