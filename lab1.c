@@ -225,7 +225,7 @@ void RBraceAnalysis(){
     strcat(result, "}");
     //printf("\n%c", *pmove);
     getsym();
-    if(symbol == -2) return;
+    if(symbol == -2) exit(0);
     else error();
 }
 
