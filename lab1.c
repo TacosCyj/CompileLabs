@@ -15,6 +15,15 @@ FILE* fp_r, *fp_w;
 int symbol;
 char* pmove;
 
+
+void IdentAnalysis();
+void LBarAnalysis();
+void RBarAnalysis();
+void LBraceAnalysis();
+void StmtAnalysis();
+void RBraceAnalysis();
+void AnalysisBegin();
+
 void error(){
     exit(1);
 }
