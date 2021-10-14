@@ -23,6 +23,65 @@ void init(){
     pmove = content;
 }
 
+void reverse(){
+    int i = 0, j = strlen(token) - 1;
+    while(i < j){
+        char temp = token[i];
+        token[i] = token[j];
+        token[j] = temp;
+        i++;
+        j--;
+    }
+}
+
+void HexToDec(){
+    int sum = 0;
+    int len = strlen(token);
+    int i, j = 0;
+    for(i = 2; i < len; i++){
+        if(isdigit(token[i])){
+            sum = sum * 16 + (token[i] - '0');
+        }
+        if(isalpha(token[i])){
+            sum = sum * 16 + (toupper(token[i]) - 'A' + 10);
+        }
+    }
+    memset(token, 0, sizeof(token));
+    while(sum){
+        token[j++] = (sum % 10) + '0';
+        sum /= 10;
+    }
+    reverse();
+}
+
+void OctToDec(){
+    int sum = 0;
+    int len = strlen(token);
+    int i, j = 0;
+    for(i = 1; i < len; i++){
+        sum = sum * 8 + (token[i] - '0');
+    }
+    memset(token, 0, sizeof(token));
+    while(sum){
+        token[j++] = (sum % 10) + '0';
+        sum /= 10;
+    }
+    reverse();
+}
+
+void CheckNumber(){
+    char* pp = token;
+    if(*pp == '0'){
+        pp++;
+        if(*pp == 'x' || *pp == 'X'){
+            HexToDec();
+        }
+        else if(isdigit(*pp)){
+            OctToDec();
+        }
+        else return;
+    }
+}
 
 /*消除单行注释功能*/
 void getsym(){
@@ -64,6 +123,7 @@ void getsym(){
             pmove++;
             if(pmove == NULL) break;
         }
+        CheckNumber();
         symbol = 10;
     }
     else if(isalpha(*pmove)){
