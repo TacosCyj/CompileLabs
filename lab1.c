@@ -77,21 +77,52 @@ void OctToDec(){
     reverse();
 }
 
+int isalpha_Hex(char c){
+    if((c >= 'A' && c <= 'F')|| (c >= 'a' && c <= 'f')) return 1;
+    else return 0;
+}
+
+int isdigit_Oct(char c){
+    if((c >= '0' && c <= '7')) return 1;
+    else return 0;
+}
+int isLegalHex(){
+    for(int i = 2; i < strlen(token); i++){
+        if(isdigit(token[i]) == 0 && isalpha_Hex(token[i]) == 0) return 1;
+    }
+    return 0;
+}
+
+int isLegalOct(){
+    for(int i = 1; i < strlen(token); i++){
+        if(isdigit(token[i]) == 0 || isdigit_Oct(token[i]) == 0) return 1;
+    }
+    return 0;
+}
+
 void CheckNumber(){
     char* pp = token;
+    int flag;
     if(*pp == '0'){
         pp++;
-        if(*pp == 'x' || *pp == 'X'){
-            HexToDec();
+        if(*pp == 'X' || *pp == 'x'){
+            flag = isLegalHex();
+            if(flag == 0) HexToDec();
+            else exit(1);
         }
-        else if(isdigit(*pp)){
-            OctToDec();
+        else{
+            flag = isLegalOct();
+            if(flag == 0) OctToDec();
+            else exit(1);
         }
-        else return;
+    }
+    else{
+        for(int i = 1; i < strlen(token); i++){
+            if(isdigit(token[i]) == 0) exit(1);
+        }
     }
 }
 
-/*消除单行注释功能*/
 void getsym(){
     if(*pmove == '#') return;
     int loc = 0;
@@ -214,7 +245,6 @@ int main(int argv, char* argc[]){
         getsym();
         if(symbol != 11) error();
         else AnalysisBegin();
-        printf("%s", result);
         fwrite(result, strlen(result), 1, fp_w);
         fclose(fp_r);
         fclose(fp_w);
