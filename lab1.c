@@ -214,6 +214,7 @@ int main(int argv, char* argc[]){
         getsym();
         if(symbol != 11) error();
         else AnalysisBegin();
+        printf("%s", result);
         fwrite(result, strlen(result), 1, fp_w);
         fclose(fp_r);
         fclose(fp_w);
