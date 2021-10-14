@@ -124,7 +124,10 @@ void CheckNumber(){
 }
 
 void getsym(){
-    if(*pmove == '#') return;
+    if(*pmove == '#'){
+        symbol = 0;
+        return;
+    }
     int loc = 0;
     symbol = -1;
     memset(token, 0, sizeof(token));
@@ -147,9 +150,7 @@ void getsym(){
         if(strcmp(token, "int") == 0) symbol = 11;
         else if(strcmp(token, "main") == 0) symbol = 12;
         else if(strcmp(token, "return") == 0) symbol = 13;
-        else{
-            error();
-        }
+        else error();
     }
     else{
         switch(*pmove){
@@ -214,7 +215,7 @@ void StmtAnalysis(){
         else{
             strcat(result, "\n");
             getsym();
-            if(symbol == 17) strcat(result, "}");
+            if(symbol == 17) RBarAnalysis();
             else error();
         }
     }
@@ -224,6 +225,8 @@ void StmtAnalysis(){
 void RBraceAnalysis(){
     strcat(result, "}");
     getsym();
+    if(symbol == 0) return;
+    else error();
 }
 
 void AnalysisBegin(){
