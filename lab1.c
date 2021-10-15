@@ -103,7 +103,7 @@ int isLegalDeci(){
 /*!!!!!!*/
 int CheckNumber(){
     char* pp = token;
-    if(*pp == '0'){
+    if(*pp == '0' && strlen(token) > 1){
         pp++;
         if(*pp == 'X' || *pp == 'x'){
             if(isLegalHex() == 0){
@@ -112,7 +112,7 @@ int CheckNumber(){
             }
             else return 1;
         }
-        else{
+        else if(*pp >= '1' && *pp <= '7'){
             if(isLegalOct() == 0){
                 OctToDec();
                 return 0;
