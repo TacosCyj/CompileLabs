@@ -263,7 +263,7 @@ int main(){
     while((c = getchar()) != EOF){
         content[i++] = c;
     }
-    strcat(content, "#");
+    content[i] = '#';
     init();
     isInt();
     if(isLegal == 1) return 1;
