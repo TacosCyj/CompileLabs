@@ -142,7 +142,7 @@ void getsym(){
         symbol = 10;
     }
     else if(isalpha(*pmove)){
-        while(isalpha(*pmove)){
+        while(isalpha(*pmove) || isdigit(*pmove) || *pmove == '_'){
             token[loc++] = *pmove;
             pmove++;
             if(*pmove == '#') break;
@@ -223,7 +223,6 @@ void StmtAnalysis(){
 
 void RBraceAnalysis(){
     strcat(result, "}");
-    //printf("\n%c", *pmove);
     getsym();
     if(symbol == -2) return;
     else error();
