@@ -132,6 +132,31 @@ void getsym(){
         /*symbol = -2, 表示输入文件结束*/
         symbol = -2;
     }
+    else if(*pmove == '/'){
+        int flag = 0;
+        char* pp = pmove + 1;
+        if(*pp == '/'){
+            while(*pp != '\n'){
+                pp++;
+                if(*pp == '#') break;
+            }
+            pmove = pp;
+            getsym();
+        }
+        else if(*pp == '*'){
+            char* pmove_temp = pmove;
+            while(*pp != '/' || *pmove_temp != '*'){
+                pp++;
+                pmove_temp++;
+                if(*pp == '#'){
+                    error();
+                }
+            }
+            pmove = pp + 1;
+            getsym();
+        }
+        else symbol = -1;
+    }
     else if(isdigit(*pmove)){
         while(isdigit(*pmove) || (loc == 1 && (*pmove == 'x' || *pmove == 'X')) || (loc > 1 && isalpha(*pmove))){
             token[loc++] = *pmove;
