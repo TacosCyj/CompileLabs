@@ -4,33 +4,25 @@
 #include<ctype.h>
 #define LEN 1024
 
-char input_file[LEN];
-char output_file[LEN];
-char buffer[LEN];
 char content[LEN];
 char result[LEN];
-char token[20];
-FILE* fp_r, *fp_w;
+char token[22];
 
+char* pmove;
 int symbol;
 int isLegal;
-char* pmove;
 
-void IdentAnalysis();
-void LBarAnalysis();
-void RBarAnalysis();
-void LBraceAnalysis();
-void StmtAnalysis();
-void RBraceAnalysis();
-void AnalysisBegin();
+void isInt();
+void isMain();
+void isLBar();
+void isRBar();
+void isLBrace();
+void isRBrace();
+void isReturn();
+void isNumber();
+void isSemicolon();
+void isFinished();
 
-void error(){
-    exit(1);
-}
-
-void init(){
-    pmove = content;
-}
 
 void reverse(){
     int i = 0, j = strlen(token) - 1;
@@ -79,228 +71,204 @@ void OctToDec(){
 }
 
 int isalpha_Hex(char c){
-    if((c >= 'A' && c <= 'F')|| (c >= 'a' && c <= 'f')) return 1;
-    else return 0;
+    if((c >= 'A' && c <= 'F')|| (c >= 'a' && c <= 'f')) return 0;
+    else return 1;
 }
 
 int isdigit_Oct(char c){
-    if((c >= '0' && c <= '7')) return 1;
-    else return 0;
+    if((c >= '0' && c <= '7')) return 0;
+    else return 1;
 }
 int isLegalHex(){
     for(int i = 2; i < strlen(token); i++){
-        if(isdigit(token[i]) == 0 && isalpha_Hex(token[i]) == 0) return 1;
+        if(isdigit(token[i]) == 0 && isalpha_Hex(token[i]) == 1) return 1;
     }
     return 0;
 }
 
 int isLegalOct(){
     for(int i = 1; i < strlen(token); i++){
-        if(isdigit_Oct(token[i]) == 0) return 1;
+        if(isdigit_Oct(token[i]) == 1) return 1;
     }
     return 0;
 }
 
-void CheckNumber(){
+int isLegalDeci(){
+    for(int i = 0; i < strlen(token); i++){
+        if(isdigit(token[i]) == 0) return 1;
+    }
+    return 0;
+}
+
+/*!!!!!!*/
+int CheckNumber(){
     char* pp = token;
-    int flag;
     if(*pp == '0'){
         pp++;
         if(*pp == 'X' || *pp == 'x'){
-            flag = isLegalHex();
-            if(flag == 0) HexToDec();
-            else isLegal = 1;
+            if(isLegalHex() == 0){
+                HexToDec();
+                return 0;
+            }
+            else return 1;
         }
         else{
-            flag = isLegalOct();
-            if(flag == 0) OctToDec();
-            else isLegal = 1;;
+            if(isLegalOct() == 0){
+                OctToDec();
+                return 0;
+            }
+            else return 1;
         }
     }
     else{
-        for(int i = 1; i < strlen(token); i++){
-            if(isdigit(token[i]) == 0) isLegal = 1;
-        }
+        if(isLegalDeci() == 0) return 0;
+        else return 1;
     }
 }
 
 void getsym(){
-    int loc = 0;
     symbol = -1;
+    int start = 0;
     memset(token, 0, sizeof(token));
-    while(*pmove == ' ' || *pmove == '\t' || *pmove == '\n') pmove++;
+    while(*pmove == ' ' || *pmove == '\n' || *pmove == '\t') pmove++;
     if(*pmove == '#'){
-        /*symbol = -2, 表示输入文件结束*/
         symbol = -2;
     }
-    else if(*pmove == '/'){
-        int flag = 0;
-        char* pp = pmove + 1;
-        if(*pp == '/'){
-            while(*pp != '\n'){
-                pp++;
-                if(*pp == '#') break;
-            }
-            pmove = pp;
-            getsym();
+    else if(isdigit(*pmove)){
+        while(isdigit(*pmove) || isalpha(*pmove)){
+            token[start++] = *pmove;
+            pmove++;
         }
-        else if(*pp == '*'){
-            char* pmove_temp = pmove;
-            while(*pp != '/' || *pmove_temp != '*'){
-                pp++;
-                pmove_temp++;
-                if(*pp == '#'){
-                    error();
-                }
-            }
-            pmove = pp + 1;
-            getsym();
-        }
+        if(CheckNumber() == 0) symbol = 10;
         else symbol = -1;
     }
-    else if(isdigit(*pmove)){
-        while(isdigit(*pmove) || (loc == 1 && (*pmove == 'x' || *pmove == 'X')) || (loc > 1 && isalpha(*pmove))){
-            token[loc++] = *pmove;
-            pmove++;
-            if(*pmove == '#') break;
-        }
-        CheckNumber();
-        symbol = 10;
-    }
     else if(isalpha(*pmove)){
-        while(isalpha(*pmove) || isdigit(*pmove) || *pmove == '_'){
-            token[loc++] = *pmove;
+        while(isalpha(*pmove)){
+            token[start++] = *pmove;
             pmove++;
-            if(*pmove == '#') break;
         }
         if(strcmp(token, "int") == 0) symbol = 11;
         else if(strcmp(token, "main") == 0) symbol = 12;
         else if(strcmp(token, "return") == 0) symbol = 13;
         else symbol = -1;
     }
-    else{
+    else {
         switch(*pmove){
-            case '(': token[loc] = '('; symbol = 14; break;
-            case ')': token[loc] = ')'; symbol = 15; break;
-            case '{': token[loc] = '{'; symbol = 16; break;
-            case '}': token[loc] = '}'; symbol = 17; break;
-            case ';': token[loc] = ';'; symbol = 18; break;
+            case '(': token[0] = '('; symbol = 14; break;
+            case ')': token[0] = ')'; symbol = 15; break;
+            case '{': token[0] = '{'; symbol = 16; break;
+            case '}': token[0] = '}'; symbol = 17; break;
+            case ';': token[0] = ';'; symbol = 18; break;
             default: symbol = -1; break;
         }
         pmove++;
     }
 }
 
-/*检查main*/
-void FuncTypeAnalysis(){
-    strcat(result, "define dso_local i32 ");
-    getsym();
-    if(symbol == 12) IdentAnalysis();
-    else isLegal = 1;
+void init(){
+    pmove = content;
 }
 
-/*检查(*/
-void IdentAnalysis(){
-    strcat(result, "@main");
+void isInt(){
     getsym();
-    if(symbol == 14) LBarAnalysis();
-    else isLegal = 1;
-}
-
-/*检查)*/
-void LBarAnalysis(){
-    strcat(result, "(");
-    getsym();
-    if(symbol == 15) RBarAnalysis();
-    else isLegal = 1;;
-}
-
-void RBarAnalysis(){
-    strcat(result, ")");
-    getsym();
-    if(symbol == 16) LBraceAnalysis();
-    else isLegal = 1;
-}
-
-void LBraceAnalysis(){
-    strcat(result, "{\n");
-    getsym();
-    if(symbol == 13) StmtAnalysis();
-    else isLegal = 1;
-}
-
-void StmtAnalysis(){
-    strcat(result, "    ret ");
-    getsym();
-    if(symbol == 10){
-        strcat(result, "i32 ");
-        strcat(result, token);
-        getsym();
-        if(symbol != 18) isLegal = 1;
-        else{
-            strcat(result, "\n");
-            getsym();
-            if(symbol == 17) RBraceAnalysis();
-            else isLegal = 1;
-        }
+    if(symbol == 11){
+        strcat(result, "define dso_local i32 ");
+        isMain();
     }
     else isLegal = 1;
 }
 
-void RBraceAnalysis(){
-    strcat(result, "}");
+void isMain(){
+    getsym();
+    if(symbol == 12){
+        strcat(result, "@main");
+        isLBar();
+    }
+    else isLegal = 1;
+}
+
+void isLBar(){
+    getsym();
+    if(symbol == 14){
+        strcat(result, "(");
+        isRBar();
+    }
+    else isLegal = 1;
+}
+
+void isRBar(){
+    getsym();
+    if(symbol == 15){
+        strcat(result, ")");
+        isLBrace();
+    }
+    else isLegal = 1;
+}
+
+void isLBrace(){
+    getsym();
+    if(symbol == 16){
+        strcat(result, "{\n");
+        isReturn();
+    }
+    else isLegal = 1;
+}
+
+void isReturn(){
+    getsym();
+    if(symbol == 13){
+        strcat(result, "    ret ");
+        isNumber();
+    }
+    else isLegal = 1;
+}
+
+void isNumber(){
+    getsym();
+    if(symbol == 10){
+        strcat(result, "i32 ");
+        strcat(result, token);
+        isSemicolon();
+    }
+    else isLegal = 1;
+}
+
+void isSemicolon(){
+    getsym();
+    if(symbol == 18){
+        strcat(result, "\n");
+        isRBrace();
+    }
+    else isLegal = 1;
+}
+
+void isRBrace(){
+    getsym();
+    if(symbol == 17){
+        strcat(result, "}");
+        isFinished();
+    }
+    else isLegal = 1;
+}
+
+void isFinished(){
     getsym();
     if(symbol == -2) return;
     else isLegal = 1;
 }
 
-void AnalysisBegin(){
-    FuncTypeAnalysis();
-}
-
-int main(int argv, char* argc[]){
-    int i;
-    if(argv == 3){
-        strcpy(input_file, argc[1]);
-        strcpy(output_file, argc[2]);
-        fp_r = fopen(input_file, "r");
-        fp_w = fopen(output_file, "w");
-        while(fgets(buffer, LEN, fp_r)){
-            strcat(content, buffer);
-        }
-        strcat(content, "#");
-        init();
-        getsym();
-        if(symbol != 11){
-            fclose(fp_r);
-            fclose(fp_w);
-            return 1;
-        }
-        else AnalysisBegin();
-        if(isLegal == 1){
-            fclose(fp_r);
-            fclose(fp_w);
-            return 1;
-        }
-        else{
-            fwrite(result, strlen(result), 1, fp_w);
-            fclose(fp_r);
-            fclose(fp_w);
-        }
+int main(){
+    int i = 0;
+    char c;
+    while((c = getchar()) != EOF){
+        content[i++] = c;
     }
+    strcat(content, "#");
+    init();
+    isInt();
+    if(isLegal == 1) return 1;
     else{
-        char c;
-        int s = 0;
-        while((c = getchar()) != EOF){
-            content[s++] = c;
-        }
-        strcat(content, "#");
-        init();
-        getsym();
-        if(symbol != 11) return 1;
-        else AnalysisBegin();
-        if(isLegal == 1) return 1;
-        else printf("%s", result);
+        printf("%s", result);
+        return 0;
     }
-    return 0;
 }
