@@ -252,9 +252,12 @@ void isRBrace(){
 }
 
 void isFinished(){
-    getsym();
-    if(symbol == -2) return;
-    else isLegal = 1;
+    if(*pmove == '\r' || *pmove == '\t' || *pmove == '\n' || *pmove == ' ') return;
+    else{
+        getsym();
+        if(symbol == -2) return;
+        else isLegal = 1;
+    }
 }
 
 int main(){
