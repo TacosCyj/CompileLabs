@@ -6,7 +6,7 @@
 
 char content[LEN];
 char result[LEN];
-char token[22];
+char token[LEN];
 
 char* pmove;
 int symbol;
@@ -130,7 +130,7 @@ void getsym(){
     symbol = -1;
     int start = 0;
     memset(token, 0, sizeof(token));
-    while(*pmove == ' ' || *pmove == '\n' || *pmove == '\t') pmove++;
+    while(*pmove == ' ' || *pmove == '\n' || *pmove == '\t' || *pmove == '\r') pmove++;
     if(*pmove == '#'){
         symbol = -2;
     }
