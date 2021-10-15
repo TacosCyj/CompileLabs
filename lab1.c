@@ -112,7 +112,7 @@ int CheckNumber(){
             }
             else return 1;
         }
-        else if(*pp >= '1' && *pp <= '7'){
+        else{
             if(isLegalOct() == 0){
                 OctToDec();
                 return 0;
