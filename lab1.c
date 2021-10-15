@@ -108,17 +108,17 @@ void CheckNumber(){
         if(*pp == 'X' || *pp == 'x'){
             flag = isLegalHex();
             if(flag == 0) HexToDec();
-            else exit(1);
+            else error();
         }
         else{
             flag = isLegalOct();
             if(flag == 0) OctToDec();
-            else exit(1);
+            else error();
         }
     }
     else{
         for(int i = 1; i < strlen(token); i++){
-            if(isdigit(token[i]) == 0) exit(1);
+            if(isdigit(token[i]) == 0) error();
         }
     }
 }
@@ -129,6 +129,7 @@ void getsym(){
     memset(token, 0, sizeof(token));
     while(*pmove == ' ' || *pmove == '\t' || *pmove == '\n') pmove++;
     if(*pmove == '#'){
+        /*symbol = -2, 表示输入文件结束*/
         symbol = -2;
     }
     else if(isdigit(*pmove)){
@@ -149,7 +150,7 @@ void getsym(){
         if(strcmp(token, "int") == 0) symbol = 11;
         else if(strcmp(token, "main") == 0) symbol = 12;
         else if(strcmp(token, "return") == 0) symbol = 13;
-        else error();
+        else symbol = -1;
     }
     else{
         switch(*pmove){
@@ -160,7 +161,6 @@ void getsym(){
             case ';': token[loc] = ';'; symbol = 18; break;
             default: symbol = -1; break;
         }
-        if(symbol == -1) error();
         pmove++;
     }
 }
@@ -235,25 +235,20 @@ void AnalysisBegin(){
 
 int main(int argv, char* argc[]){
     int i;
-    if(argv == 3){
-        strcpy(input_file, argc[1]);
-        strcpy(output_file, argc[2]);
-        fp_r = fopen(input_file, "r");
-        fp_w = fopen(output_file, "w");
-        while(fgets(buffer, LEN, fp_r)){
-            strcat(content, buffer);
-        }
-        strcat(content, "#");
-        init();
-        getsym();
-        if(symbol != 11) error();
-        else AnalysisBegin();
-        fwrite(result, strlen(result), 1, fp_w);
-        fclose(fp_r);
-        fclose(fp_w);
+    strcpy(input_file, argc[1]);
+    strcpy(output_file, argc[2]);
+    fp_r = fopen(input_file, "r");
+    fp_w = fopen(output_file, "w");
+    while(fgets(buffer, LEN, fp_r)){
+        strcat(content, buffer);
     }
-    else{
-        printf("There are not enough parameters!");
-    }
+    strcat(content, "#");
+    init();
+    getsym();
+    if(symbol != 11) error();
+    else AnalysisBegin();
+    fwrite(result, strlen(result), 1, fp_w);
+    fclose(fp_r);
+    fclose(fp_w);
     return 0;
 }
