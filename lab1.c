@@ -134,6 +134,35 @@ void getsym(){
     if(*pmove == '#'){
         symbol = -2;
     }
+    else if(*pmove == '/'){
+        int flag = 0;
+        char* pp = pmove + 1;
+        if(*pp == '/'){
+            while(*pp != '\n' || *pp == '\r'){
+                pp++;
+                if(*pp == '#') break;
+            }
+            pmove = pp;
+            getsym();
+        }
+        else if(*pp == '*'){
+            char* pmove_temp = pmove;
+            while(*pp != '/' || *pmove_temp != '*'){
+                pp++;
+                pmove_temp++;
+                if(*pp == '#'){
+                    symbol = -1;
+                    isLegal = 1;
+                    break;
+                }
+            }
+            if(!isLegal){
+                pmove = pp + 1;
+                getsym();
+            }
+        }
+        else symbol = -1;
+    }
     else if(isdigit(*pmove)){
         while(isdigit(*pmove) || isalpha(*pmove)){
             token[start++] = *pmove;
@@ -252,7 +281,7 @@ void isRBrace(){
 }
 
 void isFinished(){
-    if(*pmove == '\r' || *pmove == '\t' || *pmove == '\n' || *pmove == ' ') return;
+    if(*pmove == '\r' || *pmove == '\n' || *pmove == '\n' || *pmove == '\t') return;
     else{
         getsym();
         if(symbol == -2) return;
@@ -266,7 +295,7 @@ int main(){
     while((c = getchar()) != EOF){
         content[i++] = c;
     }
-    content[i] = '#';
+    strcat(content, "#");
     init();
     isInt();
     if(isLegal == 1) return 1;
