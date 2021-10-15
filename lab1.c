@@ -13,6 +13,7 @@ char token[20];
 FILE* fp_r, *fp_w;
 
 int symbol;
+int isLegal;
 char* pmove;
 
 void IdentAnalysis();
@@ -95,7 +96,7 @@ int isLegalHex(){
 
 int isLegalOct(){
     for(int i = 1; i < strlen(token); i++){
-        if(isdigit(token[i]) == 0 || isdigit_Oct(token[i]) == 0) return 1;
+        if(isdigit_Oct(token[i]) == 0) return 1;
     }
     return 0;
 }
@@ -108,17 +109,17 @@ void CheckNumber(){
         if(*pp == 'X' || *pp == 'x'){
             flag = isLegalHex();
             if(flag == 0) HexToDec();
-            else error();
+            else isLegal = 1;
         }
         else{
             flag = isLegalOct();
             if(flag == 0) OctToDec();
-            else error();
+            else isLegal = 1;;
         }
     }
     else{
         for(int i = 1; i < strlen(token); i++){
-            if(isdigit(token[i]) == 0) error();
+            if(isdigit(token[i]) == 0) isLegal = 1;
         }
     }
 }
@@ -195,7 +196,7 @@ void FuncTypeAnalysis(){
     strcat(result, "define dso_local i32 ");
     getsym();
     if(symbol == 12) IdentAnalysis();
-    else error();
+    else isLegal = 1;
 }
 
 /*检查(*/
@@ -203,7 +204,7 @@ void IdentAnalysis(){
     strcat(result, "@main");
     getsym();
     if(symbol == 14) LBarAnalysis();
-    else error();
+    else isLegal = 1;
 }
 
 /*检查)*/
@@ -211,21 +212,21 @@ void LBarAnalysis(){
     strcat(result, "(");
     getsym();
     if(symbol == 15) RBarAnalysis();
-    else error();
+    else isLegal = 1;;
 }
 
 void RBarAnalysis(){
     strcat(result, ")");
     getsym();
     if(symbol == 16) LBraceAnalysis();
-    else error();
+    else isLegal = 1;
 }
 
 void LBraceAnalysis(){
     strcat(result, "{\n");
     getsym();
     if(symbol == 13) StmtAnalysis();
-    else error();
+    else isLegal = 1;
 }
 
 void StmtAnalysis(){
@@ -235,22 +236,22 @@ void StmtAnalysis(){
         strcat(result, "i32 ");
         strcat(result, token);
         getsym();
-        if(symbol != 18) error();
+        if(symbol != 18) isLegal = 1;
         else{
             strcat(result, "\n");
             getsym();
             if(symbol == 17) RBraceAnalysis();
-            else error();
+            else isLegal = 1;
         }
     }
-    else error();
+    else isLegal = 1;
 }
 
 void RBraceAnalysis(){
     strcat(result, "}");
     getsym();
     if(symbol == -2) return;
-    else error();
+    else isLegal = 1;
 }
 
 void AnalysisBegin(){
@@ -270,11 +271,22 @@ int main(int argv, char* argc[]){
         strcat(content, "#");
         init();
         getsym();
-        if(symbol != 11) error();
+        if(symbol != 11){
+            fclose(fp_r);
+            fclose(fp_w);
+            return 1;
+        }
         else AnalysisBegin();
-        fwrite(result, strlen(result), 1, fp_w);
-        fclose(fp_r);
-        fclose(fp_w);
+        if(isLegal == 1){
+            fclose(fp_r);
+            fclose(fp_w);
+            return 1;
+        }
+        else{
+            fwrite(result, strlen(result), 1, fp_w);
+            fclose(fp_r);
+            fclose(fp_w);
+        }
     }
     else{
         char c;
@@ -285,9 +297,10 @@ int main(int argv, char* argc[]){
         strcat(content, "#");
         init();
         getsym();
-        if(symbol != 11) error();
+        if(symbol != 11) return 1;
         else AnalysisBegin();
-        printf("%s", result);
+        if(isLegal == 1) return 1;
+        else printf("%s", result);
     }
     return 0;
 }
