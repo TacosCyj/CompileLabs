@@ -4,5 +4,4 @@ image = { source = "dockerfile", path = "." }
 
 run = [
   "./lab1 $input $ir",
- 
-]
+ ]
