@@ -259,20 +259,35 @@ void AnalysisBegin(){
 
 int main(int argv, char* argc[]){
     int i;
-    strcpy(input_file, argc[1]);
-    strcpy(output_file, argc[2]);
-    fp_r = fopen(input_file, "r");
-    fp_w = fopen(output_file, "w");
-    while(fgets(buffer, LEN, fp_r)){
-        strcat(content, buffer);
+    if(argv == 3){
+        strcpy(input_file, argc[1]);
+        strcpy(output_file, argc[2]);
+        fp_r = fopen(input_file, "r");
+        fp_w = fopen(output_file, "w");
+        while(fgets(buffer, LEN, fp_r)){
+            strcat(content, buffer);
+        }
+        strcat(content, "#");
+        init();
+        getsym();
+        if(symbol != 11) error();
+        else AnalysisBegin();
+        fwrite(result, strlen(result), 1, fp_w);
+        fclose(fp_r);
+        fclose(fp_w);
     }
-    strcat(content, "#");
-    init();
-    getsym();
-    if(symbol != 11) error();
-    else AnalysisBegin();
-    fwrite(result, strlen(result), 1, fp_w);
-    fclose(fp_r);
-    fclose(fp_w);
+    else{
+        char c;
+        int s = 0;
+        while((c = getchar()) != EOF){
+            content[s++] = c;
+        }
+        strcat(content, "#");
+        init();
+        getsym();
+        if(symbol != 11) error();
+        else AnalysisBegin();
+        printf("%s", result);
+    }
     return 0;
 }
