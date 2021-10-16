@@ -11,6 +11,7 @@ char token[LEN];
 char* pmove;
 int symbol;
 int isLegal;
+int returnValue;
 
 void isInt();
 void isMain();
@@ -194,6 +195,14 @@ void getsym(){
     }
 }
 
+void getReturnValue(){
+    int i;
+    int l = strlen(token);
+    for(i = 0; i < l; i++){
+        returnValue = returnValue * 10 + (token[i] - '0');
+    }
+}
+
 void init(){
     pmove = content;
 }
@@ -257,6 +266,7 @@ void isNumber(){
     if(symbol == 10){
         strcat(result, "i32 ");
         strcat(result, token);
+        getReturnValue();
         isSemicolon();
     }
     else isLegal = 1;
@@ -289,6 +299,12 @@ void isFinished(){
     }
 }
 
+void PrintCode(){
+    printf("define dso_local i32 @main(){\n");
+    printf("    ret %d\n", returnValue);
+    printf("}");
+}
+
 int main(){
     int i = 0;
     char c;
@@ -300,7 +316,7 @@ int main(){
     isInt();
     if(isLegal == 1) return 1;
     else{
-        printf("%s", result);
+        PrintCode();
         return 0;
     }
 }
