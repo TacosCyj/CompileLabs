@@ -301,7 +301,7 @@ void isFinished(){
 
 void PrintCode(){
     printf("define dso_local i32 @main(){\n");
-    printf("    ret %d\n", returnValue);
+    printf("    ret i32 %d\n", returnValue);
     printf("}");
 }
 
