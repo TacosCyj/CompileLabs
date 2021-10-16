@@ -5,7 +5,6 @@
 #define LEN 1024
 
 char content[LEN];
-char result[LEN];
 char token[LEN];
 
 char* pmove;
@@ -210,7 +209,6 @@ void init(){
 void isInt(){
     getsym();
     if(symbol == 11){
-        strcat(result, "define dso_local i32 ");
         isMain();
     }
     else isLegal = 1;
@@ -219,7 +217,6 @@ void isInt(){
 void isMain(){
     getsym();
     if(symbol == 12){
-        strcat(result, "@main");
         isLBar();
     }
     else isLegal = 1;
@@ -228,7 +225,6 @@ void isMain(){
 void isLBar(){
     getsym();
     if(symbol == 14){
-        strcat(result, "(");
         isRBar();
     }
     else isLegal = 1;
@@ -237,7 +233,6 @@ void isLBar(){
 void isRBar(){
     getsym();
     if(symbol == 15){
-        strcat(result, ")");
         isLBrace();
     }
     else isLegal = 1;
@@ -246,7 +241,6 @@ void isRBar(){
 void isLBrace(){
     getsym();
     if(symbol == 16){
-        strcat(result, "{\n");
         isReturn();
     }
     else isLegal = 1;
@@ -255,7 +249,6 @@ void isLBrace(){
 void isReturn(){
     getsym();
     if(symbol == 13){
-        strcat(result, "    ret ");
         isNumber();
     }
     else isLegal = 1;
@@ -264,9 +257,7 @@ void isReturn(){
 void isNumber(){
     getsym();
     if(symbol == 10){
-        strcat(result, "i32 ");
-        strcat(result, token);
-        getReturnValue();
+       getReturnValue();
         isSemicolon();
     }
     else isLegal = 1;
@@ -275,7 +266,6 @@ void isNumber(){
 void isSemicolon(){
     getsym();
     if(symbol == 18){
-        strcat(result, "\n");
         isRBrace();
     }
     else isLegal = 1;
@@ -284,7 +274,6 @@ void isSemicolon(){
 void isRBrace(){
     getsym();
     if(symbol == 17){
-        strcat(result, "}");
         isFinished();
     }
     else isLegal = 1;
