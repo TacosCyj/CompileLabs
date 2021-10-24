@@ -638,7 +638,7 @@ int main(){
     strcat(content, "#");
     init();
     isInt();
-    PrintfCode();
+    PrintCode();
     return 0;
     /*if(isLegal == 1) return 1;
     else{
