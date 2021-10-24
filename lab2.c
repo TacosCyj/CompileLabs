@@ -507,17 +507,17 @@ int ScannerFutherForLBar(){
     else return 0;
 }
 
-int isExpression(){
+/*int isExpression(){
     if(*pmove == '(' || *pmove == ')' || *pmove == '+' ||*pmove == '-' || *pmove == '*' ||*pmove == '/' || *pmove == '%' || *pmove == ' ' || *pmove == ';' || isdigit(*pmove) || isalpha(*pmove)) return 0;
     else return 1;
-}
+}*/
 
 void isExp(){
     int flag = 1;
     int is_Minus = 0;
     int p;
-    while(isExpression() == 0){
-        getsym();
+    getsym();
+    while(symbol != 18){
         if(symbol == 10){
             if(ScannerFutherForLBar() == 1){
                 isLegal = 1;
@@ -571,28 +571,23 @@ void isExp(){
                 break;
             }
         }
-        else if(symbol == 18){
-            while(getPriority(token[0], optrStack_top()) == 1){
-                calculate();
-            }
-            if(top_n == 0 && top_o == 0 && optrStack_top() == ';'){
-                pmove = pmove_for_semi;
-                flag = 0;
-                break;
-            }
-            else{
-                isLegal = 1;
-                break;
-            }
-        }
         else{
             isLegal = 1;
             break;
         }
+        getsym();
     }
-    if(flag == 0) isSemicolon();
-    else isLegal = 1;
- }
+    while(getPriority(token[0], optrStack_top()) == 1){
+            calculate();
+    }
+    if(top_n == 0 && top_o == 0 && optrStack_top() == ';'){
+        pmove = pmove_for_semi;
+        isSemicolon();   
+    }
+    else{
+        isLegal = 1;
+    }
+}
 
  void isSemicolon(){
     getsym();
