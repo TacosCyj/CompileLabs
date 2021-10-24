@@ -518,6 +518,7 @@ void isExp(){
     int p;
     getsym();
     while(symbol != 18){
+        //if(symbol != 20) printf("%d\n", symbol);
         if(symbol == 10){
             if(ScannerFutherForLBar() == 1){
                 isLegal = 1;
@@ -543,6 +544,7 @@ void isExp(){
             if((symbol == 20 || symbol == 19) && (optrStack_top() == '+' || optrStack_top() == '-' || optrStack_top() == '(') && isnumstack[top_i - 1] == 1){
                 int ttt = ScannerFurtherForMinusNum();
                 is_Minus = ttt * (is_Minus == 0 ? 1 : 0);
+                getsym();
                 continue;
             }
             int j = getPriority(token[0], optrStack_top());
@@ -559,7 +561,7 @@ void isExp(){
                     break;
                 }
                 if(optrStack_top() == '('){
-                optrStack_pop();
+                    optrStack_pop();
                 }
                 if(token[0] != ')') optrStack_push(token[0]);
             }
