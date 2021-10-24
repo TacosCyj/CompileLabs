@@ -484,7 +484,7 @@ void isExp(){
             }
             else{
                 isLegal = 1;
-                break
+                break;
             }
         }
         else{
