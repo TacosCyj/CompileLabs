@@ -469,7 +469,7 @@ int ScannerFurtherForNum(){
 
 int ScannerFurtherForOp(){
     int num_of_op = 0;
-    while(*pmove_exp == '*' || *pmove_exp == '/' || *pmove_exp == '%' || *pmove_exp == ' ' || *pmove_exp == '+' || *pmove_exp == '-'){
+    while(*pmove_exp == '*' || *pmove_exp == '/' || *pmove_exp == '%' || *pmove_exp == ' ' || *pmove_exp == '+' || *pmove_exp == '-' || *pmove_exp == ')'){
         if(*pmove_exp == ' '){
             pmove_exp++;
         }
@@ -502,6 +502,7 @@ int isExpression(){
 void isExp(){
     int flag = 1;
     int is_Minus = 0;
+    int p;
     while(isExpression() == 0){
         getsym();
         if(symbol == 10){
@@ -530,7 +531,7 @@ void isExp(){
                 optrStack_push(token[0]);
             }
             else if(j == 1){
-                while(getPriority(token[0], optrStack_top()) == 1){
+                while((p = getPriority(token[0], optrStack_top())) == 1){
                     int f = calculate();
                     if(f == 1) break;
                 }
