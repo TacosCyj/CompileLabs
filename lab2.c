@@ -535,6 +535,10 @@ void isExp(){
                     int f = calculate();
                     if(f == 1) break;
                 }
+                if(p == -2){
+                    isLegal = 1;
+                    break;
+                }
                 if(optrStack_top() == '('){
                 optrStack_pop();
                 }
