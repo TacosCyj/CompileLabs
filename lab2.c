@@ -328,21 +328,27 @@ void initStack(){
 void isReturn(){
     getsym();
     int number = 0;
+    int bar = 0;
     if(symbol == 13){
         char* pp = pmove;
         while(*pmove != '\n' && *pmove !='\r'){
             getsym();
             if(symbol == 10) number++;
+            else if(symbol == 14) bar++;
+            else if(symbol == 15) bar--;
         }
-        if(number == 1){
-            pmove = pp;
-            isLeftExp();
+        if(bar == 0){
+            if(number == 1){
+                pmove = pp;
+                isLeftExp();
+            }
+            else{
+                pmove = pp;
+                initStack();
+                isExp();
+            }
         }
-        else{
-            pmove = pp;
-            initStack();
-            isExp();
-        }
+        else isLegal = 1;
     }
     else isLegal = 1;
 }
@@ -494,6 +500,13 @@ int ScannerFurtherForMinusNum(){
     else return 1;
 }
 
+int ScannerFutherForLBar(){
+    char* pp = pmove;
+    while(*pp == ' ')pp++;
+    if(*pp == '(') return 1;
+    else return 0;
+}
+
 int isExpression(){
     if(*pmove == '(' || *pmove == ')' || *pmove == '+' ||*pmove == '-' || *pmove == '*' ||*pmove == '/' || *pmove == '%' || *pmove == ' ' || *pmove == ';' || isdigit(*pmove) || isalpha(*pmove)) return 0;
     else return 1;
@@ -506,11 +519,17 @@ void isExp(){
     while(isExpression() == 0){
         getsym();
         if(symbol == 10){
-            getValue();
-            if(is_Minus == 1) Value *= -1;
-            numStack_push(Value);
-            is_Minus = 0;
-            isnumstack[++top_i] = 0;
+            if(ScannerFutherForLBar() == 1){
+                isLegal = 1;
+                break;
+            }
+            else{
+                getValue();
+                if(is_Minus == 1) Value *= -1;
+                numStack_push(Value);
+                is_Minus = 0;
+                isnumstack[++top_i] = 0;
+            }
         }
         else if((symbol >= 19 && symbol <= 23) || symbol == 14 || symbol == 15){
             isnumstack[++top_i] = 1;
