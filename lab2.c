@@ -516,10 +516,9 @@ void isExp(){
     int flag = 1;
     int is_Minus = 0;
     int p;
+    int symbol_last;
     getsym();
     while(symbol != 18){
-        printf("%d\n", symbol);
-        //if(symbol != 20) printf("%d\n", symbol);
         if(symbol == 10){
             if(ScannerFutherForLBar() == 1){
                 isLegal = 1;
@@ -578,17 +577,21 @@ void isExp(){
             isLegal = 1;
             break;
         }
+        symbol_last = symbol;
         getsym();
     }
-    while(getPriority(token[0], optrStack_top()) == 1){
-            calculate();
-    }
-    if(top_n == 0 && top_o == 0 && optrStack_top() == ';'){
-        pmove = pmove_for_semi;
-        isSemicolon();   
-    }
+    if(symbol_last != 10 && symbol_last != 15) isLegal = 1;
     else{
-        isLegal = 1;
+        while(getPriority(token[0], optrStack_top()) == 1){
+            calculate();
+        }
+        if(top_n == 0 && top_o == 0 && optrStack_top() == ';'){
+            pmove = pmove_for_semi;
+            isSemicolon();   
+        }
+        else{
+            isLegal = 1;
+        }
     }
 }
 
