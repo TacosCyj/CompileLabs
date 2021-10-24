@@ -449,7 +449,7 @@ void isExp(){
         }
         else if((symbol >= 19 && symbol <= 23) || symbol == 14 || symbol == 15){
             isnumstack[++top_i] = 1;
-            if(symbol == 21 || symbol == 22){
+            if(symbol == 21 || symbol == 22 || symbol == 23){
                 int tt = ScannerFurtherForOp();
                 if(tt != 1){
                     isLegal = 1;
