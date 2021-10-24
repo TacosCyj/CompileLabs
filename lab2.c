@@ -594,7 +594,7 @@ void isFinished(){
 }
 
 void PrintCode(){
-    returnValue = numStack_top();
+    if(top_n != -1) returnValue = numStack_top();
     printf("define dso_local i32 @main(){\n");
     printf("    ret i32 %d\n", returnValue);
     printf("}");
