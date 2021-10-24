@@ -421,10 +421,15 @@ int ScannerFurtherForMinusNum(){
     else return 1;
 }
 
+int isExpression(){
+    if(*pmove == '(' || *pmove == ')' || *pmove == '+' ||*pmove == '-' || *pmove == '*' ||*pmove == '/' || *pmove == '%' || *pmove == ' ' || *pmove == ';' || isdigit(*pmove) || isalpha(*pmove)) return 0;
+    else return 1;
+}
+
 void isExp(){
     int flag = 1;
     int is_Minus = 1;
-    while(*pmove != '\n' && *pmove != '\r'){
+    while(isExpression() == 0){
         getsym();
         if(symbol == 10){
             getValue();
@@ -465,7 +470,7 @@ void isExp(){
             }
             else if(j == -2){
                 isLegal = 1;
-                return;
+                break;
             }
         }
         else if(symbol == 18){
@@ -477,9 +482,15 @@ void isExp(){
                 flag = 0;
                 break;
             }
-            else isLegal = 1;
+            else{
+                isLegal = 1;
+                break
+            }
         }
-        else isLegal = 1;
+        else{
+            isLegal = 1;
+            break;
+        }
     }
     if(flag == 0) isSemicolon();
     else isLegal = 1;
