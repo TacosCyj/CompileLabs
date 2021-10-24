@@ -518,6 +518,7 @@ void isExp(){
     int p;
     getsym();
     while(symbol != 18){
+        printf("%d\n", symbol);
         //if(symbol != 20) printf("%d\n", symbol);
         if(symbol == 10){
             if(ScannerFutherForLBar() == 1){
@@ -591,7 +592,7 @@ void isExp(){
     }
 }
 
- void isSemicolon(){
+void isSemicolon(){
     getsym();
     if(symbol == 18){
         isRBrace();
@@ -618,6 +619,7 @@ void isFinished(){
 
 void PrintCode(){
     if(top_n != -1) returnValue = numStack_top();
+    //if(top_o != 0) returnValue = optrStack_top();
     printf("define dso_local i32 @main(){\n");
     printf("    ret i32 %d\n", returnValue);
     printf("}");
