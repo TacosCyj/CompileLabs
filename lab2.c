@@ -7,11 +7,14 @@
 char content[LEN];
 char token[LEN];
 int numstack[LEN];
+int isnumstack[LEN];
 char OPTRstack[LEN];
 int opList[5] = {19, 20, 21, 22, 23};
 
 int top_n = -1;
 int top_o = -1;
+int top_i = -1;
+int num_in_Bar = 0;
 
 char* pmove;
 char* pmove_for_semi;
@@ -323,7 +326,7 @@ void isReturn(){
 }
 
 int calculate(){
-    if(top_n == 0 && top_o  > 0){
+    if(top_n == 0){
         int a = numStack_pop();
         int b = 0;
         char op = optrStack_top();
@@ -404,7 +407,6 @@ int ScannerFurtherForNum(){
 
 int ScannerFurtherForOp(){
     int num_of_op = 0;
-    //printf("%c", *pmove_exp);
     while(*pmove_exp == '*' || *pmove_exp == '/' || *pmove_exp == '%' || *pmove_exp == ' '){
         if(*pmove_exp == '*' || *pmove_exp == '/' || *pmove_exp == '%'){
             num_of_op++;
@@ -416,8 +418,15 @@ int ScannerFurtherForOp(){
 }
 
 int ScannerFurtherForMinusNum(){
-    pmove_exp++;
-    if(isdigit(*pmove_exp)) return 0;
+    int num_of_plus = 0;
+    int num_of_minus = 0;
+    while(*pmove_exp == '+' || *pmove_exp == '-'){
+        if(*pmove_exp == '+') num_of_plus++;
+        else num_of_minus++;
+        pmove_exp++;
+    }
+    pmove = pmove_exp;
+    if(num_of_minus % 2 == 0) return 0;
     else return 1;
 }
 
@@ -428,28 +437,29 @@ int isExpression(){
 
 void isExp(){
     int flag = 1;
-    int is_Minus = 1;
+    int is_Minus = 0;
     while(isExpression() == 0){
         getsym();
         if(symbol == 10){
             getValue();
-            if(is_Minus == 0) Value *= -1;
-            //printf("%d\n", Value);
+            if(is_Minus == 1) Value *= -1;
             numStack_push(Value);
-            is_Minus = 1;
+            is_Minus = 0;
+            isnumstack[++top_i] = 0;
         }
         else if((symbol >= 19 && symbol <= 23) || symbol == 14 || symbol == 15){
+            isnumstack[++top_i] = 1;
             if(symbol == 21 || symbol == 22){
                 int tt = ScannerFurtherForOp();
-                //printf("%d", tt);
-                if(tt != 1) break;
-            }
-            if(symbol == 20){
-                int ttt = ScannerFurtherForMinusNum();
-                if(ttt == 0){
-                    is_Minus = 0;
-                    continue;
+                if(tt != 1){
+                    isLegal = 1;
+                    break;
                 }
+            }
+            if((symbol == 20 || symbol == 19) && (optrStack_top() == '+' || optrStack_top() == '-' || optrStack_top() == '(') && isnumstack[top_i - 1] == 1){
+                int ttt = ScannerFurtherForMinusNum();
+                is_Minus = ttt * (is_Minus == 0 ? 1 : 0);
+                continue;
             }
             int j = getPriority(token[0], optrStack_top());
             if(j == -1){
