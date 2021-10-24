@@ -268,6 +268,15 @@ void getValue(){
     }
 }
 
+void getReturnValue(){
+    int i;
+    int l = strlen(token);
+    for(i = 0; i < l; i++){
+        returnValue = returnValue * 10 + (token[i] - '0');
+    }
+    if(numOfMinus % 2) returnValue *= -1;
+}
+
 void init(){
     pmove = content;
 }
@@ -318,12 +327,65 @@ void initStack(){
 
 void isReturn(){
     getsym();
+    int number = 0;
     if(symbol == 13){
-        initStack();
-        isExp();
+        char* pp = pmove;
+        while(*pmove != '\n' && *pmove !='\r'){
+            getsym();
+            if(symbol == 10) number++;
+        }
+        if(number == 1){
+            pmove = pp;
+            isLeftExp();
+        }
+        else{
+            pmove = pp;
+            initStack();
+            isExp();
+        }
     }
     else isLegal = 1;
 }
+
+void isLeftExp(){
+    getsym();
+    if(symbol == 14){
+        numOfLBar++;
+        isLeftExp();
+    }
+    else if(symbol == 19){
+        numOfPlus++;
+        isLeftExp();
+    }
+    else if(symbol == 20){
+        numOfMinus++;
+        isLeftExp();
+    }
+    else if(symbol == 10){
+        isNumber();
+    }
+    else isLegal = 1;
+}
+
+void isRightExp(){
+    if(numOfLBar == 0 || numOfLBar == numOfRBar){
+        isSemicolon();
+    }
+    else{
+        getsym();
+        if(symbol == 15){
+            numOfRBar++;
+            isRightExp();
+        }
+        else isLegal = 1;
+    }
+}
+
+void isNumber(){
+    getReturnValue();
+    isRightExp();
+}
+
 
 int calculate(){
     if(top_n == 0){
