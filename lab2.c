@@ -519,6 +519,7 @@ void isExp(){
     int symbol_last;
     getsym();
     while(symbol != 18){
+        printf("%d ", symbol);
         if(symbol == 10){
             if(ScannerFutherForLBar() == 1){
                 isLegal = 1;
@@ -637,9 +638,11 @@ int main(){
     strcat(content, "#");
     init();
     isInt();
-    if(isLegal == 1) return 1;
+    PrintfCode();
+    return 0;
+    /*if(isLegal == 1) return 1;
     else{
         PrintCode();
         return 0;
-    }
+    }*/
 }
