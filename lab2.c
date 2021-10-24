@@ -405,8 +405,8 @@ int ScannerFurtherForNum(){
 int ScannerFurtherForOp(){
     int num_of_op = 0;
     //printf("%c", *pmove_exp);
-    while(*pmove_exp == '*' || *pmove_exp == '/' || *pmove_exp == ' '){
-        if(*pmove_exp == '*' || *pmove_exp == '/'){
+    while(*pmove_exp == '*' || *pmove_exp == '/' || *pmove_exp == '%' || *pmove_exp == ' '){
+        if(*pmove_exp == '*' || *pmove_exp == '/' || *pmove_exp == '%'){
             num_of_op++;
             pmove_exp++;
         }
