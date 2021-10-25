@@ -363,11 +363,6 @@ void isReturn(){
             else if(symbol == 15) bar--;
         }
         if(bar == 0){
-            pmove = pp;
-            initStack();
-            initExp();
-            isExp();
-            /*
             if(number == 1){
                 pmove = pp;
                 isLeftExp();
@@ -377,7 +372,7 @@ void isReturn(){
                 initStack();
                 initExp();
                 isExp();
-            }*/
+            }
         }
         else isLegal = 1;
     }
