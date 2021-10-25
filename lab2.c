@@ -373,11 +373,6 @@ void isReturn(){
                 pmove = pp;
                 initStack();
                 initExp();
-                /*while(*pmove != '}'){
-                    printf("%c", *pmove);
-                    pmove++;
-                }
-                exit(0);*/
                 isExp();
             }
         }
@@ -543,6 +538,7 @@ void isExp(){
     while(symbol != 18){
         if(symbol == 10){
             if(ScannerFutherForLBar() == 1){
+                printf("Here 542");
                 isLegal = 1;
                 break;
             }
@@ -557,6 +553,7 @@ void isExp(){
             if(symbol == 21 || symbol == 22 || symbol == 23){
                 int tt = ScannerFurtherForOp();
                 if(tt != 1){
+                    printf("Here 557");
                     isLegal = 1;
                     break;
                 }
@@ -575,7 +572,7 @@ void isExp(){
                     int f = calculate();
                     if(f == 1) break;
                 }
-                if(p == -2){
+                if(p == -2 && optrStack_top() != ';'){
                     isLegal = 1;
                     break;
                 }
@@ -590,17 +587,20 @@ void isExp(){
                 optrStack_pop();
             }
             else if(j == -2){
+                printf("Here 592");
                 isLegal = 1;
                 break;
             }
         }
         else{
+            printf("Here 598");
             isLegal = 1;
             break;
         }
         symbol_last = symbol;
         getsym();
     }
+    
     if(symbol_last != 10 && symbol_last != 15) isLegal = 1;
     else{
         while(getPriority(token[0], optrStack_top()) == 1){
