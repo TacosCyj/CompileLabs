@@ -217,7 +217,6 @@ void getsym(){
         else{
             token[0] = '/';
             pmove_exp = pmove;
-            //printf("%c", *pmove_exp);
             symbol = 22;
             pmove++;
         }
@@ -325,6 +324,34 @@ void initStack(){
     optrStack_push(';');
 }
 
+void initExp(){
+    char* pp = pmove;
+    char* pt, *pe;
+    int numofplus = 0, numofminus = 0;
+    while(*pp != ';' && *pp != '\n' && *pp != '\r'){
+        if(*pp == '+' || *pp == '-'){
+            pt = pp;
+            while(*pt == '+' || *pt == '-' || *pt == ' '){
+                if(*pt == '+') numofplus++;
+                else if(*pt == '-') numofminus++;
+                pt++;
+            }
+            pe = pt;
+            if(numofminus % 2 == 0) *pp = '+';
+            else *pp = '-';
+            pt = pp + 1;
+            while(pt != pe){
+                *pt = ' ';
+                pt++;
+            }
+            numofplus = 0;
+            numofminus = 0;
+            pp = pe;
+        }
+        else pp++;
+    }
+}
+
 void isReturn(){
     getsym();
     int number = 0;
@@ -345,6 +372,12 @@ void isReturn(){
             else{
                 pmove = pp;
                 initStack();
+                initExp();
+                /*while(*pmove != '}'){
+                    printf("%c", *pmove);
+                    pmove++;
+                }
+                exit(0);*/
                 isExp();
             }
         }
@@ -488,16 +521,10 @@ int ScannerFurtherForOp(){
 }
 
 int ScannerFurtherForMinusNum(){
-    int num_of_plus = 0;
-    int num_of_minus = 0;
-    while(*pmove_exp == '+' || *pmove_exp == '-'){
-        if(*pmove_exp == '+') num_of_plus++;
-        else num_of_minus++;
-        pmove_exp++;
-    }
+    pmove_exp++;
+    while(*pmove_exp == ' ') pmove_exp++;
     pmove = pmove_exp;
-    if(num_of_minus % 2 == 0) return 0;
-    else return 1;
+    return 1;
 }
 
 int ScannerFutherForLBar(){
@@ -507,11 +534,6 @@ int ScannerFutherForLBar(){
     else return 0;
 }
 
-/*int isExpression(){
-    if(*pmove == '(' || *pmove == ')' || *pmove == '+' ||*pmove == '-' || *pmove == '*' ||*pmove == '/' || *pmove == '%' || *pmove == ' ' || *pmove == ';' || isdigit(*pmove) || isalpha(*pmove)) return 0;
-    else return 1;
-}*/
-
 void isExp(){
     int flag = 1;
     int is_Minus = 0;
@@ -519,7 +541,6 @@ void isExp(){
     int symbol_last;
     getsym();
     while(symbol != 18){
-        printf("%d ", symbol);
         if(symbol == 10){
             if(ScannerFutherForLBar() == 1){
                 isLegal = 1;
@@ -530,11 +551,9 @@ void isExp(){
                 if(is_Minus == 1) Value *= -1;
                 numStack_push(Value);
                 is_Minus = 0;
-                isnumstack[++top_i] = 0;
             }
         }
         else if((symbol >= 19 && symbol <= 23) || symbol == 14 || symbol == 15){
-            isnumstack[++top_i] = 1;
             if(symbol == 21 || symbol == 22 || symbol == 23){
                 int tt = ScannerFurtherForOp();
                 if(tt != 1){
@@ -542,9 +561,8 @@ void isExp(){
                     break;
                 }
             }
-            if((symbol == 20 || symbol == 19) && (optrStack_top() == '+' || optrStack_top() == '-' || optrStack_top() == '(') && isnumstack[top_i - 1] == 1){
-                int ttt = ScannerFurtherForMinusNum();
-                is_Minus = ttt * (is_Minus == 0 ? 1 : 0);
+            if(symbol == 20 && (symbol_last == 14 || (optrStack_top() == ';' && top_n == -1))){
+                is_Minus = 1;
                 getsym();
                 continue;
             }
@@ -564,7 +582,9 @@ void isExp(){
                 if(optrStack_top() == '('){
                     optrStack_pop();
                 }
-                if(token[0] != ')') optrStack_push(token[0]);
+                if(token[0] != ')'){
+                    optrStack_push(token[0]);
+                }
             }
             else if(j == 0){
                 optrStack_pop();
@@ -623,7 +643,6 @@ void isFinished(){
 
 void PrintCode(){
     if(top_n != -1) returnValue = numStack_top();
-    //if(top_o != 0) returnValue = optrStack_top();
     printf("define dso_local i32 @main(){\n");
     printf("    ret i32 %d\n", returnValue);
     printf("}");
@@ -638,11 +657,9 @@ int main(){
     strcat(content, "#");
     init();
     isInt();
-    PrintCode();
-    return 0;
-    /*if(isLegal == 1) return 1;
+    if(isLegal == 1) return 1;
     else{
         PrintCode();
         return 0;
-    }*/
+    }
 }
