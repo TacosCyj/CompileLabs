@@ -9,11 +9,9 @@ char token[LEN];
 int numstack[LEN];
 int isnumstack[LEN];
 char OPTRstack[LEN];
-int opList[5] = {19, 20, 21, 22, 23};
 
 int top_n = -1;
 int top_o = -1;
-int top_i = -1;
 int num_in_Bar = 0;
 
 char* pmove;
@@ -365,6 +363,11 @@ void isReturn(){
             else if(symbol == 15) bar--;
         }
         if(bar == 0){
+            pmove = pp;
+            initStack();
+            initExp();
+            isExp();
+            /*
             if(number == 1){
                 pmove = pp;
                 isLeftExp();
@@ -374,7 +377,7 @@ void isReturn(){
                 initStack();
                 initExp();
                 isExp();
-            }
+            }*/
         }
         else isLegal = 1;
     }
