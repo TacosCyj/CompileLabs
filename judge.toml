@@ -1,0 +1,6 @@
+[jobs.lab3]
+image = { source = "dockerfile", path = "."}
+
+run = [
+  "java -cp dst/ Analysis $input $ir",
+]
