@@ -135,7 +135,7 @@ public class Grammar {
                 if(t_judge instanceof number) this.answer.append("    store i32 ").append(ans).append(", i32* %").append(reg.getSeq()).append("\n");
                 else if(t_judge instanceof ident){
                     int s = this.reglist.get(((ident) t_judge).getId()).getSeq();
-                    this.answer.append("    store i32 ").append("%" + s).append(", i32* %").append(reg.getSeq()).append("\n");
+                    this.answer.append("    store i32* ").append("%" + s).append(", i32* %").append(reg.getSeq()).append("\n");
                 }
             }
             else{
