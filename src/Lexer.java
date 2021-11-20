@@ -1,17 +1,14 @@
+import javax.sound.midi.SysexMessage;
 import java.io.*;
 import java.util.Objects;
-import java.util.Queue;
 import java.util.LinkedList;
 
 public class Lexer {
     private static Lexer lexer;
     private StringBuilder input_file;
-    private StringBuilder output_file;
     private BufferedReader reader;
     private FileReader r;
-    private FileWriter writer;
     private StringBuilder content = new StringBuilder();
-    private int line = 0;
     private int jump_i = 0, is_neg = 1;
     private LinkedList<token> tokenList = new LinkedList<token>();
     private Lexer(){}
@@ -35,7 +32,6 @@ public class Lexer {
         String str = null;
         try{
             while((str = reader.readLine()) != null){
-                line++;
                 content.append(str);
                 content.append('\n');
             }
@@ -43,18 +39,78 @@ public class Lexer {
         }catch(IOException e){
             e.printStackTrace();
         }
-        //System.out.println(content);
     }
-    public boolean getIdent(String ident){
-        int symbol = 0;
-        if(Objects.equals(ident, "main")) symbol = 11;
-        else if(Objects.equals(ident, "int")) symbol = 12;
-        else if(Objects.equals(ident, "const")) symbol = 13;
-        else if(Objects.equals(ident, "return")) symbol = 14;
-        else symbol = 15;
-        ident id = new ident(ident, "Ident", symbol, 0, is_neg);
-        this.tokenList.offer(id);
-        is_neg = 1;
+    //检查函数参数列表长度
+    public boolean checkFuncRParamsNum(int start, int num){
+        int n = 0, j = ++start;
+        if(this.content.charAt(j) == ')') n = 0;
+        else{
+            while(this.content.charAt(j) != ';' && this.content.charAt(j) != ',') j++;
+            if(this.content.charAt(j) == ';') n = 1;
+            else if(this.content.charAt(j - 1) == ')') n = 1;
+            else n = 2;
+        }
+        if(n == num) return true;
+        else return false;
+    }
+    public boolean getIdent(String ident, int i){
+        int symbol = 0, j = i;
+        // a function call
+        if(this.content.charAt(j) == '('){
+            if(Objects.equals(ident, "getint") && checkFuncRParamsNum(j, 0)){
+                symbol = 15;
+                function func = new function("getint", "int", "Function", symbol);
+                this.tokenList.offer(func);
+            }
+            else if(Objects.equals(ident, "getch") && checkFuncRParamsNum(j, 0)){
+                symbol = 16;
+                function func = new function("getch", "int", "Function", symbol);
+                this.tokenList.offer(func);
+            }
+            else if(Objects.equals(ident, "putint") && checkFuncRParamsNum(j, 1)){
+                symbol = 17;
+                function func = new function("putint", "void", "Function", symbol);
+                this.tokenList.offer(func);
+            }
+            else if(Objects.equals(ident, "putch") && checkFuncRParamsNum(j, 1)){
+                symbol = 18;
+                function func = new function("putch", "void", "Function", symbol);
+                this.tokenList.offer(func);
+            }
+            else if(Objects.equals(ident, "main") && checkFuncRParamsNum(j, 0)){
+                symbol = 11;
+                function func = new function("main", "int", "Function", symbol);
+                this.tokenList.offer(func);
+            }
+            else return false;
+        }
+        else{
+            if(Objects.equals(ident, "int")){
+                symbol = 12;
+                ident id = new ident(ident, "Ident", symbol, 0, is_neg);
+                this.tokenList.offer(id);
+                is_neg = 1;
+            }
+            else if(Objects.equals(ident, "const")){
+                symbol = 13;
+                ident id = new ident(ident, "Ident", symbol, 0, is_neg);
+                this.tokenList.offer(id);
+                is_neg = 1;
+            }
+            else if(Objects.equals(ident, "return")) {
+                symbol = 14;
+                ident id = new ident(ident, "Ident", symbol, 0, is_neg);
+                this.tokenList.offer(id);
+                is_neg = 1;
+            }
+            else {
+                symbol = 19;
+                ident id = new ident(ident, "Ident", symbol, 0, is_neg);
+                this.tokenList.offer(id);
+                is_neg = 1;
+            }
+        }
+        //assign times
         return true;
     }
     public boolean getNumber(String number){
@@ -109,6 +165,7 @@ public class Lexer {
                 j++;
             }
             //前面的符号表示正负
+            //有多于一个的连续的+、-符号
             if(Character.isDigit(this.content.charAt(j)) || Character.isAlphabetic(this.content.charAt(j)) || this.content.charAt(j) == '_'){
                 if(num_m % 2 == 0) is_neg = 1;
                 else is_neg = -1;
@@ -124,20 +181,20 @@ public class Lexer {
                     this.jump_i = j;
                 }
             }
-            else{
+            //+ -表示运算符号
+            else if(this.content.charAt(j) == ' ' || this.content.charAt(j) == '\t'){
                 switch (c) {
                     case '+' -> s = 16;
                     case '-' -> s = 17;
                 }
                 operator o = new operator(c, "Op", s);
                 this.tokenList.offer(o);
-                this.jump_i = ++l;
+                this.jump_i = j;
             }
         }
         else{
             switch (c) {
                 case '*' -> s = 18;
-                case '/' -> s = 19;
                 case '%' -> s = 20;
                 case '(' -> s = 21;
                 case ')' -> s = 22;
@@ -171,13 +228,14 @@ public class Lexer {
                 if(!flag) return false;
             }
             //deal with ident
+            //scan for next ( to judge whether this is a function call
             else if(Character.isAlphabetic(this.content.charAt(i)) || this.content.charAt(i) == '_'){
                 temp.delete(0, temp.length());
                 while(Character.isDigit(this.content.charAt(i)) || Character.isAlphabetic(this.content.charAt(i)) || this.content.charAt(i) == '_'){
                     temp.append(this.content.charAt(i));
                     i++;
                 }
-                flag = getIdent(temp.toString());
+                flag = getIdent(temp.toString(), i);
                 if(!flag) return false;
             }
             //deal with 注释 /
@@ -188,7 +246,7 @@ public class Lexer {
                 }
                 else if(this.content.charAt(i + 1) == '*'){
                     j = i + 1;
-                    while(this.content.charAt(j) != '/' && this.content.charAt(i) != '*' && this.content.charAt(j) != '#'){
+                    while((this.content.charAt(j) != '/' || this.content.charAt(i) != '*') && this.content.charAt(j) != '#'){
                         i++;
                         j++;
                     }

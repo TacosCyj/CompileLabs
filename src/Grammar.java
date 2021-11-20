@@ -1,3 +1,4 @@
+import javax.sound.midi.SysexMessage;
 import java.util.*;
 
 public class Grammar {
@@ -8,11 +9,11 @@ public class Grammar {
     private HashMap<String, register> reglist = new HashMap<>();
     private HashMap<String, Integer> timelist = new HashMap<>();
     private HashMap<String, Boolean> constlist = new HashMap<>();
+    private HashMap<String, Integer> funclist = new HashMap<>();
     private expression exper;
     public LinkedList<token> expList = new LinkedList<>();
     private int reg_seq = 0;
     private int ans = 0;
-    private int for_bug = 0;
     private token t_judge;
     private Grammar(){}
     static{
@@ -26,6 +27,30 @@ public class Grammar {
     }
     public void setTokenList(LinkedList<token> q){
         this.tokenList = q;
+    }
+    public void checkForFunc(){
+        int i;
+        for(i = 0; i < this.tokenList.toArray().length; i++){
+            token temp = this.tokenList.get(i);
+            if(temp instanceof function){
+                if(Objects.equals(((function) temp).getFuncName(), "getint") && !this.funclist.containsKey("getint")){
+                    this.answer.append("declare i32 @getint()\n");
+                    this.funclist.put("getint", 1);
+                }
+                else if(Objects.equals(((function) temp).getFuncName(), "getch") && !this.funclist.containsKey("getch")){
+                    this.answer.append("declare i32 @getch()\n");
+                    this.funclist.put("getch", 2);
+                }
+                else if(Objects.equals(((function) temp).getFuncName(), "putint") && !this.funclist.containsKey("putint")){
+                    this.answer.append("declare void @putint(i32)\n");
+                    this.funclist.put("putint", 3);
+                }
+                else if(Objects.equals(((function) temp).getFuncName(), "putch") && !this.funclist.containsKey("putch")){
+                    this.answer.append("declare void @putch(i32)\n");
+                    this.funclist.put("putch", 4);
+                }
+            }
+        }
     }
     //递归下降
     public boolean isInt(){
@@ -43,8 +68,8 @@ public class Grammar {
     }
     public boolean isMain(){
         boolean flag = true;
-        if(this.tokenList.peek() instanceof ident){
-            if(Objects.equals(((ident) this.tokenList.peek()).getId(), "main")){
+        if(this.tokenList.peek() instanceof function){
+            if(Objects.equals(((function) this.tokenList.peek()).getFuncName(), "main")){
                 this.answer.append("@main");
                 this.tokenList.poll();
                 flag = isLbar();
@@ -97,7 +122,7 @@ public class Grammar {
         boolean flag = true;
         token check = null;
         this.expList.clear();
-        while((this.tokenList.peek() instanceof operator || this.tokenList.peek() instanceof number || this.tokenList.peek() instanceof ident)){
+        while((this.tokenList.peek() instanceof operator || this.tokenList.peek() instanceof number || this.tokenList.peek() instanceof ident || this.tokenList.peek() instanceof function)){
             check = this.tokenList.peek();
             this.expList.offer(this.tokenList.poll());
             if(check instanceof operator){
@@ -107,7 +132,7 @@ public class Grammar {
         if(check instanceof operator && (Objects.equals(((operator) check).getOperator(), ";") || Objects.equals(((operator) check).getOperator(), ","))){
             exper.getExp(expList);
             exper.getMap(varlist, reglist, timelist, constlist, reg_seq, answer);
-            flag = exper.dealExp(((operator) check).getOperator().charAt(0));
+            flag = exper.dealExp(((operator) check).getOperator().charAt(0), expList);
             if(flag){
                 this.ans = exper.passAns();
                 this.reg_seq = exper.passRegSeq();
@@ -135,7 +160,9 @@ public class Grammar {
                 if(t_judge instanceof number) this.answer.append("    store i32 ").append(ans).append(", i32* %").append(reg.getSeq()).append("\n");
                 else if(t_judge instanceof ident){
                     int s = this.reglist.get(((ident) t_judge).getId()).getSeq();
-                    this.answer.append("    store i32* ").append("%" + s).append(", i32* %").append(reg.getSeq()).append("\n");
+                    this.reg_seq++;
+                    this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + s + "\n");
+                    this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
                 }
             }
             else{
@@ -149,7 +176,13 @@ public class Grammar {
             obj.setAssigntimes(obj.getAssigntimes() + 1);
             this.timelist.put(obj.getId(),obj.getAssigntimes());
             if(this.reg_seq == old_value){
-                this.answer.append("    store i32 ").append(ans).append(", i32* %").append(reg.getSeq()).append("\n");
+                if(t_judge instanceof number) this.answer.append("    store i32 ").append(ans).append(", i32* %").append(reg.getSeq()).append("\n");
+                else if(t_judge instanceof ident){
+                    int s = this.reglist.get(((ident) t_judge).getId()).getSeq();
+                    this.reg_seq++;
+                    this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + s + "\n");
+                    this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
+                }
             }
             else{
                 this.answer.append("    store i32 %").append(this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
@@ -191,22 +224,60 @@ public class Grammar {
                     }
                     else if(Objects.equals(temp_op.getOperator(), "=")){
                         this.tokenList.poll();
-                        flag = isGiveValueOld(temp_token);
-                        if(this.tokenList.peek() instanceof operator && flag){
-                            operator temp_op_2 = (operator) this.tokenList.peek();
-                            if(Objects.equals(temp_op_2.getOperator(), ",")){
-                                this.tokenList.poll();
-                                flag = isIndentifyNew(is_const);
+                        token f = this.tokenList.peek();
+                        if(f instanceof function){
+                            if(Objects.equals(((function) f).getFuncName(), "getint")){
+                                this.answer.append("    %").append(++this.reg_seq).append("= call i32 @getint()\n");
+                                this.answer.append("    store i32 %" + this.reg_seq + ", i32* %" + this.reglist.get(temp_token.getId()).getSeq() + "\n");
+                                temp_token.setAssigntimes(temp_token.getAssigntimes() + 1);
+                                this.timelist.put(temp_token.getId(), temp_token.getAssigntimes());
                             }
-                            else if(Objects.equals(temp_op_2.getOperator(), ";")){
-                                this.tokenList.poll();
-                                //System.exit(0);
-                                flag = true;
-                                return flag;
+                            else if(Objects.equals(((function) f).getFuncName(), "getch")){
+                                this.answer.append("    %").append(++this.reg_seq).append("= call i32 @getch()\n");
+                                this.answer.append("    store i32 %" + this.reg_seq + ", i32* %" + this.reglist.get(temp_token.getId()).getSeq() + "\n");
+                                temp_token.setAssigntimes(temp_token.getAssigntimes() + 1);
+                                this.timelist.put(temp_token.getId(), temp_token.getAssigntimes());
+                            }
+                            else{
+                                flag = false;
+                            }
+                            this.tokenList.poll();
+                            this.tokenList.poll();
+                            this.tokenList.poll();
+                            if(this.tokenList.peek() instanceof operator && flag){
+                                operator temp_op_2 = (operator) this.tokenList.peek();
+                                if(Objects.equals(temp_op_2.getOperator(), ",")){
+                                    this.tokenList.poll();
+                                    flag = isIndentifyNew(is_const);
+                                }
+                                else if(Objects.equals(temp_op_2.getOperator(), ";")){
+                                    this.tokenList.poll();
+                                    //System.exit(0);
+                                    flag = true;
+                                    return flag;
+                                }
+                                else flag = false;
                             }
                             else flag = false;
                         }
-                        else flag = false;
+                        else{
+                            flag = isGiveValueOld(temp_token);
+                            if(this.tokenList.peek() instanceof operator && flag){
+                                operator temp_op_2 = (operator) this.tokenList.peek();
+                                if(Objects.equals(temp_op_2.getOperator(), ",")){
+                                    this.tokenList.poll();
+                                    flag = isIndentifyNew(is_const);
+                                }
+                                else if(Objects.equals(temp_op_2.getOperator(), ";")){
+                                    this.tokenList.poll();
+                                    //System.exit(0);
+                                    flag = true;
+                                    return flag;
+                                }
+                                else flag = false;
+                            }
+                            else flag = false;
+                        }
                     }
                     else flag = false;
                 }
@@ -251,15 +322,46 @@ public class Grammar {
                         if(this.tokenList.peek() instanceof operator){
                             if(Objects.equals(((operator) this.tokenList.peek()).getOperator(), "=")){
                                 this.tokenList.poll();
-                                flag = isGiveValueOld(temp_ident);
-                                if(this.tokenList.peek() instanceof operator && flag){
-                                    operator temp_op_2 = (operator) this.tokenList.peek();
-                                    if(Objects.equals(temp_op_2.getOperator(), ";")){
-                                        this.tokenList.poll();
+                                token f = this.tokenList.peek();
+                                if(f instanceof function){
+                                    if(Objects.equals(((function) f).getFuncName(), "getint")){
+                                        this.answer.append("    %").append(++this.reg_seq).append("= call i32 @getint()\n");
+                                        this.answer.append("    store i32 %" + this.reg_seq + ", i32* %" + this.reglist.get(temp_ident.getId()).getSeq() + "\n");
+                                        temp_ident.setAssigntimes(temp_ident.getAssigntimes() + 1);
+                                        this.timelist.put(temp_ident.getId(), temp_ident.getAssigntimes());
+                                    }
+                                    else if(Objects.equals(((function) f).getFuncName(), "getch")){
+                                        this.answer.append("    %").append(++this.reg_seq).append("= call i32 @getch()\n");
+                                        this.answer.append("    store i32 %" + this.reg_seq + ", i32* %" + this.reglist.get(temp_ident.getId()).getSeq() + "\n");
+                                        temp_ident.setAssigntimes(temp_ident.getAssigntimes() + 1);
+                                        this.timelist.put(temp_ident.getId(), temp_ident.getAssigntimes());
+                                    }
+                                    else{
+                                        flag = false;
+                                    }
+                                    this.tokenList.poll();
+                                    this.tokenList.poll();
+                                    this.tokenList.poll();
+                                    if(this.tokenList.peek() instanceof operator && flag){
+                                        operator temp_op_2 = (operator) this.tokenList.peek();
+                                        if(Objects.equals(temp_op_2.getOperator(), ";")){
+                                            this.tokenList.poll();
+                                        }
+                                        else flag = false;
                                     }
                                     else flag = false;
                                 }
-                                else flag = false;
+                                else{
+                                    flag = isGiveValueOld(temp_ident);
+                                    if(this.tokenList.peek() instanceof operator && flag){
+                                        operator temp_op_2 = (operator) this.tokenList.peek();
+                                        if(Objects.equals(temp_op_2.getOperator(), ";")){
+                                            this.tokenList.poll();
+                                        }
+                                        else flag = false;
+                                    }
+                                    else flag = false;
+                                }
                             }
                             else{
                                 this.tokenList.addFirst(back);
@@ -278,6 +380,52 @@ public class Grammar {
                     }
                     else flag = false;
                 }
+            }
+            //putint、putch
+            else if(this.tokenList.peek() instanceof function){
+                function f = (function)this.tokenList.poll();
+                String func_name = f.getFuncName();
+                //this.tokenList.poll();
+                int old_value = this.reg_seq;
+                //removeRbar(0);
+                flag = isExp();
+                if(flag && this.tokenList.peek() instanceof operator){
+                    //System.out.println("HIHI");
+                    operator temp_opp = (operator) this.tokenList.peek();
+                    if(Objects.equals(temp_opp.getOperator(), ";")){
+                        if(this.reg_seq == old_value){
+                            if(t_judge instanceof number){
+                                if(Objects.equals(func_name, "putint")){
+                                    this.answer.append("    call void @putint(i32 " + ans + ")\n");
+                                }
+                                else{
+                                    this.answer.append("    call void @putch(i32 " + ans + ")\n");
+                                }
+                            }
+                            else if(t_judge instanceof ident){
+                                int s = this.reglist.get(((ident) t_judge).getId()).getSeq();
+                                this.answer.append("    %" + (++this.reg_seq) + " = " + "load i32, i32* %" + s + "\n");
+                                if(Objects.equals(func_name, "putint")){
+                                    this.answer.append("    call void @putint(i32 %" + this.reg_seq + ")\n");
+                                }
+                                else{
+                                    this.answer.append("    call void @putch(i32 %" + this.reg_seq + ")\n");
+                                }
+                            }
+                        }
+                        else{
+                            if(Objects.equals(func_name, "putint")){
+                                this.answer.append("    call void @putint(i32 %" + this.reg_seq + ")\n");
+                            }
+                            else{
+                                this.answer.append("    call void @putch(i32 %" + this.reg_seq + ")\n");
+                            }
+                        }
+                        this.tokenList.poll();
+                    }
+                    else flag = false;
+                }
+                else flag = false;
             }
             //一行只有一个表达式
             else if(this.tokenList.peek() instanceof number){
@@ -319,6 +467,7 @@ public class Grammar {
                 flag = isExp();
                 if(this.tokenList.peek() instanceof operator && flag){
                     operator temp_op_2 = (operator) this.tokenList.peek();
+                    //System.out.println(ans);
                     if(Objects.equals(temp_op_2.getOperator(), ";")){
                         this.tokenList.poll();
                         if(this.reg_seq == old_value){
@@ -362,9 +511,23 @@ public class Grammar {
     public boolean isEnd(){
         boolean flag = true;
         if(this.tokenList.peek() instanceof operator){
-            if(Objects.equals(((operator) this.tokenList.peek()).getOperator(), "#")) return true;
+            if(Objects.equals(((operator) this.tokenList.peek()).getOperator(), "#")){
+                return true;
+            }
         }
         return false;
     }
     public StringBuilder getAnswer(){return this.answer;}
+    public void removeRbar(int start){
+        int i;
+        for(i = start; i < this.tokenList.toArray().length; i++){
+            if(this.tokenList.get(i) instanceof operator){
+                operator t = (operator) this.tokenList.get(i);
+                if(Objects.equals(t.getOperator(), ";")){
+                    break;
+                }
+            }
+        }
+        this.tokenList.remove(i - 1);
+    }
 }

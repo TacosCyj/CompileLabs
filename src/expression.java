@@ -107,35 +107,6 @@ public class expression {
                 }
             }
         }
-        //处理连续的+ - 号
-        /*
-        for(i = 0; i < this.expList.toArray().length;){
-            j = i;
-            nump = 0;
-            numm = 0;
-            while(isAddOrSub(this.expList.get(i)) == 1 || isAddOrSub(this.expList.get(i)) == 2){
-                if(isAddOrSub(this.expList.get(i)) == 1) nump++;
-                else numm++;
-                i++;
-            }
-            if(nump != 0 || numm != 0){
-                k = 0;
-                while(k < i - j){
-                    this.expList.remove(j);
-                    k++;
-                }
-                if(numm % 2 == 0){
-                    temp_op = new operator('+', "Op", 16);
-                }
-                else{
-                    temp_op = new operator('-', "Op", 17);
-                }
-                this.expList.add(j, temp_op);
-            }
-            i = j + 1;
-        }*/
-        //将所有负数改为一个数
-        //两种情况：(-x)；第一个数为负数
         return flag;
     }
     public int getPriority(char a, char b){
@@ -412,14 +383,14 @@ public class expression {
         }
     }
     //public boolean calExp(){}
-    public boolean dealExp(char c){
+    public boolean dealExp(char c, LinkedList<token> exp){
         boolean flag = true;
         int i, j, p;
         flag = initExp(c);
         if(!flag) return flag;
         else{
-            for(i = 0; i < this.expList.toArray().length; i++){
-                token temp_t = this.expList.get(i);
+            for(i = 0; i < exp.toArray().length; i++){
+                token temp_t = exp.get(i);
                 if(temp_t instanceof number){
                     numstack.push((number) temp_t);
                 }
