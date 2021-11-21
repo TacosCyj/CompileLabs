@@ -193,6 +193,7 @@ public class expression {
             int old = ++this.reg_seq;
             this.ans.append("    %" + this.reg_seq +  " = " + "load i32, i32* %" + this.reglist.get(id2).getSeq() + "\n");
             this.reg_seq++;
+            id_name++;
             r = new register();
             r.setSeq(this.reg_seq);
             r.setOwnerofreg(String.valueOf(id_name));
@@ -211,6 +212,7 @@ public class expression {
             int old2 = ++this.reg_seq;
             this.ans.append("    %" + this.reg_seq +  " = " + "load i32, i32* %" + this.reglist.get(id2).getSeq() + "\n");
             this.reg_seq++;
+            id_name++;
             r = new register();
             r.setSeq(this.reg_seq);
             r.setOwnerofreg(String.valueOf(id_name));
@@ -303,6 +305,7 @@ public class expression {
             r = new register();
             r.setSeq(this.reg_seq);
             r.setOwnerofreg(String.valueOf(id_name));
+            System.out.println(this.reglist.get(id2) + "|" + this.reglist.get(id1));
             switch(op){
                 case '+': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b + a); r.setValueOfReg(b + a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "add " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
                 case '-': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b - a); r.setValueOfReg(b - a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sub " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
@@ -389,7 +392,7 @@ public class expression {
                 b = varlist.get(((ident) temp_t2).getId()) * ((ident) temp_t2).getIs_neg();
                 if(isDivZero(a, this.opstack.peek().getOperator().charAt(0))){
                     sign = ((ident) temp_t1).getCreate_when_op();
-                    sign2 = ((ident) temp_t2).getAssigntimes();
+                    sign2 = ((ident) temp_t2).getCreate_when_op();
                     if(sign == 0 && sign2 == 0){
                         setAns(a, b, 1, 1, ((ident) temp_t1).getId(),((ident) temp_t2).getId());
                     }
