@@ -36,13 +36,7 @@ public class Analysis {
                 System.exit(0);
             }
             else{
-                for(int i = 0; i < tokenlist.toArray().length; i++){
-                    token t = tokenlist.get(i);
-                    if(t instanceof ident) System.out.println(((ident) t).getId());
-                    else if(t instanceof  function) System.out.println(((function) t).getFuncName());
-                    else if(t instanceof number) System.out.println(((number) t).getValue());
-                    else if(t instanceof operator) System.out.println(((operator) t).getOperator());
-                }
+                System.out.println(lexer.getcon().toString());
                 System.exit(3);
             }
         }
