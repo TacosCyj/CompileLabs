@@ -25,6 +25,7 @@ public class Analysis {
             grammar.checkForFunc();
             boolean flag = grammar.isInt();
             if(flag){
+                System.out.println(lexer.getcon());
                 try{
                     FileWriter writer = new FileWriter(String.valueOf(output_file));
                     writer.write(grammar.getAnswer().toString());
