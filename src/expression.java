@@ -332,7 +332,10 @@ public class expression {
                 a = ((number) temp_t1).getValue();
             }
             else if(temp_t1 instanceof ident){
-                a = varlist.get(((ident) temp_t1).getId());
+                if(((ident) temp_t1).getAssigntimes() > 0){
+                    a = varlist.get(((ident) temp_t1).getId());
+                }
+                else System.exit(3);
             }
             char op = opstack.peek().getOperator().charAt(0);
             if(!isDivZero(a, op)) System.exit(3);
@@ -362,7 +365,7 @@ public class expression {
             else if(temp_t1 instanceof number && temp_t2 instanceof ident){
                 a = ((number) temp_t1).getValue();
                 b = varlist.get(((ident) temp_t2).getId()) * ((ident) temp_t2).getIs_neg();
-                if(isDivZero(a, this.opstack.peek().getOperator().charAt(0))){
+                if(isDivZero(a, this.opstack.peek().getOperator().charAt(0)) && ((ident) temp_t2).getAssigntimes() > 0){
                     sign = ((ident) temp_t2).getCreate_when_op();
                     if(sign == 0){
                         setAns(a, b, 0, 1, null, ((ident) temp_t2).getId());
@@ -376,7 +379,7 @@ public class expression {
             else if(temp_t1 instanceof ident && temp_t2 instanceof number){
                 a = varlist.get(((ident) temp_t1).getId()) * ((ident) temp_t1).getIs_neg();
                 b = ((number) temp_t2).getValue();
-                if(isDivZero(a, this.opstack.peek().getOperator().charAt(0))){
+                if(isDivZero(a, this.opstack.peek().getOperator().charAt(0)) && ((ident) temp_t1).getAssigntimes() > 0){
                     sign = ((ident) temp_t1).getCreate_when_op();
                     if(sign == 0){
                         setAns(a, b, 1, 0, ((ident) temp_t1).getId(), null);
@@ -390,7 +393,7 @@ public class expression {
             else if(temp_t1 instanceof ident && temp_t2 instanceof ident){
                 a = varlist.get(((ident) temp_t1).getId()) * ((ident) temp_t1).getIs_neg();
                 b = varlist.get(((ident) temp_t2).getId()) * ((ident) temp_t2).getIs_neg();
-                if(isDivZero(a, this.opstack.peek().getOperator().charAt(0))){
+                if(isDivZero(a, this.opstack.peek().getOperator().charAt(0)) && ((ident) temp_t1).getAssigntimes() > 0 && ((ident) temp_t2).getAssigntimes() > 0){
                     sign = ((ident) temp_t1).getCreate_when_op();
                     sign2 = ((ident) temp_t2).getCreate_when_op();
                     if(sign == 0 && sign2 == 0){
