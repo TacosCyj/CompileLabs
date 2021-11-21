@@ -35,7 +35,7 @@ public class Analysis {
                 }
                 System.exit(0);
             }
-            else System.exit(1);
+            else System.exit(3);
         }
         else{
             System.exit(2);
