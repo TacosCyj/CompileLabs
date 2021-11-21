@@ -169,7 +169,7 @@ public class Lexer {
             }
             //前面的符号表示正负
             //有多于一个的连续的+、-符号
-            if(Character.isDigit(this.content.charAt(j)) || Character.isAlphabetic(this.content.charAt(j)) || this.content.charAt(j) == '_'){
+            if(Character.isDigit(this.content.charAt(j)) || Character.isAlphabetic(this.content.charAt(j)) || this.content.charAt(j) == '_' || this.content.charAt(j) == '('){
                 if((num_p == 1 || num_m == 1) && (this.tokenList.getLast() instanceof ident || this.tokenList.getLast() instanceof number)){
                     switch (c) {
                         case '+' -> s = 16;
