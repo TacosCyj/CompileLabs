@@ -176,6 +176,36 @@ public class Lexer {
                     this.tokenList.offer(o);
                     this.jump_i = j;
                 }
+                else if((num_p == 1 || num_m == 1) && this.tokenList.getLast() instanceof operator){
+                    operator t = (operator) this.tokenList.getLast();
+                    if(Objects.equals(t.getOperator(), "+")){
+                        if(c == '+') this.jump_i = j;
+                        else{
+                            this.tokenList.removeLast();
+                            operator o = new operator('-', "Op", 17);
+                            this.tokenList.offer(o);
+                            this.jump_i = j;
+                        }
+                    }
+                    else if(Objects.equals(t.getOperator(), "-")){
+                        if(c == '+') this.jump_i = j;
+                        else{
+                            this.tokenList.removeLast();
+                            operator o = new operator('+', "Op", 16);
+                            this.tokenList.offer(o);
+                            this.jump_i = j;
+                        }
+                    }
+                    else{
+                        switch (c) {
+                            case '+' -> s = 16;
+                            case '-' -> s = 17;
+                        }
+                        operator o = new operator(c, "Op", s);
+                        this.tokenList.offer(o);
+                        this.jump_i = j;
+                    }
+                }
                 else if(num_m % 2 == 0) is_neg = 1;
                 else is_neg = -1;
                 this.jump_i = j;
