@@ -270,4 +270,5 @@ public class Lexer {
     public LinkedList<token> getTokenList(){
         return this.tokenList;
     }
+    public StringBuilder getcon(){return this.content;}
 }
