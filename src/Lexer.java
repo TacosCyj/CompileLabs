@@ -56,28 +56,31 @@ public class Lexer {
     public boolean getIdent(String ident, int i){
         int symbol = 0, j = i;
         // a function call
-        if(this.content.charAt(j) == '('){
-            if(Objects.equals(ident, "getint") && checkFuncRParamsNum(j, 0)){
+        if(this.content.charAt(j) == '(' || this.content.charAt(j + 1) == '('){
+            int k;
+            if(this.content.charAt(j) == '(') k = j;
+            else k = j + 1;
+            if(Objects.equals(ident, "getint") && checkFuncRParamsNum(k, 0)){
                 symbol = 15;
                 function func = new function("getint", "int", "Function", symbol);
                 this.tokenList.offer(func);
             }
-            else if(Objects.equals(ident, "getch") && checkFuncRParamsNum(j, 0)){
+            else if(Objects.equals(ident, "getch") && checkFuncRParamsNum(k, 0)){
                 symbol = 16;
                 function func = new function("getch", "int", "Function", symbol);
                 this.tokenList.offer(func);
             }
-            else if(Objects.equals(ident, "putint") && checkFuncRParamsNum(j, 1)){
+            else if(Objects.equals(ident, "putint") && checkFuncRParamsNum(k, 1)){
                 symbol = 17;
                 function func = new function("putint", "void", "Function", symbol);
                 this.tokenList.offer(func);
             }
-            else if(Objects.equals(ident, "putch") && checkFuncRParamsNum(j, 1)){
+            else if(Objects.equals(ident, "putch") && checkFuncRParamsNum(k, 1)){
                 symbol = 18;
                 function func = new function("putch", "void", "Function", symbol);
                 this.tokenList.offer(func);
             }
-            else if(Objects.equals(ident, "main") && checkFuncRParamsNum(j, 0)){
+            else if(Objects.equals(ident, "main") && checkFuncRParamsNum(k, 0)){
                 symbol = 11;
                 function func = new function("main", "int", "Function", symbol);
                 this.tokenList.offer(func);
