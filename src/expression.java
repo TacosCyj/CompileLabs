@@ -273,7 +273,7 @@ public class expression {
             r.setOwnerofreg(String.valueOf(id_name));
             switch(op){
                 case '+': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b + a); r.setValueOfReg(b + a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "add " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", %" + old + "\n");break;
-                case '-': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1);  numstack.push(n); varlist.put(String.valueOf(id_name), b - a); r.setValueOfReg(b - a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sub " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", %" + old + "\n");break;
+                case '-': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b - a); r.setValueOfReg(b - a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sub " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", %" + old + "\n");break;
                 case '*': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b * a); r.setValueOfReg(b * a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "mul " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", %" + old + "\n");break;
                 case '/': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b / a); r.setValueOfReg(b * a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sdiv " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", %" + old + "\n");break;
                 case '%': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b * a); r.setValueOfReg(b % a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "srem " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", %" + old + "\n");break;
@@ -290,7 +290,7 @@ public class expression {
             r.setOwnerofreg(String.valueOf(id_name));
             switch(op){
                 case '+': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b + a); r.setValueOfReg(b + a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "add " + "i32 " + "%" + old + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
-                case '-': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1);  numstack.push(n); varlist.put(String.valueOf(id_name), b - a); r.setValueOfReg(b - a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sub " + "i32 " + "%" + old + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
+                case '-': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b - a); r.setValueOfReg(b - a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sub " + "i32 " + "%" + old + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
                 case '*': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b * a); r.setValueOfReg(b * a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "mul " + "i32 " + "%" + old + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
                 case '/': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b / a); r.setValueOfReg(b * a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sdiv " + "i32 " + "%" + old + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
                 case '%': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b * a); r.setValueOfReg(b % a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "srem " + "i32 " + "%" + old + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
@@ -305,13 +305,18 @@ public class expression {
             r.setOwnerofreg(String.valueOf(id_name));
             switch(op){
                 case '+': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b + a); r.setValueOfReg(b + a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "add " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
-                case '-': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1);  numstack.push(n); varlist.put(String.valueOf(id_name), b - a); r.setValueOfReg(b - a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sub " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
+                case '-': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b - a); r.setValueOfReg(b - a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sub " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
                 case '*': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b * a); r.setValueOfReg(b * a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "mul " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
                 case '/': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b / a); r.setValueOfReg(b * a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sdiv " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
                 case '%': n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b * a); r.setValueOfReg(b % a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "srem " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
                 default: break;
             }
         }
+    }
+    //除0检验
+    public boolean isDivZero(int b, char op){
+        if(b == 0 && op == '/') return false;
+        else return true;
     }
     public void calculate(){
         token temp_t1, temp_t2;
@@ -327,6 +332,7 @@ public class expression {
                 a = varlist.get(((ident) temp_t1).getId());
             }
             char op = opstack.peek().getOperator().charAt(0);
+            if(!isDivZero(a, op)) System.exit(3);
             switch(op){
                 case '+': n = new number(b + a, "Number", 10); numstack.push(n); break;
                 case '-': n = new number(b - a, "Number", 10); numstack.push(n); break;
@@ -343,41 +349,55 @@ public class expression {
             if(temp_t1 instanceof number && temp_t2 instanceof number){
                 a = ((number) temp_t1).getValue();
                 b = ((number) temp_t2).getValue();
-                setAns(a, b, 0, 0, null, null);
+                if(isDivZero(a, opstack.peek().getOperator().charAt(0))){
+                    setAns(a, b, 0, 0, null, null);
+                }
+                else{
+                    System.exit(3);
+                }
             }
             else if(temp_t1 instanceof number && temp_t2 instanceof ident){
                 a = ((number) temp_t1).getValue();
                 b = varlist.get(((ident) temp_t2).getId()) * ((ident) temp_t2).getIs_neg();
-                sign = ((ident) temp_t2).getCreate_when_op();
-                if(sign == 0){
-                    setAns(a, b, 0, 1, null, ((ident) temp_t2).getId());
+                if(isDivZero(a, this.opstack.peek().getOperator().charAt(0))){
+                    sign = ((ident) temp_t2).getCreate_when_op();
+                    if(sign == 0){
+                        setAns(a, b, 0, 1, null, ((ident) temp_t2).getId());
+                    }
+                    else{
+                        setAns2(a, b, 0, 1, null, ((ident) temp_t2).getId());
+                    }
                 }
-                else{
-                    setAns2(a, b, 0, 1, null, ((ident) temp_t2).getId());
-                }
+                else System.exit(3);
             }
             else if(temp_t1 instanceof ident && temp_t2 instanceof number){
                 a = varlist.get(((ident) temp_t1).getId()) * ((ident) temp_t1).getIs_neg();
                 b = ((number) temp_t2).getValue();
-                sign = ((ident) temp_t1).getCreate_when_op();
-                if(sign == 0){
-                    setAns(a, b, 1, 0, ((ident) temp_t1).getId(), null);
+                if(isDivZero(a, this.opstack.peek().getOperator().charAt(0))){
+                    sign = ((ident) temp_t1).getCreate_when_op();
+                    if(sign == 0){
+                        setAns(a, b, 1, 0, ((ident) temp_t1).getId(), null);
+                    }
+                    else{
+                        setAns2(a, b, 1, 0, ((ident) temp_t1).getId(), null);
+                    }
                 }
-                else{
-                    setAns2(a, b, 1, 0, ((ident) temp_t1).getId(), null);
-                }
+                else System.exit(3);
             }
             else if(temp_t1 instanceof ident && temp_t2 instanceof ident){
                 a = varlist.get(((ident) temp_t1).getId()) * ((ident) temp_t1).getIs_neg();
                 b = varlist.get(((ident) temp_t2).getId()) * ((ident) temp_t2).getIs_neg();
-                sign = ((ident) temp_t1).getCreate_when_op();
-                sign2 = ((ident) temp_t2).getAssigntimes();
-                if(sign == 0 && sign2 == 0){
-                    setAns(a, b, 1, 1, ((ident) temp_t1).getId(),((ident) temp_t2).getId());
+                if(isDivZero(a, this.opstack.peek().getOperator().charAt(0))){
+                    sign = ((ident) temp_t1).getCreate_when_op();
+                    sign2 = ((ident) temp_t2).getAssigntimes();
+                    if(sign == 0 && sign2 == 0){
+                        setAns(a, b, 1, 1, ((ident) temp_t1).getId(),((ident) temp_t2).getId());
+                    }
+                    else{
+                        setAns3(a, b, 1, 1, ((ident) temp_t1).getId(), ((ident) temp_t2).getId(), sign, sign2);
+                    }
                 }
-                else{
-                    setAns3(a, b, 1, 1, ((ident) temp_t1).getId(), ((ident) temp_t2).getId(), sign, sign2);
-                }
+                else System.exit(3);
             }
             opstack.pop();
         }
