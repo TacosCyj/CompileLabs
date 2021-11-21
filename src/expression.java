@@ -412,8 +412,7 @@ public class expression {
                 }
                 else if(temp_t instanceof ident){
                     if(!this.varlist.containsKey(((ident) temp_t).getId()) || this.timelist.get(((ident) temp_t).getId()) == 0){
-                        flag = false;
-                        break;
+                        System.exit(3);
                     }
                     else if(!constlist.get(((ident) temp_t).getId())){
                         numstack.push(temp_t);
