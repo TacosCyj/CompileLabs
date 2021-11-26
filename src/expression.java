@@ -196,17 +196,27 @@ public class expression {
                 case "&&": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 && a != 0 ? 1: -1); r.setValueOfReg(b != 0 && a != 0 ? 1 : -1); this.reglist.put(String.valueOf(id_name), r);
                     this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + b + ", " + 0 + "\n");
                     r1 = this.reg_seq;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r1 + " to i32\n");
+                    //r1 = this.reg_seq;
+
                     this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + a + ", " + 0 + "\n");
                     r2 = this.reg_seq;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r2 + " to i32\n");
+                    //r2 = this.reg_seq;
                     this.ans.append("    %" + (++this.reg_seq) + " = " + "and i1 " + "i32 " + "%" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 case "||": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 || a != 0 ? 1: -1); r.setValueOfReg(b != 0 || a != 0 ? 1: -1); this.reglist.put(String.valueOf(id_name), r);
                     this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + b + ", " + 0 + "\n");
                     r1 = this.reg_seq;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r1 + " to i32\n");
+                    //r1 = this.reg_seq;
+
                     this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + a + ", " + 0 + "\n");
                     r2 = this.reg_seq;
+                   // this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r2 + " to i32\n");
+                    //r2 = this.reg_seq;
                     this.ans.append("    %" + (++this.reg_seq) + " = " + "or i1 " + "i32 " + "%" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 default: break;
             }
         }
@@ -233,17 +243,27 @@ public class expression {
                 case "&&": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 && a != 0 ? 1: -1); r.setValueOfReg(b != 0 && a != 0 ? 1 : -1); this.reglist.put(String.valueOf(id_name), r);
                     this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + b + ", " + 0 + "\n");
                     r1 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + "%" + old + ", " + 0 + "\n");
+                   // this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r1 + " to i32\n");
+                   // r1 = this.reg_seq;
+
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 %" + old + ", " + 0 + "\n");
                     r2 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "and i1 " + "i32 %" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r2 + " to i32\n");
+                    //r2 = this.reg_seq;
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "and i1 " + "i32 " + "%" + r1 + ", %" + r2 + "\n");
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 case "||": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 || a != 0 ? 1: -1); r.setValueOfReg(b != 0 || a != 0 ? 1: -1); this.reglist.put(String.valueOf(id_name), r);
                     this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + b + ", " + 0 + "\n");
                     r1 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + "%" + old + ", " + 0 + "\n");
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r1 + " to i32\n");
+                    //r1 = this.reg_seq;
+
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 %" + old + ", " + 0 + "\n");
                     r2 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "or i1 " + "i32 %" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r2 + " to i32\n");
+                    //r2 = this.reg_seq;
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "or i1 " + "i32 " + "%" + r1 + ", %" + r2 + "\n");
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 default: break;
             }
         }
@@ -268,19 +288,29 @@ public class expression {
                 case "==": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b == a ? 1 : -1); r.setValueOfReg(b == a ? 1 : -1); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "icmp eq " + "i32 " + "%"  + old + ", " + a + "\n");break;
                 case "!=": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != a ? 1 : -1); r.setValueOfReg(b != a ? 1 : -1); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + "%"  + old + ", " + a + "\n");break;
                 case "&&": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 && a != 0 ? 1: -1); r.setValueOfReg(b != 0 && a != 0 ? 1 : -1); this.reglist.put(String.valueOf(id_name), r);
-                    this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + "%" + old + ", " + 0 + "\n");
+                    this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 %" + old + ", " + 0 + "\n");
                     r1 = this.reg_seq;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r1 + " to i32\n");
+                   // r1 = this.reg_seq;
+
                     this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + a + ", " + 0 + "\n");
                     r2 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "and i1 " + "i32 %" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r2 + " to i32\n");
+                    //r2 = this.reg_seq;
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "and i1 " + "i32 " + "%" + r1 + ", %" + r2 + "\n");
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 case "||": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 || a != 0 ? 1: -1); r.setValueOfReg(b != 0 || a != 0 ? 1: -1); this.reglist.put(String.valueOf(id_name), r);
-                    this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + "%" + old + ", " + 0 + "\n");
+                    this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 %" + old + ", " + 0 + "\n");
                     r1 = this.reg_seq;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r1 + " to i32\n");
+                    //r1 = this.reg_seq;
+
                     this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + a + ", " + 0 + "\n");
                     r2 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "or i1 " + "i32 %" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r2 + " to i32\n");
+                    //r2 = this.reg_seq;
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "or i1 " + "i32 " + "%" + r1 + ", %" + r2 + "\n");
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 default: break;
             }
         }
@@ -307,19 +337,29 @@ public class expression {
                 case "==": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b == a ? 1 : -1); r.setValueOfReg(b == a ? 1 : -1); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "icmp eq " + "i32 " + "%"  + old2 + ", " + "%"  + old1 + "\n");break;
                 case "!=": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != a ? 1 : -1); r.setValueOfReg(b != a ? 1 : -1); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + "%"  + old2 + ", " + "%"  + old1 + "\n");break;
                 case "&&": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 && a != 0 ? 1: -1); r.setValueOfReg(b != 0 && a != 0 ? 1 : -1); this.reglist.put(String.valueOf(id_name), r);
-                    this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + "%" + old2 + ", " + 0 + "\n");
+                    this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 %" + old2 + ", " + 0 + "\n");
                     r1 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + "%" + old1 + ", " + 0 + "\n");
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r1 + " to i32\n");
+                    //r1 = this.reg_seq;
+
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 %" + old1 + ", " + 0 + "\n");
                     r2 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "and i1 " + "i32 %" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r2 + " to i32\n");
+                    //r2 = this.reg_seq;
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "and i1 " + "i32 " + "%" + r1 + ", %" + r2 + "\n");
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 case "||": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 || a != 0 ? 1: -1); r.setValueOfReg(b != 0 || a != 0 ? 1: -1); this.reglist.put(String.valueOf(id_name), r);
-                    this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + "%" + old2 + ", " + 0 + "\n");
+                    this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 %" + old2 + ", " + 0 + "\n");
                     r1 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + "%" + old1 + ", " + 0 + "\n");
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r1 + " to i32\n");
+                    //r1 = this.reg_seq;
+
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 %" + old1 + ", " + 0 + "\n");
                     r2 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "or i1 " + "i32 %" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r2 + " to i32\n");
+                    //r2 = this.reg_seq;
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "or i1 " + "i32 " + "%" + r1 + ", %" + r2 + "\n");
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 default: break;
             }
         }
@@ -350,17 +390,25 @@ public class expression {
                 case "&&": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 && a != 0 ? 1: -1); r.setValueOfReg(b != 0 && a != 0 ? 1 : -1); this.reglist.put(String.valueOf(id_name), r);
                     this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + b + ", " + 0 + "\n");
                     r1 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + "%" + this.reglist.get(id1).getSeq() + ", " + 0 + "\n");
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r1 + " to i32\n");
+                    //r1 = this.reg_seq;
+
+                    this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + this.reglist.get(id1).getSeq() + " to i32\n");
                     r2 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "and i1 " + "i32 %" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "and i1 " + "i32 " + "%" + r1 + ", %" + r2 + "\n");
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 case "||": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 || a != 0 ? 1: -1); r.setValueOfReg(b != 0 || a != 0 ? 1: -1); this.reglist.put(String.valueOf(id_name), r);
                     this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + b + ", " + 0 + "\n");
                     r1 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + "%" + this.reglist.get(id1).getSeq() + ", " + 0 + "\n");
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r1 + " to i32\n");
+                    //r1 = this.reg_seq;
+
+                    this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + this.reglist.get(id1).getSeq() + " to i32\n");
                     r2 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "or i1 " + "i32 %" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "or i1 " + "i32 " + "%" + r1 + ", %" + r2 + "\n");
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 default: break;
             }
         }
@@ -383,19 +431,25 @@ public class expression {
                 case "==": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b == a ? 1 : -1); r.setValueOfReg(b == a ? 1 : -1); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "icmp eq " + "i32 %" +  this.reglist.get(id2).getSeq() + ", " + a + "\n");break;
                 case "!=": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != a ? 1 : -1); r.setValueOfReg(b != a ? 1 : -1); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 %" +  this.reglist.get(id2).getSeq() + ", " + a + "\n");break;
                 case "&&": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 && a != 0 ? 1: -1); r.setValueOfReg(b != 0 && a != 0 ? 1 : -1); this.reglist.put(String.valueOf(id_name), r);
-                    this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + this.reglist.get(id2).getSeq() + ", " + 0 + "\n");
-                    r1 = this.reg_seq;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + this.reglist.get(id2).getSeq() + " to i32\n");
+                   // r1 = this.reg_seq;
+
                     this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + a + ", " + 0 + "\n");
                     r2 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "and i1 " + "i32 %" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r2 + " to i32\n");
+                    //r2 = this.reg_seq;
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "and i1 " + "i32 %" + this.reglist.get(id2).getSeq() + ", %" + r2 + "\n");
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 case "||": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 || a != 0 ? 1: -1); r.setValueOfReg(b != 0 || a != 0 ? 1: -1); this.reglist.put(String.valueOf(id_name), r);
-                    this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + this.reglist.get(id2).getSeq() + ", " + 0 + "\n");
-                    r1 = this.reg_seq;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + this.reglist.get(id2).getSeq() + " to i32\n");
+                    //r1 = this.reg_seq;
+
                     this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + a + ", " + 0 + "\n");
                     r2 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "or i1 " + "i32 %" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r2 + " to i32\n");
+                    //r2 = this.reg_seq;
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "or i1 " + "i32 %" + this.reglist.get(id2).getSeq() + ", %" + r2 + "\n");
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 default: break;
             }
         }
@@ -426,19 +480,26 @@ public class expression {
                 case "==": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b == a ? 1 : -1); r.setValueOfReg(b == a ? 1 : -1); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "icmp eq " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", %" + old + "\n");break;
                 case "!=": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != a ? 1 : -1); r.setValueOfReg(b != a ? 1 : -1); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", %" + old + "\n");break;
                 case "&&": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 && a != 0 ? 1: -1); r.setValueOfReg(b != 0 && a != 0 ? 1 : -1); this.reglist.put(String.valueOf(id_name), r);
-                    this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", " + 0 + "\n");
-                    r1 = this.reg_seq;
+                    //this.ans.append("    %" + this.reg_seq + " = zext i1 %" +  this.reglist.get(id2).getSeq() + " to i32\n");
+                    //r1 = this.reg_seq;
+
                     this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + "%" + old + ", " + 0 + "\n");
                     r2 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "and i1 " + "i32 %" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r2 + " to i32\n");
+                    //r2 = this.reg_seq;
+
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "and i1 " + "i32 %" + this.reglist.get(id2).getSeq() + ", %" + r2 + "\n");
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 case "||": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 || a != 0 ? 1: -1); r.setValueOfReg(b != 0 || a != 0 ? 1: -1); this.reglist.put(String.valueOf(id_name), r);
-                    this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", " + 0 + "\n");
-                    r1 = this.reg_seq;
+                    //this.ans.append("    %" + this.reg_seq + " = zext i1 %" +  this.reglist.get(id2).getSeq() + " to i32\n");
+                    //r1 = this.reg_seq;
+
                     this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + "%" + old + ", " + 0 + "\n");
                     r2 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "or i1 " + "i32 %" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r2 + " to i32\n");
+                   // r2 = this.reg_seq;
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "or i1 " + "i32 %" + this.reglist.get(id2).getSeq() + ", %" + r2 + "\n");
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 default: break;
             }
         }
@@ -463,19 +524,26 @@ public class expression {
                 case "==": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b == a ? 1 : -1); r.setValueOfReg(b == a ? 1 : -1); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "icmp eq " + "i32 " + "%" + old + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
                 case "!=": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != a ? 1 : -1); r.setValueOfReg(b != a ? 1 : -1); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + "%" + old + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
                 case "&&": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 && a != 0 ? 1: -1); r.setValueOfReg(b != 0 && a != 0 ? 1 : -1); this.reglist.put(String.valueOf(id_name), r);
-                    this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + "%" + old + ", " + 0 + "\n");
+                    this.ans.append("    %" + (this.reg_seq) + " = " + "icmp ne " + "i32 " + "%" + old + ", " + 0 + "\n");
                     r1 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + "%" + this.reglist.get(id1).getSeq() + ", " + 0 + "\n");
-                    r2 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "and i1 " + "i32 %" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r1 + " to i32\n");
+                    //r1 = this.reg_seq;
+
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" +  this.reglist.get(id1).getSeq() + " to i32\n");
+                    //r2 = this.reg_seq;
+
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "and i1 " + "i32 %" + r1 + ", %" + this.reglist.get(id1).getSeq() + "\n");
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 case "||": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 || a != 0 ? 1: -1); r.setValueOfReg(b != 0 || a != 0 ? 1: -1); this.reglist.put(String.valueOf(id_name), r);
-                    this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + "%" + old + ", " + 0 + "\n");
+                    this.ans.append("    %" + (this.reg_seq) + " = " + "icmp ne " + "i32 " + "%" + old + ", " + 0 + "\n");
                     r1 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + "%" + this.reglist.get(id1).getSeq() + ", " + 0 + "\n");
-                    r2 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "or i1 " + "i32 %" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + r1 + " to i32\n");
+                    //r1 = this.reg_seq;
+
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" +  this.reglist.get(id1).getSeq() + " to i32\n");
+                    //r2 = this.reg_seq;
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "or i1 " + "i32 %" + r1 + ", %" + this.reglist.get(id1).getSeq() + "\n");
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 default: break;
             }
         }
@@ -499,19 +567,19 @@ public class expression {
                 case "==": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b == a ? 1 : -1); r.setValueOfReg(b == a ? 1 : -1); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "icmp eq " + "i32 " +  "%" + this.reglist.get(id2).getSeq() + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
                 case "!=": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != a ? 1 : -1); r.setValueOfReg(b != a ? 1 : -1); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " +  "%" + this.reglist.get(id2).getSeq() + ", %" + this.reglist.get(id1).getSeq() + "\n");break;
                 case "&&": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 && a != 0 ? 1: -1); r.setValueOfReg(b != 0 && a != 0 ? 1 : -1); this.reglist.put(String.valueOf(id_name), r);
-                    this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", " + 0 + "\n");
-                    r1 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + "%" + this.reglist.get(id1).getSeq() + ", " + 0 + "\n");
-                    r2 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "and i1 " + "i32 %" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+                    //this.ans.append("    %" + this.reg_seq + " = zext i1 %" +  this.reglist.get(id2).getSeq() + " to i32\n");
+                    //r1 = this.reg_seq;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" +  this.reglist.get(id1).getSeq() + " to i32\n");
+                    //r2 = this.reg_seq;
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "and i1 " + "i32 %" + this.reglist.get(id2).getSeq() + ", %" + this.reglist.get(id1).getSeq() + "\n");
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 case "||": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b != 0 || a != 0 ? 1: -1); r.setValueOfReg(b != 0 || a != 0 ? 1: -1); this.reglist.put(String.valueOf(id_name), r);
-                    this.ans.append("    %" + this.reg_seq + " = " + "icmp ne " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", " + 0 + "\n");
-                    r1 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "icmp ne " + "i32 " + "%" + this.reglist.get(id1).getSeq() + ", " + 0 + "\n");
-                    r2 = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = " + "or i1 " + "i32 %" + r1 + ", %" + r2 + "\n");
-                    this.reglist.get(String.valueOf(id_name)).setSeq(++this.reg_seq);break;
+                    //this.ans.append("    %" + this.reg_seq + " = zext i1 %" +  this.reglist.get(id2).getSeq() + " to i32\n");
+                    //r1 = this.reg_seq;
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" +  this.reglist.get(id1).getSeq() + " to i32\n");
+                    //r2 = this.reg_seq;
+                    this.ans.append("    %" + (++this.reg_seq) + " = " + "or i1 " + "i32 %" + this.reglist.get(id2).getSeq() + ", %" + this.reglist.get(id1).getSeq() + "\n");
+                    this.reglist.get(String.valueOf(id_name)).setSeq(this.reg_seq);break;
                 default: break;
             }
         }

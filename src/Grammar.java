@@ -102,7 +102,7 @@ public class Grammar {
             if(Objects.equals(((operator) this.tokenList.peek()).getOperator(), ")")){
                 this.answer.append(")");
                 this.tokenList.poll();
-                flag = isLbrace(0, 0, 0);
+                flag = isLbrace(0, 0, 0, false);
             }
             else flag = false;
         }
@@ -110,7 +110,7 @@ public class Grammar {
         return flag;
     }
     //块中出现return，则置mark_return 为1
-    public boolean isLbrace(int is_one, int mark_return, int mark_isElseIf){
+    public boolean isLbrace(int is_one, int mark_return, int mark_isElseIf, boolean hasFollowingElse){
         boolean flag = true;
         if(this.tokenList.peek() instanceof operator){
             if(Objects.equals(((operator) this.tokenList.peek()).getOperator(), "{")){
@@ -122,7 +122,7 @@ public class Grammar {
                     this.answer.append("\n");
                 }
                 this.tokenList.poll();
-                flag = isStmt(is_one, mark_return, mark_isElseIf);
+                flag = isStmt(is_one, mark_return, mark_isElseIf, hasFollowingElse);
             }
             else flag = false;
         }
@@ -298,7 +298,7 @@ public class Grammar {
     }
     //mark_isElseIf = 1表示是elseif
     //mark_isElseIf = 0表示是if
-    public boolean isCondExp(int mark_isElseIf){
+    public boolean isCondExp(int mark_isElseIf, boolean hasFollowingElse){
         boolean flag = true;
         token check = null;
         this.expList.clear();
@@ -320,9 +320,18 @@ public class Grammar {
                 //将'{'加回去
                 this.tokenList.addFirst(check);
                 if(mark_isElseIf == 0){
-                    dstANDstr temp = new dstANDstr(this.reg_seq + 1, this.reg_seq + 2, this.reg_seq + 3);
-                    this.three.push(temp);
-                    this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(++this.reg_seq).append(", label %").append(++this.reg_seq);
+                    //if后面有一个else statement
+                    if(hasFollowingElse){
+                        dstANDstr temp = new dstANDstr(this.reg_seq + 1, this.reg_seq + 2, this.reg_seq + 3);
+                        this.three.push(temp);
+                        this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(++this.reg_seq).append(", label %").append(++this.reg_seq);
+                    }
+                    //只有一个if statement
+                    else{
+                        dstANDstr temp = new dstANDstr(this.reg_seq + 1, 0, this.reg_seq + 2);
+                        this.three.push(temp);
+                        this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(++this.reg_seq).append(", label %").append(++this.reg_seq);
+                    }
                 }
                 else{
                     int a1 = this.three.peek().getIf_seq();
@@ -339,32 +348,45 @@ public class Grammar {
         else flag = false;
         return flag;
     }
+    public boolean checkFollowingElse(){
+        int i, numofif = 1, numofelse = 0;
+        for(i = 0; i < this.tokenList.toArray().length; i++){
+            token temp = this.tokenList.get(i);
+            if(temp instanceof cond){
+                if(Objects.equals(((cond) temp).getCondid(), "else")) numofelse++;
+                else numofelse++;
+            }
+            if(numofelse == numofif) return true;
+        }
+        return false;
+    }
     public boolean isIf(int mark_isElseIf){
         boolean flag = true;
         //if中表达式处理，包括两个跳转地址压栈、一个块跳转地址压栈
         //设置three
-        flag = isCondExp(mark_isElseIf);
+        boolean hasFollowingElse = checkFollowingElse();
+        flag = isCondExp(mark_isElseIf, hasFollowingElse);
         //弹出)
         if(flag){
             this.strblockeach.push(this.three.peek().getIf_seq());
-            flag = isLbrace(1, 0, mark_isElseIf);
+            flag = isLbrace(1, 0, mark_isElseIf, hasFollowingElse);
         }
         return flag;
     }
     public boolean isElseIf(int mark_isElseIf){
         boolean flag = true;
         this.strblockeach.push(this.three.peek().getElse_seq());
-        flag = isStmt(1, 0, mark_isElseIf);
+        flag = isStmt(1, 0, mark_isElseIf, false);
         return flag;
     }
     public boolean isElse(int mark_isElseIf){
         boolean flag = true;
         //进入新的块
         this.strblockeach.push(this.three.peek().getElse_seq());
-        flag = isLbrace(2, 0, mark_isElseIf);
+        flag = isLbrace(2, 0, mark_isElseIf, false);
         return flag;
     }
-    public boolean isStmt(int is_one, int mark_return, int mark_isElseIf){
+    public boolean isStmt(int is_one, int mark_return, int mark_isElseIf, boolean hasFollowingElse){
         boolean flag = true;
         if(!this.strblockeach.isEmpty()){
             this.answer.append(this.strblockeach.pop()).append(":").append("\n");
@@ -555,11 +577,23 @@ public class Grammar {
                     }
                     //if块结束
                     else if(is_one == 1){
-                        if(mark_return == 1){
-                            return flag;
+                        if(hasFollowingElse){
+                            if(mark_return == 1){
+                                return flag;
+                            }
+                            else{
+                                this.answer.append("    br label %").append(this.three.peek().getDst() + "\n");
+                            }
                         }
                         else{
-                            this.answer.append("    br label %").append(this.three.peek().getDst() + "\n");
+                            if(mark_return == 1){
+                                this.answer.append(this.three.pop().getDst()).append(":").append("\n");
+                                return flag;
+                            }
+                            else{
+                                this.answer.append("    br label %").append(this.three.peek().getDst() + "\n");
+                                this.answer.append(this.three.pop().getDst()).append(":").append("\n");
+                            }
                         }
                     }
                     //else 块结束
