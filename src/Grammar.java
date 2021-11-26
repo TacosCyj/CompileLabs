@@ -325,6 +325,7 @@ public class Grammar {
                         dstANDstr temp = new dstANDstr(this.reg_seq + 1, this.reg_seq + 2, this.reg_seq + 3);
                         this.three.push(temp);
                         this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(++this.reg_seq).append(", label %").append(++this.reg_seq);
+                        this.reg_seq++;
                     }
                     //只有一个if statement
                     else{
