@@ -334,14 +334,14 @@ public class Grammar {
                         this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(++this.reg_seq).append(", label %").append(++this.reg_seq);
                     }
                 }
+                //if后面是elseif statement
                 else{
-                    int a1 = this.three.peek().getIf_seq();
-                    int a2 = this.three.peek().getElse_seq();
                     int a3 = this.three.peek().getDst();
                     this.three.pop();
-                    dstANDstr temp_new = new dstANDstr(a2, this.reg_seq + 1, a3);
+                    dstANDstr temp_new = new dstANDstr(this.reg_seq + 1, this.reg_seq + 2, a3);
                     this.three.push(temp_new);
-                    this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(a2).append(", label %").append(++this.reg_seq);
+                    this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(++this.reg_seq).append(", label %").append(a3);
+                    ++this.reg_seq;
                 }
                 exper.clearExp();
             }
@@ -354,7 +354,7 @@ public class Grammar {
         for(i = 0; i < this.tokenList.toArray().length; i++){
             token temp = this.tokenList.get(i);
             if(temp instanceof cond){
-                if(Objects.equals(((cond) temp).getCondid(), "else")) numofelse++;
+                if(Objects.equals(((cond) temp).getCondid(), "else") || Objects.equals(((cond) temp).getCondid(), "else if") ) numofelse++;
                 else numofelse++;
             }
             if(numofelse == numofif) return true;
@@ -367,7 +367,6 @@ public class Grammar {
         //设置three
         boolean hasFollowingElse = checkFollowingElse();
         flag = isCondExp(mark_isElseIf, hasFollowingElse);
-        //弹出)
         if(flag){
             this.strblockeach.push(this.three.peek().getIf_seq());
             flag = isLbrace(1, 0, mark_isElseIf, hasFollowingElse);
@@ -388,6 +387,7 @@ public class Grammar {
         return flag;
     }
     public boolean isStmt(int is_one, int mark_return, int mark_isElseIf, boolean hasFollowingElse){
+        int mr = mark_return;
         boolean flag = true;
         if(!this.strblockeach.isEmpty()){
             this.answer.append(this.strblockeach.pop()).append(":").append("\n");
@@ -416,7 +416,7 @@ public class Grammar {
                 }
                 else if(Objects.equals(temp_ident.getId(), "return")){
                     flag = isReturn();
-                    if(flag) mark_return = 1;
+                    if(flag) mr = 1;
                 }
                 else{
                     if(this.varlist.containsKey(temp_ident.getId())){
@@ -533,7 +533,8 @@ public class Grammar {
             else if(this.tokenList.peek() instanceof cond){
                 cond temp = (cond)this.tokenList.poll();
                 if(Objects.equals(temp.getCondid(), "if")){
-                    flag = isIf(0);
+                    flag = isIf(mark_isElseIf);
+                    if(mark_isElseIf == 1) return flag;
                 }
                 else if(Objects.equals(temp.getCondid(), "else if")){
                     flag = isElseIf(1);
@@ -572,14 +573,13 @@ public class Grammar {
                     this.tokenList.poll();
                     //main块结束
                     if(is_one == 0){
-                        //System.out.println("Here");
                         this.answer.append("}");
                         return isEnd();
                     }
                     //if块结束
                     else if(is_one == 1){
                         if(hasFollowingElse){
-                            if(mark_return == 1){
+                            if(mr == 1){
                                 return flag;
                             }
                             else{
@@ -587,19 +587,15 @@ public class Grammar {
                             }
                         }
                         else{
-                            if(mark_return == 1){
-                                this.answer.append(this.three.pop().getDst()).append(":").append("\n");
-                                return flag;
-                            }
-                            else{
+                            if (mr != 1) {
                                 this.answer.append("    br label %").append(this.three.peek().getDst() + "\n");
-                                this.answer.append(this.three.pop().getDst()).append(":").append("\n");
                             }
+                            this.answer.append(this.three.pop().getDst()).append(":").append("\n");
                         }
                     }
                     //else 块结束
                     else{
-                        if(mark_return == 1){
+                        if(mr == 1){
                             this.answer.append(this.three.pop().getDst()).append(":").append("\n");
                         }
                         else{
