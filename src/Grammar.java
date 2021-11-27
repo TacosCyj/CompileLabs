@@ -11,13 +11,15 @@ public class Grammar {
     private HashMap<String, Boolean> constlist = new HashMap<>();
     private HashMap<String, Integer> funclist = new HashMap<>();
     private Stack<Integer> dstblockeach = new Stack<>();
-    private Stack<Integer> strblockeach = new Stack<>();
+    private Stack<String> strblockeach = new Stack<>();
     private Stack<dstANDstr> three = new Stack<>();
     private expression exper;
     public LinkedList<token> expList = new LinkedList<>();
     private int reg_seq = 0;
     private int ans = 0;
     private int firstbolck = 0;
+    private String label = "x";
+    private int labelseq = 1;
     private token t_judge;
     private Grammar(){}
     static{
@@ -55,6 +57,10 @@ public class Grammar {
                 }
             }
         }
+    }
+    public void addLabel(){
+        this.label = "x" + String.valueOf(labelseq);
+        labelseq++;
     }
     //递归下降
     public boolean isInt(){
@@ -322,26 +328,33 @@ public class Grammar {
                 if(mark_isElseIf == 0){
                     //if后面有一个else statement
                     if(hasFollowingElse){
-                        dstANDstr temp = new dstANDstr(this.reg_seq + 1, this.reg_seq + 2, this.reg_seq + 3);
+                        addLabel(); String temp1 = label;
+                        addLabel(); String temp2 = label;
+                        addLabel(); String temp3 = label;
+                        dstANDstr temp = new dstANDstr(temp1, temp2, temp3);
                         this.three.push(temp);
-                        this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(++this.reg_seq).append(", label %").append(++this.reg_seq);
-                        this.reg_seq++;
+                        this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(temp1).append(", label %").append(temp2);
+                        //this.reg_seq++;
                     }
                     //只有一个if statement
                     else{
-                        dstANDstr temp = new dstANDstr(this.reg_seq + 1, 0, this.reg_seq + 2);
+                        addLabel(); String temp1 = label;
+                        addLabel(); String temp2 = label;
+                        dstANDstr temp = new dstANDstr(temp1, "x0", temp2);
                         this.three.push(temp);
-                        this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(++this.reg_seq).append(", label %").append(++this.reg_seq);
+                        this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(temp1).append(", label %").append(temp2);
                     }
                 }
                 //if后面是elseif statement
                 else{
-                    int a3 = this.three.peek().getDst();
+                    String a3 = this.three.peek().getDst();
                     this.three.pop();
-                    dstANDstr temp_new = new dstANDstr(this.reg_seq + 1, this.reg_seq + 2, a3);
+                    addLabel(); String temp1 = label;
+                    addLabel(); String temp2 = label;
+                    dstANDstr temp_new = new dstANDstr(temp1, temp2, a3);
                     this.three.push(temp_new);
-                    this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(++this.reg_seq).append(", label %").append(a3);
-                    ++this.reg_seq;
+                    this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(temp1).append(", label %").append(a3);
+                    //++this.reg_seq;
                 }
                 exper.clearExp();
             }
@@ -587,6 +600,7 @@ public class Grammar {
                             }
                         }
                         else{
+                            System.out.println("Here");
                             if (mr != 1) {
                                 this.answer.append("    br label %").append(this.three.peek().getDst() + "\n");
                             }
