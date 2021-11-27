@@ -10,9 +10,10 @@ public class Grammar {
     private HashMap<String, Integer> timelist = new HashMap<>();
     private HashMap<String, Boolean> constlist = new HashMap<>();
     private HashMap<String, Integer> funclist = new HashMap<>();
-    private Stack<Integer> dstblockeach = new Stack<>();
     private Stack<String> strblockeach = new Stack<>();
     private Stack<dstANDstr> three = new Stack<>();
+    private Stack<cond> elselist;
+    private Queue<cond> iflist;
     private expression exper;
     public LinkedList<token> expList = new LinkedList<>();
     private int reg_seq = 0;
@@ -34,6 +35,8 @@ public class Grammar {
     public void setTokenList(LinkedList<token> q){
         this.tokenList = q;
     }
+    public void setElseList(Stack<cond> e){this.elselist = e;}
+    public void setIfList(Queue<cond> e){this.iflist = e;}
     public void checkForFunc(){
         int i;
         for(i = 0; i < this.tokenList.toArray().length; i++){
@@ -362,23 +365,37 @@ public class Grammar {
         else flag = false;
         return flag;
     }
-    public boolean checkFollowingElse(){
+    public boolean checkFollowingElse(String name){
+        /*
         int i, numofif = 1, numofelse = 0;
-        for(i = 0; i < this.tokenList.toArray().length; i++){
+        for(i = 0; i < this.tokenList.toArray().length && !this.elselist.isEmpty(); i++){
             token temp = this.tokenList.get(i);
             if(temp instanceof cond){
-                if(Objects.equals(((cond) temp).getCondid(), "else") || Objects.equals(((cond) temp).getCondid(), "else if") ) numofelse++;
-                else numofif++;
+                if((Objects.equals(((cond) temp).getCondid(), "else") || Objects.equals(((cond) temp).getCondid(), "else if"))){
+                    numofelse++;
+                    this.elselist.pop();
+                }
+                else{
+                    if(Objects.equals(name, ((cond) temp).getCondname())) numofif++;
+                }
             }
-            if(numofelse == numofif) return true;
+            if(numofelse == 1 && numofif == 1) return true;
         }
-        return false;
+        return false;*/
+        if(!this.iflist.isEmpty() && !this.elselist.isEmpty()){
+            this.iflist.poll();
+            this.elselist.pop();
+            return true;
+        }
+        else{
+            return false;
+        }
     }
-    public boolean isIf(int mark_isElseIf){
+    public boolean isIf(int mark_isElseIf, String name){
         boolean flag = true;
         //if中表达式处理，包括两个跳转地址压栈、一个块跳转地址压栈
         //设置three
-        boolean hasFollowingElse = checkFollowingElse();
+        boolean hasFollowingElse = checkFollowingElse(name);
         flag = isCondExp(mark_isElseIf, hasFollowingElse);
         if(flag){
             this.strblockeach.push(this.three.peek().getIf_seq());
@@ -546,7 +563,7 @@ public class Grammar {
             else if(this.tokenList.peek() instanceof cond){
                 cond temp = (cond)this.tokenList.poll();
                 if(Objects.equals(temp.getCondid(), "if")){
-                    flag = isIf(mark_isElseIf);
+                    flag = isIf(mark_isElseIf, temp.getCondname());
                     if(mark_isElseIf == 1) return flag;
                 }
                 else if(Objects.equals(temp.getCondid(), "else if")){

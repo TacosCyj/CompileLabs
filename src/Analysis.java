@@ -8,8 +8,8 @@ public class Analysis {
         StringBuilder input_file = new StringBuilder();
         StringBuilder output_file = new StringBuilder();
         LinkedList<token> tokenlist;
-        input_file.append(args[0]);
-        output_file.append(args[1]);
+        input_file.append("E:\\编译原理\\lab4\\testfile\\a1.txt");
+        output_file.append("E:\\编译原理\\lab4\\testfile\\b.txt");
         Lexer lexer = Lexer.getLexerInstance();
         lexer.setFile(input_file);
         lexer.getContent();
@@ -21,6 +21,8 @@ public class Analysis {
             expression exp = expression.getInstance();
             grammar.setTokenList(tokenlist);
             grammar.setExper(exp);
+            grammar.setElseList(lexer.getElselist());
+            grammar.setIfList(lexer.getIflist());
             grammar.checkForFunc();
             boolean flag = grammar.isInt();
             if(flag){
@@ -37,6 +39,8 @@ public class Analysis {
                 System.exit(0);
             }
             else{
+                System.out.println(lexer.getcon().toString());
+                System.out.println(grammar.getAnswer().toString());
                 System.exit(3);
             }
         }

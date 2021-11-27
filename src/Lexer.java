@@ -2,6 +2,8 @@ import javax.sound.midi.SysexMessage;
 import java.io.*;
 import java.util.Objects;
 import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
 
 public class Lexer {
     private static Lexer lexer;
@@ -11,6 +13,10 @@ public class Lexer {
     private StringBuilder content = new StringBuilder();
     private int jump_i = 0, is_neg = 1;
     private LinkedList<token> tokenList = new LinkedList<token>();
+    private Queue<cond> iflist = new LinkedList<>();
+    private Stack<cond> elselist = new Stack<>();
+    private int ifName = 1;
+    private int elseName = 1;
     private Lexer(){}
     static{
         lexer = new Lexer();
@@ -39,6 +45,12 @@ public class Lexer {
         }catch(IOException e){
             e.printStackTrace();
         }
+    }
+    public String addIfName(){
+        return "i" + String.valueOf(ifName++);
+    }
+    public String addElseName(){
+        return "e" + String.valueOf(elseName++);
     }
     //检查函数参数列表长度
     public boolean checkFuncRParamsNum(int start, int num){
@@ -153,8 +165,9 @@ public class Lexer {
             //需要检查if是否以{结束，若不是则加上
             else if(Objects.equals(ident, "if")){
                 symbol = 19;
-                cond cond_if = new cond("if", "Cond_if", symbol);
+                cond cond_if = new cond("if", "Cond_if", symbol, addIfName());
                 this.tokenList.offer(cond_if);
+                this.iflist.offer(cond_if);
                 if(!checkforLbrace(i)){
                     addLbrace(i, getnumofTab(i));
                 }
@@ -184,15 +197,17 @@ public class Lexer {
                 if(this.content.charAt(j + 1) == 'i'){
                     if(this.content.charAt(j + 2) == 'f'){
                         symbol = 19;
-                        cond cond_else_if = new cond("else if", "Cond_if", symbol);
+                        cond cond_else_if = new cond("else if", "Cond_if", symbol, addElseName());
                         this.tokenList.offer(cond_else_if);
+                        this.elselist.push(cond_else_if);
                         //this.jump_i = j + 3;
                     }
                 }
                 else{
                     symbol = 20;
-                    cond cond_else = new cond("else", "Cond_else", symbol);
+                    cond cond_else = new cond("else", "Cond_else", symbol, addElseName());
                     this.tokenList.offer(cond_else);
+                    this.elselist.push(cond_else);
                     if(!checkforLbrace(i)){
                         addLbrace(i, getnumofTab(i));
                     }
@@ -492,5 +507,7 @@ public class Lexer {
     public LinkedList<token> getTokenList(){
         return this.tokenList;
     }
-   public StringBuilder getcon(){return this.content;}
+    public StringBuilder getcon(){return this.content;}
+    public Stack<cond> getElselist(){return this.elselist;}
+    public Queue<cond> getIflist(){return this.iflist;}
 }
