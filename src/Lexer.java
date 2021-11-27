@@ -291,7 +291,8 @@ public class Lexer {
                             this.jump_i = j;
                         }
                     }
-                    else if(Objects.equals(t.getOperator(), "==")){
+                    else if(Objects.equals(t.getOperator(), "==") || Objects.equals(t.getOperator(), "!=") || Objects.equals(t.getOperator(), "<")
+                            || Objects.equals(t.getOperator(), ">") || Objects.equals(t.getOperator(), "<=") || Objects.equals(t.getOperator(), ">=")){
                         if(num_m % 2 == 0) is_neg = 1;
                         else is_neg = -1;
                     }
