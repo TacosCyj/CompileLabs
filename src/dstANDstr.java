@@ -1,14 +1,14 @@
 public class dstANDstr {
-    private int if_seq, else_seq, dst;
-    public dstANDstr(int a, int b, int c){
+    private String if_seq, else_seq, dst;
+    public dstANDstr(String a, String b, String c){
         this.if_seq = a;
         this.else_seq = b;
         this.dst = c;
     }
-    public int getIf_seq(){return this.if_seq;}
-    public int getElse_seq(){return this.else_seq;}
-    public int getDst(){return this.dst;}
-    public void setIf_seq(int a){this.if_seq = a;}
-    public void setElse_seq(int b){this.else_seq = b;}
-    public void setDst(int c){this.dst = c;}
+    public String getIf_seq(){return this.if_seq;}
+    public String getElse_seq(){return this.else_seq;}
+    public String getDst(){return this.dst;}
+    public void setIf_seq(String a){this.if_seq = a;}
+    public void setElse_seq(String b){this.else_seq = b;}
+    public void setDst(String c){this.dst = c;}
 }
