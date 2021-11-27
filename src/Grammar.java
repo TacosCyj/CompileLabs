@@ -368,7 +368,7 @@ public class Grammar {
             token temp = this.tokenList.get(i);
             if(temp instanceof cond){
                 if(Objects.equals(((cond) temp).getCondid(), "else") || Objects.equals(((cond) temp).getCondid(), "else if") ) numofelse++;
-                else numofelse++;
+                else numofif++;
             }
             if(numofelse == numofif) return true;
         }
@@ -600,7 +600,6 @@ public class Grammar {
                             }
                         }
                         else{
-                            System.out.println("Here");
                             if (mr != 1) {
                                 this.answer.append("    br label %").append(this.three.peek().getDst() + "\n");
                             }
