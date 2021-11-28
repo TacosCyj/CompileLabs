@@ -66,12 +66,33 @@ public class Lexer {
         return numoflbrace > 0;
     }
     public int getnumofTab(int i){
-        int s = i;
+        int s = i - 1;
         int numofTabs = 0;
         while(this.content.charAt(s) != '\r' && this.content.charAt(s) != '\n'){
             if(this.content.charAt(s) == ' ') numofTabs++;
             s--;
         }
+        //System.out.println(numofTabs);
+        return numofTabs;
+    }
+    public int getnumofTab2(int i){
+        int s = i - 1;
+        int numofTabs = 0;
+        StringBuilder temp = new StringBuilder();
+        StringBuilder temp2 = new StringBuilder();
+        while(this.content.charAt(s) != '\r' && this.content.charAt(s) != '\n'){
+            if(this.content.charAt(s) == ' ') numofTabs++;
+            if(this.content.charAt(s) == '}') numofTabs--;
+            if(Character.isAlphabetic(this.content.charAt(s)) && this.content.charAt(s) != 'i' &&this.content.charAt(s) != 'f'){
+                temp.append(this.content.charAt(s));
+            }
+            if(this.content.charAt(s) == 'i' || this.content.charAt(s) == 'f'){
+                temp2.append(this.content.charAt(s));
+            }
+            s--;
+        }
+        if(temp.reverse().toString().equals("else") && temp2.reverse().toString().equals("if")) numofTabs--;
+        System.out.println(numofTabs);
         return numofTabs;
     }
     public void addRbrace(int i, int numoftabs){
@@ -154,7 +175,7 @@ public class Lexer {
             //需要检查if是否以{结束，若不是则加上
             else if(Objects.equals(ident, "if")){
                 symbol = 19;
-                cond cond_if = new cond("if", "Cond_if", symbol);
+                cond cond_if = new cond("if", "Cond_if", symbol, getnumofTab2(i));
                 this.tokenList.offer(cond_if);
                 if(!checkforLbrace(i)){
                     addLbrace(i, getnumofTab(i));
@@ -185,7 +206,7 @@ public class Lexer {
                 if(this.content.charAt(j + 1) == 'i'){
                     if(this.content.charAt(j + 2) == 'f'){
                         symbol = 19;
-                        cond cond_else_if = new cond("else if", "Cond_if", symbol);
+                        cond cond_else_if = new cond("else if", "Cond_if", symbol, getnumofTab2(i));
                         this.elsenum++;
                         this.tokenList.offer(cond_else_if);
                         //this.jump_i = j + 3;
@@ -193,7 +214,7 @@ public class Lexer {
                 }
                 else{
                     symbol = 20;
-                    cond cond_else = new cond("else", "Cond_else", symbol);
+                    cond cond_else = new cond("else", "Cond_else", symbol, getnumofTab2(i));
                     this.tokenList.offer(cond_else);
                     this.elsenum++;
                     if(!checkforLbrace(i)){

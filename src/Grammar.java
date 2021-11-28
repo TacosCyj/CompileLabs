@@ -378,14 +378,14 @@ public class Grammar {
         else flag = false;
         return flag;
     }
-    public boolean checkFollowingElse(){
+    public boolean checkFollowingElse(int tab){
         int i, numofif = 1, numofelse = 0;
-        for(i = 0; i < this.tokenList.toArray().length && this.elsenum > 0; i++){
+        for(i = 0; i < this.tokenList.toArray().length; i++){
             token temp = this.tokenList.get(i);
             if(temp instanceof cond){
-                if(Objects.equals(((cond) temp).getCondid(), "else") || Objects.equals(((cond) temp).getCondid(), "else if") ){
+                if((Objects.equals(((cond) temp).getCondid(), "else") || Objects.equals(((cond) temp).getCondid(), "else if"))
+                        && ((cond) temp).getTabnums() == tab){
                     numofelse++;
-                    this.elsenum--;
                 }
                 //else numofif++;
             }
@@ -393,11 +393,11 @@ public class Grammar {
         }
         return false;
     }
-    public boolean isIf(int mark_isElseIf){
+    public boolean isIf(int mark_isElseIf, int tab){
         boolean flag = true;
         //if中表达式处理，包括两个跳转地址压栈、一个块跳转地址压栈
         //设置three
-        boolean hasFollowingElse = checkFollowingElse();
+        boolean hasFollowingElse = checkFollowingElse(tab);
         flag = isCondExp(mark_isElseIf, hasFollowingElse);
         if(flag){
             this.strblockeach.push(this.three.peek().getIf_seq());
@@ -566,7 +566,7 @@ public class Grammar {
             else if(this.tokenList.peek() instanceof cond){
                 cond temp = (cond)this.tokenList.poll();
                 if(Objects.equals(temp.getCondid(), "if")){
-                    flag = isIf(mark_isElseIf);
+                    flag = isIf(mark_isElseIf, temp.getTabnums());
                     if(mark_isElseIf == 1) return flag;
                 }
                 else if(Objects.equals(temp.getCondid(), "else if")){
