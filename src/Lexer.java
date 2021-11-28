@@ -72,7 +72,6 @@ public class Lexer {
             if(this.content.charAt(s) == ' ') numofTabs++;
             s--;
         }
-        //System.out.println(numofTabs);
         return numofTabs;
     }
     public int getnumofTab2(int i){
@@ -356,13 +355,34 @@ public class Lexer {
             }
             //+ -表示运算符号
             else if(this.content.charAt(j) == ' ' || this.content.charAt(j) == '\t'){
-                switch (c) {
-                    case '+' -> s = 21;
-                    case '-' -> s = 22;
+                token temp = this.tokenList.getLast();
+                if(temp instanceof operator && Objects.equals(((operator) temp).getOperator(), "=")){
+                    number temp_n = new number(0, "Number", 10);
+                    this.tokenList.offer(temp_n);
                 }
-                operator o = new operator(String.valueOf(c), "Op", s);
-                this.tokenList.offer(o);
-                this.jump_i = j;
+                if(temp instanceof operator && (Objects.equals(((operator) temp).getOperator(), "+") || Objects.equals(((operator) temp).getOperator(), "-"))){
+                    if(c == '+'){
+                        jump_i = j;
+                    }
+                    else{
+                        if(Objects.equals(((operator) temp).getOperator(), "+")) jump_i = j;
+                        else{
+                            this.tokenList.removeLast();
+                            operator o = new operator("+", "Op", 16);
+                            this.tokenList.offer(o);
+                            this.jump_i = j;
+                        }
+                    }
+                }
+                else{
+                    switch (c) {
+                        case '+' -> s = 21;
+                        case '-' -> s = 22;
+                    }
+                    operator o = new operator(String.valueOf(c), "Op", s);
+                    this.tokenList.offer(o);
+                    this.jump_i = j;
+                }
             }
         }
         else{
