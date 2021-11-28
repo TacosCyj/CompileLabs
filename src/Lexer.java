@@ -343,7 +343,7 @@ public class Lexer {
                 else is_neg = -1;
                 this.jump_i = j;
             }
-            else if(this.content.charAt(j) == '('){
+            else if(this.content.charAt(j) == '(' || this.content.charAt(j) == '!'){
                 if(num_m % 2 != 0){
                     operator o = new operator("-", "Op", 17);
                     this.tokenList.offer(o);
