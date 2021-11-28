@@ -610,24 +610,46 @@ public class expression {
             }
             else if(temp_t1 instanceof ident){
                 if(this.timelist.get(((ident) temp_t1).getId()) > 0){
-                    a = varlist.get(((ident) temp_t1).getId());
-                    if(!isDivZero(a, op)) System.exit(3);
-                    this.ans.append("    %" + (++this.reg_seq) +  " = " + "load i32, i32* %" + this.reglist.get(((ident) temp_t1).getId()).getSeq() + "\n");
-                    int old = this.reg_seq;
-                    ident n;
-                    register r;
-                    this.reg_seq++;
-                    id_name++;
-                    r = new register();
-                    r.setSeq(this.reg_seq);
-                    r.setOwnerofreg(String.valueOf(id_name));
-                    switch(op){
-                        case "+": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b + a); r.setValueOfReg(b + a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "add " + "i32 "  + 0 + ", %" + old + "\n");break;
-                        case "-": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes()); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b - a); r.setValueOfReg(b - a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sub " + "i32 "  + 0 + ", %" + old + "\n");break;
-                        case "*": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b * a); r.setValueOfReg(b * a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "mul " + "i32 " + 0 + ", %" + old + "\n");break;
-                        case "/": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b / a); r.setValueOfReg(b * a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sdiv " + "i32 "  + 0+ ", %" + old + "\n");break;
-                        case "%": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b * a); r.setValueOfReg(b % a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "srem " + "i32 "  + 0 + ", %" + old + "\n");break;
+                    if(((ident) temp_t1).getCreate_when_op() != 0){
+                        a = varlist.get(((ident) temp_t1).getId());
+                        if(!isDivZero(a, op)) System.exit(3);
+                        //this.ans.append("    %" + (++this.reg_seq) +  " = " + "load i32, i32* %" + this.reglist.get(((ident) temp_t1).getId()).getSeq() + "\n");
+                        int old = this.reglist.get(((ident) temp_t1).getId()).getSeq();
+                        ident n;
+                        register r;
+                        this.reg_seq++;
+                        id_name++;
+                        r = new register();
+                        r.setSeq(this.reg_seq);
+                        r.setOwnerofreg(String.valueOf(id_name));
+                        switch(op){
+                            case "+": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b + a); r.setValueOfReg(b + a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "add " + "i32 "  + 0 + ", %" + old + "\n");break;
+                            case "-": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes()); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b - a); r.setValueOfReg(b - a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sub " + "i32 "  + 0 + ", %" + old + "\n");break;
+                            case "*": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b * a); r.setValueOfReg(b * a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "mul " + "i32 " + 0 + ", %" + old + "\n");break;
+                            case "/": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b / a); r.setValueOfReg(b * a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sdiv " + "i32 "  + 0+ ", %" + old + "\n");break;
+                            case "%": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b * a); r.setValueOfReg(b % a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "srem " + "i32 "  + 0 + ", %" + old + "\n");break;
                         }
+                    }
+                    else{
+                        a = varlist.get(((ident) temp_t1).getId());
+                        if(!isDivZero(a, op)) System.exit(3);
+                        this.ans.append("    %" + (++this.reg_seq) +  " = " + "load i32, i32* %" + this.reglist.get(((ident) temp_t1).getId()).getSeq() + "\n");
+                        int old = this.reg_seq;
+                        ident n;
+                        register r;
+                        this.reg_seq++;
+                        id_name++;
+                        r = new register();
+                        r.setSeq(this.reg_seq);
+                        r.setOwnerofreg(String.valueOf(id_name));
+                        switch(op){
+                            case "+": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b + a); r.setValueOfReg(b + a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "add " + "i32 "  + 0 + ", %" + old + "\n");break;
+                            case "-": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes()); n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b - a); r.setValueOfReg(b - a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sub " + "i32 "  + 0 + ", %" + old + "\n");break;
+                            case "*": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b * a); r.setValueOfReg(b * a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "mul " + "i32 " + 0 + ", %" + old + "\n");break;
+                            case "/": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b / a); r.setValueOfReg(b * a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sdiv " + "i32 "  + 0+ ", %" + old + "\n");break;
+                            case "%": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); n.setAssigntimes(n.getAssigntimes() + 1);this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1); numstack.push(n); varlist.put(String.valueOf(id_name), b * a); r.setValueOfReg(b % a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "srem " + "i32 "  + 0 + ", %" + old + "\n");break;
+                        }
+                    }
                 }
                 else{
                     System.exit(3);
@@ -635,7 +657,6 @@ public class expression {
             }
             opstack.pop();
         }
-        //!a -> a == 0
         else{
             temp_t1 = numstack.pop();
             temp_t2 = numstack.pop();
