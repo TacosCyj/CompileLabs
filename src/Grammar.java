@@ -345,7 +345,7 @@ public class Grammar {
                         this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(temp1).append(", label %").append(temp2);
                     }
                 }
-                //if后面是elseif statement
+                //是elseif statement
                 else{
                     String a3 = this.three.peek().getDst();
                     this.three.pop();
@@ -353,7 +353,12 @@ public class Grammar {
                     addLabel(); String temp2 = label;
                     dstANDstr temp_new = new dstANDstr(temp1, temp2, a3);
                     this.three.push(temp_new);
-                    this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(temp1).append(", label %").append(a3);
+                    if(hasFollowingElse){
+                        this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(temp1).append(", label %").append(temp2);
+                    }
+                    else{
+                        this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(temp1).append(", label %").append(a3);
+                    }
                     //++this.reg_seq;
                 }
                 exper.clearExp();
@@ -389,6 +394,7 @@ public class Grammar {
     public boolean isElseIf(int mark_isElseIf){
         boolean flag = true;
         this.strblockeach.push(this.three.peek().getElse_seq());
+        //boolean hasFollowingElse = checkFollowingElse();
         flag = isStmt(1, 0, mark_isElseIf, false);
         return flag;
     }

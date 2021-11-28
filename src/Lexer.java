@@ -291,6 +291,16 @@ public class Lexer {
                             this.jump_i = j;
                         }
                     }
+                    else if(Objects.equals(t.getOperator(), "=")){
+                        if(num_m % 2 == 0){
+                            operator o = new operator("+", "Op", 16);
+                            this.tokenList.offer(o);
+                        }
+                        else{
+                            operator o = new operator("-", "Op", 17);
+                            this.tokenList.offer(o);
+                        }
+                    }
                     else if(Objects.equals(t.getOperator(), "==") || Objects.equals(t.getOperator(), "!=") || Objects.equals(t.getOperator(), "<")
                             || Objects.equals(t.getOperator(), ">") || Objects.equals(t.getOperator(), "<=") || Objects.equals(t.getOperator(), ">=")){
                         if(num_m % 2 == 0) is_neg = 1;
