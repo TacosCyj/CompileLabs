@@ -17,6 +17,7 @@ public class Grammar {
     public LinkedList<token> expList = new LinkedList<>();
     private int reg_seq = 0;
     private int ans = 0;
+    private int elsenum = 0;
     private int firstbolck = 0;
     private String label = "x";
     private int labelseq = 1;
@@ -34,6 +35,7 @@ public class Grammar {
     public void setTokenList(LinkedList<token> q){
         this.tokenList = q;
     }
+    public void setElsenum(int k){this.elsenum = k;}
     public void checkForFunc(){
         int i;
         for(i = 0; i < this.tokenList.toArray().length; i++){
@@ -326,6 +328,7 @@ public class Grammar {
                 //将'{'加回去
                 this.tokenList.addFirst(check);
                 if(mark_isElseIf == 0){
+                    System.out.println(hasFollowingElse);
                     //if后面有一个else statement
                     if(hasFollowingElse){
                         addLabel(); String temp1 = label;
@@ -338,11 +341,19 @@ public class Grammar {
                     }
                     //只有一个if statement
                     else{
-                        addLabel(); String temp1 = label;
-                        addLabel(); String temp2 = label;
-                        dstANDstr temp = new dstANDstr(temp1, "x0", temp2);
-                        this.three.push(temp);
-                        this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(temp1).append(", label %").append(temp2);
+                        if(this.three.isEmpty()){
+                            addLabel(); String temp1 = label;
+                            addLabel(); String temp2 = label;
+                            dstANDstr temp = new dstANDstr(temp1, "x0", temp2);
+                            this.three.push(temp);
+                            this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(temp1).append(", label %").append(temp2);
+                        }
+                        else{
+                            addLabel(); String temp1 = label;
+                            dstANDstr temp = new dstANDstr(temp1, this.three.peek().getDst(), this.three.peek().getDst());
+                            this.three.push(temp);
+                            this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(temp1).append(", label %").append(this.three.peek().getDst());
+                        }
                     }
                 }
                 //是elseif statement
@@ -369,11 +380,14 @@ public class Grammar {
     }
     public boolean checkFollowingElse(){
         int i, numofif = 1, numofelse = 0;
-        for(i = 0; i < this.tokenList.toArray().length; i++){
+        for(i = 0; i < this.tokenList.toArray().length && this.elsenum > 0; i++){
             token temp = this.tokenList.get(i);
             if(temp instanceof cond){
-                if(Objects.equals(((cond) temp).getCondid(), "else") || Objects.equals(((cond) temp).getCondid(), "else if") ) numofelse++;
-                else numofif++;
+                if(Objects.equals(((cond) temp).getCondid(), "else") || Objects.equals(((cond) temp).getCondid(), "else if") ){
+                    numofelse++;
+                    this.elsenum--;
+                }
+                //else numofif++;
             }
             if(numofelse == numofif) return true;
         }
@@ -606,10 +620,35 @@ public class Grammar {
                             }
                         }
                         else{
+                            if(mr == 1){
+                                if(this.three.size() < 2){
+                                    return flag;
+                                }
+                                else{
+                                    this.three.pop();
+                                }
+                            }
+                            else{
+                                if(this.three.size() < 2){
+                                    this.answer.append("    br label %").append(this.three.peek().getDst() + "\n");
+                                    this.answer.append(this.three.pop().getDst()).append(":").append("\n");
+                                }
+                                else{
+                                    this.three.pop();
+                                }
+                            }
+                            /*
                             if (mr != 1) {
                                 this.answer.append("    br label %").append(this.three.peek().getDst() + "\n");
                             }
-                            this.answer.append(this.three.pop().getDst()).append(":").append("\n");
+                            if(this.three.size() < 2){
+                                this.answer.append(this.three.pop().getDst()).append(":").append("\n");
+                            }
+                            else{
+                                this.three.pop();
+                            }
+                            */
+
                         }
                     }
                     //else 块结束

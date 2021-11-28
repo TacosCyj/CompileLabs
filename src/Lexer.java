@@ -10,6 +10,7 @@ public class Lexer {
     private FileReader r;
     private StringBuilder content = new StringBuilder();
     private int jump_i = 0, is_neg = 1;
+    private int elsenum = 0;
     private LinkedList<token> tokenList = new LinkedList<token>();
     private Lexer(){}
     static{
@@ -185,6 +186,7 @@ public class Lexer {
                     if(this.content.charAt(j + 2) == 'f'){
                         symbol = 19;
                         cond cond_else_if = new cond("else if", "Cond_if", symbol);
+                        this.elsenum++;
                         this.tokenList.offer(cond_else_if);
                         //this.jump_i = j + 3;
                     }
@@ -193,6 +195,7 @@ public class Lexer {
                     symbol = 20;
                     cond cond_else = new cond("else", "Cond_else", symbol);
                     this.tokenList.offer(cond_else);
+                    this.elsenum++;
                     if(!checkforLbrace(i)){
                         addLbrace(i, getnumofTab(i));
                     }
@@ -508,4 +511,5 @@ public class Lexer {
         return this.tokenList;
     }
    public StringBuilder getcon(){return this.content;}
+    public int getElsenum(){return this.elsenum;}
 }
