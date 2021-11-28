@@ -636,19 +636,6 @@ public class expression {
             opstack.pop();
         }
         //!a -> a == 0
-        else if(Objects.equals(this.opstack.peek().getOperator(), "!")){
-            temp_t1 = this.numstack.pop();
-            if(temp_t1 instanceof number){
-                a = ((number) temp_t1).getValue();
-                this.ans.append("%" + (++this.reg_seq) + " = icmp eq i32 %" + a + ", 0");
-            }
-            else if(temp_t1 instanceof ident){
-                a = this.reglist.get(((ident) temp_t1).getId()).getSeq();
-                this.ans.append("%" + (++this.reg_seq) + " = load i32, i32* %" + a);
-                this.ans.append("%" + (++this.reg_seq) + " = icmp eq i32 %" + this.reg_seq + ", 0");
-            }
-            this.opstack.pop();
-        }
         else{
             temp_t1 = numstack.pop();
             temp_t2 = numstack.pop();
@@ -708,6 +695,67 @@ public class expression {
             opstack.pop();
         }
     }
+    public void calculate_not_eqzero(){
+        token temp_t1;
+        int a = 0;
+        if(Objects.equals(this.opstack.peek().getOperator(), "!")){
+            temp_t1 = this.numstack.pop();
+            ident n;
+            register r = new register();
+            if(temp_t1 instanceof number){
+                a = ((number) temp_t1).getValue();
+                this.ans.append("    %" + (this.reg_seq) + " = icmp eq i32 %" + a + ", 0\n");
+                int old = this.reg_seq;
+                this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + old +" to i32\n");
+                id_name++;
+                r.setSeq(this.reg_seq);
+                r.setOwnerofreg(String.valueOf(id_name));
+                r.setValueOfReg(a == 0 ? 1 : -1);
+                n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
+                n.setAssigntimes(n.getAssigntimes() + 1);
+                this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1);
+                numstack.push(n);
+                varlist.put(String.valueOf(id_name), a == 0 ? 1 : -1);
+                this.reglist.put(String.valueOf(id_name), r);
+            }
+            else if(temp_t1 instanceof ident){
+                if(((ident) temp_t1).getCreate_when_op() != 0){
+                    a = this.reglist.get(((ident) temp_t1).getId()).getSeq();
+                    this.ans.append("    %" + (++this.reg_seq) + " = icmp eq i32 %" + a + ", 0\n");
+                    int old = this.reg_seq;
+                    this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + old +" to i32\n");
+                    id_name++;
+                    r.setSeq(this.reg_seq);
+                    r.setOwnerofreg(String.valueOf(id_name));
+                    r.setValueOfReg(a == 0 ? 1 : -1);
+                    n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
+                    n.setAssigntimes(n.getAssigntimes() + 1);
+                    this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1);
+                    numstack.push(n);
+                    varlist.put(String.valueOf(id_name), a == 0 ? 1 : -1);
+                    this.reglist.put(String.valueOf(id_name), r);
+                }
+                else{
+                    a = this.reglist.get(((ident) temp_t1).getId()).getSeq();
+                    this.ans.append("    %" + (++this.reg_seq) + " = load i32, i32* %" + a + "\n");
+                    this.ans.append("    %" + (++this.reg_seq) + " = icmp eq i32 %" + (this.reg_seq - 1) + ", 0\n");
+                    int old = this.reg_seq;
+                    this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + old +" to i32\n");
+                    id_name++;
+                    r.setSeq(this.reg_seq);
+                    r.setOwnerofreg(String.valueOf(id_name));
+                    r.setValueOfReg(a == 0 ? 1 : -1);
+                    n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
+                    n.setAssigntimes(n.getAssigntimes() + 1);
+                    this.timelist.put(n.getId(),n.getAssigntimes());n.setCreate_when_op(1);
+                    numstack.push(n);
+                    varlist.put(String.valueOf(id_name), a == 0 ? 1 : -1);
+                    this.reglist.put(String.valueOf(id_name), r);
+                }
+            }
+            this.opstack.pop();
+        }
+    }
     //public boolean calExp(){}
     public boolean dealExp(char c, LinkedList<token> exp){
         boolean flag = true;
@@ -738,25 +786,34 @@ public class expression {
                     }
                 }
                 else if(temp_t instanceof operator){
-                    j = getPriority(((operator) temp_t).getOperator(), opstack.peek().getOperator());
-                    if(j == -1) opstack.push((operator) temp_t);
-                    else if(j == 1){
-                        while((p = getPriority(((operator) temp_t).getOperator(), opstack.peek().getOperator())) == 1 && !numstack.isEmpty()){
-                            calculate();
+                    if(Objects.equals(((operator) temp_t).getOperator(), "!")){
+                        this.opstack.push((operator) temp_t);
+                    }
+                    else{
+                        if(!this.numstack.isEmpty()){
+                            while(Objects.equals(this.opstack.peek().getOperator(), "!"))
+                                calculate_not_eqzero();
                         }
-                        if(p == -2 && opstack.peek().getOperator().charAt(0) != c){
-                            flag = false;
-                            break;
+                        j = getPriority(((operator) temp_t).getOperator(), opstack.peek().getOperator());
+                        if(j == -1) opstack.push((operator) temp_t);
+                        else if(j == 1){
+                            while((p = getPriority(((operator) temp_t).getOperator(), opstack.peek().getOperator())) == 1 && !numstack.isEmpty()){
+                                calculate();
+                            }
+                            if(p == -2 && opstack.peek().getOperator().charAt(0) != c){
+                                flag = false;
+                                break;
+                            }
+                            if(p == 0 && opstack.peek().getOperator().charAt(0) == '('){
+                                opstack.pop();
+                            }
+                            if(((operator) temp_t).getOperator().charAt(0) != ')' && ((operator) temp_t).getOperator().charAt(0) != c){
+                                opstack.push((operator) temp_t);
+                            }
                         }
-                        if(p == 0 && opstack.peek().getOperator().charAt(0) == '('){
+                        else if(j == 0){
                             opstack.pop();
                         }
-                        if(((operator) temp_t).getOperator().charAt(0) != ')' && ((operator) temp_t).getOperator().charAt(0) != c){
-                            opstack.push((operator) temp_t);
-                        }
-                    }
-                    else if(j == 0){
-                        opstack.pop();
                     }
                 }
             }
