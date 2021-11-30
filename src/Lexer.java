@@ -91,7 +91,6 @@ public class Lexer {
             s--;
         }
         if(temp.reverse().toString().equals("else") && temp2.reverse().toString().equals("if")) numofTabs--;
-        System.out.println(numofTabs);
         return numofTabs;
     }
     public void addRbrace(int i, int numoftabs){

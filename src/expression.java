@@ -163,7 +163,7 @@ public class expression {
     }
     public int getRegTail(ident id){
         int i;
-        for(i = final_layer; i >= 1; i--){
+        for(i = final_layer; i >= 0; i--){
             if(reglist.containsKey(id.getId() + i)){
                 return i;
             }
@@ -190,7 +190,6 @@ public class expression {
             id_name++;
             r = new register();
             r.setSeq(this.reg_seq);
-            r.setOwnerofreg(String.valueOf(id_name));
             switch (op) {
                 case "+" -> {
                     n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
@@ -338,12 +337,16 @@ public class expression {
         }
         else if(v1 == 1 && v2 == 0){
             int old = ++this.reg_seq;
-            this.ans.append("    %" + this.reg_seq +  " = " + "load i32, i32* %" + this.reglist.get(id1).getSeq() + "\n");
+            if(!this.reglist.get(id1).getIsGlobal()) {
+                this.ans.append("    %" + this.reg_seq + " = " + "load i32, i32* %" + this.reglist.get(id1).getSeq() + "\n");
+            }
+            else{
+                this.ans.append("    %" + this.reg_seq + " = " + "load i32, i32* " + this.reglist.get(id1).getGlobalname() + "\n");
+            }
             this.reg_seq++;
             id_name++;
             r = new register();
             r.setSeq(this.reg_seq);
-            r.setOwnerofreg(String.valueOf(id_name));
             switch (op) {
                 case "+" -> {
                     n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
@@ -491,12 +494,16 @@ public class expression {
         }
         else if(v1 == 0 && v2 == 1){
             int old = ++this.reg_seq;
-            this.ans.append("    %" + this.reg_seq +  " = " + "load i32, i32* %" + this.reglist.get(id2).getSeq() + "\n");
+            if(!this.reglist.get(id2).getIsGlobal()) {
+                this.ans.append("    %" + this.reg_seq + " = " + "load i32, i32* %" + this.reglist.get(id2).getSeq() + "\n");
+            }
+            else{
+                this.ans.append("    %" + this.reg_seq + " = " + "load i32, i32* " + this.reglist.get(id2).getGlobalname() + "\n");
+            }
             this.reg_seq++;
             id_name++;
             r = new register();
             r.setSeq(this.reg_seq);
-            r.setOwnerofreg(String.valueOf(id_name));
             switch (op) {
                 case "+" -> {
                     n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
@@ -644,14 +651,23 @@ public class expression {
         }
         else{
             int old1 = ++this.reg_seq;
-            this.ans.append("    %" + this.reg_seq +  " = " + "load i32, i32* %" + this.reglist.get(id1).getSeq() + "\n");
+            if(!this.reglist.get(id1).getIsGlobal()) {
+                this.ans.append("    %" + this.reg_seq + " = " + "load i32, i32* %" + this.reglist.get(id1).getSeq() + "\n");
+            }
+            else{
+                this.ans.append("    %" + this.reg_seq + " = " + "load i32, i32* " + this.reglist.get(id1).getGlobalname() + "\n");
+            }
             int old2 = ++this.reg_seq;
-            this.ans.append("    %" + this.reg_seq +  " = " + "load i32, i32* %" + this.reglist.get(id2).getSeq() + "\n");
+            if(!this.reglist.get(id2).getIsGlobal()) {
+                this.ans.append("    %" + this.reg_seq + " = " + "load i32, i32* %" + this.reglist.get(id2).getSeq() + "\n");
+            }
+            else{
+                this.ans.append("    %" + this.reg_seq + " = " + "load i32, i32* " + this.reglist.get(id2).getGlobalname() + "\n");
+            }
             this.reg_seq++;
             id_name++;
             r = new register();
             r.setSeq(this.reg_seq);
-            r.setOwnerofreg(String.valueOf(id_name));
             switch (op) {
                 case "+" -> {
                     n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
@@ -808,7 +824,6 @@ public class expression {
             id_name++;
             r = new register();
             r.setSeq(this.reg_seq);
-            r.setOwnerofreg(String.valueOf(id_name));
             switch (op) {
                 case "+" -> {
                     n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
@@ -959,7 +974,6 @@ public class expression {
             id_name++;
             r = new register();
             r.setSeq(this.reg_seq);
-            r.setOwnerofreg(String.valueOf(id_name));
             switch (op) {
                 case "+" -> {
                     n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
@@ -1109,12 +1123,16 @@ public class expression {
         String op = opstack.peek().getOperator();
         if(sign1 == 0 && sign2 == 1){
             int old = ++this.reg_seq;
-            this.ans.append("    %" + this.reg_seq +  " = " + "load i32, i32* %" + this.reglist.get(id1).getSeq() + "\n");
+            if(!this.reglist.get(id1).getIsGlobal()) {
+                this.ans.append("    %" + this.reg_seq + " = " + "load i32, i32* %" + this.reglist.get(id1).getSeq() + "\n");
+            }
+            else{
+                this.ans.append("    %" + this.reg_seq + " = " + "load i32, i32* " + this.reglist.get(id1).getGlobalname() + "\n");
+            }
             this.reg_seq++;
             id_name++;
             r = new register();
             r.setSeq(this.reg_seq);
-            r.setOwnerofreg(String.valueOf(id_name));
             switch (op) {
                 case "+" -> {
                     n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
@@ -1258,12 +1276,16 @@ public class expression {
         }
         else if(sign1 == 1 && sign2 == 0){
             int old = ++this.reg_seq;
-            this.ans.append("    %" + this.reg_seq +  " = " + "load i32, i32* %" + this.reglist.get(id2).getSeq() + "\n");
+            if(!this.reglist.get(id2).getIsGlobal()) {
+                this.ans.append("    %" + this.reg_seq + " = " + "load i32, i32* %" + this.reglist.get(id2).getSeq() + "\n");
+            }
+            else{
+                this.ans.append("    %" + this.reg_seq + " = " + "load i32, i32* " + this.reglist.get(id2).getGlobalname() + "\n");
+            }
             this.reg_seq++;
             id_name++;
             r = new register();
             r.setSeq(this.reg_seq);
-            r.setOwnerofreg(String.valueOf(id_name));
             switch (op) {
                 case "+" -> {
                     n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
@@ -1410,7 +1432,6 @@ public class expression {
             id_name++;
             r = new register();
             r.setSeq(this.reg_seq);
-            r.setOwnerofreg(String.valueOf(id_name));
             switch (op) {
                 case "+" -> {
                     n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
@@ -1597,7 +1618,7 @@ public class expression {
                         int for_not_eq_zero = this.reg_seq;
                         this.ans.append("    %" + (++this.reg_seq) + " = icmp ne i32 %" + for_not_eq_zero  +", 0\n");
                     }
-                    else{
+                    else if(!this.reglist.get(t1.getId() + (tail == -1 ? "" : tail)).getIsGlobal()){
                         a = this.reglist.get(t1.getId() + (tail == -1 ? "" : tail)).getValueofreg();
                         if(!isDivZero(a, op)) System.exit(3);
                         tail = getRegTail((ident)temp_t1);
@@ -1617,9 +1638,28 @@ public class expression {
                             case "%": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); r.setCreatedWhenOp(1); numstack.push(n); varlist.put(String.valueOf(id_name), b * a); r.setHasValue(); r.setValueOfReg(b % a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "srem " + "i32 "  + 0 + ", %" + old + "\n");break;
                         }
                     }
+                    else{
+                        a = this.reglist.get(t1.getId() + (tail == -1 ? "" : tail)).getValueofreg();
+                        if(!isDivZero(a, op)) System.exit(3);
+                        tail = getRegTail((ident)temp_t1);
+                        this.ans.append("    %" + (++this.reg_seq) +  " = " + "load i32, i32* " + this.reglist.get(((ident) temp_t1).getId() + (tail == -1 ? "" : tail)).getGlobalname() + "\n");
+                        int old = this.reg_seq;
+                        ident n;
+                        register r;
+                        this.reg_seq++;
+                        id_name++;
+                        r = new register();
+                        r.setSeq(this.reg_seq);
+                        switch(op){
+                            case "+": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); r.setCreatedWhenOp(1); numstack.push(n); varlist.put(String.valueOf(id_name), b + a); r.setHasValue(); r.setValueOfReg(b + a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "add " + "i32 "  + 0 + ", %" + old + "\n");break;
+                            case "-": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); r.setCreatedWhenOp(1); numstack.push(n); varlist.put(String.valueOf(id_name), b - a); r.setHasValue(); r.setValueOfReg(b - a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sub " + "i32 "  + 0 + ", %" + old + "\n");break;
+                            case "*": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); r.setCreatedWhenOp(1); numstack.push(n); varlist.put(String.valueOf(id_name), b * a); r.setHasValue(); r.setValueOfReg(b * a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "mul " + "i32 " + 0 + ", %" + old + "\n");break;
+                            case "/": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); r.setCreatedWhenOp(1); numstack.push(n); varlist.put(String.valueOf(id_name), b / a); r.setHasValue(); r.setValueOfReg(b * a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "sdiv " + "i32 "  + 0+ ", %" + old + "\n");break;
+                            case "%": n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1); r.setCreatedWhenOp(1); numstack.push(n); varlist.put(String.valueOf(id_name), b * a); r.setHasValue(); r.setValueOfReg(b % a); this.reglist.put(String.valueOf(id_name), r); this.ans.append("    %" + this.reg_seq + " = " + "srem " + "i32 "  + 0 + ", %" + old + "\n");break;
+                        }
+                    }
                 }
                 else{
-                    System.out.println(this.ans);
                     System.exit(4);
                 }
             }
@@ -1636,7 +1676,6 @@ public class expression {
                     setAns(a, b, 0, 0, null, null);
                 }
                 else{
-                    System.out.println(this.ans);
                     System.exit(4);
                 }
             }
@@ -1655,7 +1694,6 @@ public class expression {
                     }
                 }
                 else {
-                    System.out.println(this.ans);
                     System.exit(4);
                 }
             }
@@ -1674,7 +1712,6 @@ public class expression {
                     }
                 }
                 else {
-                    System.out.println(this.ans);
                     System.exit(4);
                 }
             }
@@ -1696,7 +1733,6 @@ public class expression {
                     }
                 }
                 else {
-                    System.out.println(this.ans);
                     System.exit(4);
                 }
             }
@@ -1717,7 +1753,6 @@ public class expression {
                 this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + old +" to i32\n");
                 id_name++;
                 r.setSeq(this.reg_seq);
-                r.setOwnerofreg(String.valueOf(id_name));
                 r.setValueOfReg(a == 0 ? 1 : -1);
                 n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
                 r.setHasValue();
@@ -1735,7 +1770,22 @@ public class expression {
                     this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + old +" to i32\n");
                     id_name++;
                     r.setSeq(this.reg_seq);
-                    r.setOwnerofreg(String.valueOf(id_name));
+                    r.setValueOfReg(a == 0 ? 1 : -1);
+                    n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
+                    r.setHasValue();
+                    r.setCreatedWhenOp(1);
+                    numstack.push(n);
+                    varlist.put(String.valueOf(id_name), a == 0 ? 1 : -1);
+                    this.reglist.put(String.valueOf(id_name), r);
+                }
+                else if(!this.reglist.get(t1.getId() + (tail == -1 ? "" : tail)).getIsGlobal()){
+                    a = this.reglist.get(t1.getId() + (tail == -1 ? "" : tail)).getSeq();
+                    this.ans.append("    %" + (++this.reg_seq) + " = load i32, i32* %" + a + "\n");
+                    this.ans.append("    %" + (++this.reg_seq) + " = icmp eq i32 %" + (this.reg_seq - 1) + ", 0\n");
+                    int old = this.reg_seq;
+                    this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + old +" to i32\n");
+                    id_name++;
+                    r.setSeq(this.reg_seq);
                     r.setValueOfReg(a == 0 ? 1 : -1);
                     n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
                     r.setHasValue();
@@ -1745,14 +1795,13 @@ public class expression {
                     this.reglist.put(String.valueOf(id_name), r);
                 }
                 else{
-                    a = this.reglist.get(t1.getId() + (tail == -1 ? "" : tail)).getSeq();
-                    this.ans.append("    %" + (++this.reg_seq) + " = load i32, i32* %" + a + "\n");
+                    String aa = this.reglist.get(t1.getId() + (tail == -1 ? "" : tail)).getGlobalname();
+                    this.ans.append("    %" + (++this.reg_seq) + " = load i32, i32* %" + aa + "\n");
                     this.ans.append("    %" + (++this.reg_seq) + " = icmp eq i32 %" + (this.reg_seq - 1) + ", 0\n");
                     int old = this.reg_seq;
                     this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + old +" to i32\n");
                     id_name++;
                     r.setSeq(this.reg_seq);
-                    r.setOwnerofreg(String.valueOf(id_name));
                     r.setValueOfReg(a == 0 ? 1 : -1);
                     n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
                     r.setHasValue();
@@ -1761,6 +1810,7 @@ public class expression {
                     varlist.put(String.valueOf(id_name), a == 0 ? 1 : -1);
                     this.reglist.put(String.valueOf(id_name), r);
                 }
+
             }
             this.opstack.pop();
         }
@@ -1781,7 +1831,6 @@ public class expression {
                 }
                 else if(temp_t instanceof ident){
                     if(!getIdentlegal((ident)temp_t)){
-                        System.out.println(this.ans);
                         System.exit(3);
                     }
                     else if(!this.reglist.get(((ident) temp_t).getId() + getRegTail((ident)temp_t)).getIsConst()){

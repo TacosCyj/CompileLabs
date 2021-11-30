@@ -8,12 +8,11 @@ public class Analysis {
         StringBuilder input_file = new StringBuilder();
         StringBuilder output_file = new StringBuilder();
         LinkedList<token> tokenlist;
-        input_file.append(args[0]);
-        output_file.append(args[1]);
+        input_file.append("E:\\编译原理\\lab5\\testfile\\a.txt");
+        output_file.append("E:\\编译原理\\lab5\\testfile\\b.txt");
         Lexer lexer = Lexer.getLexerInstance();
         lexer.setFile(input_file);
         lexer.getContent();
-        System.out.println(lexer.getcon().toString());
         if(lexer.lexerAnalysis()){
             tokenlist = lexer.getTokenList();
             operator o = new operator("#", "Op", 28);
@@ -22,26 +21,49 @@ public class Analysis {
             expression exp = expression.getInstance();
             grammar.setTokenList(tokenlist);
             grammar.setExper(exp);
-            grammar.checkForFunc();
-            boolean flag = grammar.isInt();
-            if(flag){
-                System.out.println(lexer.getcon());
-                try{
-                    FileWriter writer = new FileWriter(String.valueOf(output_file));
-                    writer.write(grammar.getAnswer().toString());
-                    writer.flush();
-                    writer.close();
-                    
-                }catch(IOException e){
-                    e.printStackTrace();
+            int detectforglobal = grammar.detect();
+            if(detectforglobal == 0) System.exit(5);
+            else if(detectforglobal == 1){
+                boolean flag = grammar.isInt();
+                if(flag){
+                    System.out.println(lexer.getcon());
+                    try{
+                        FileWriter writer = new FileWriter(String.valueOf(output_file));
+                        writer.write(grammar.getAnswer().toString());
+                        writer.flush();
+                        writer.close();
+
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                    System.exit(0);
                 }
-                System.exit(0);
+                else{
+                    System.out.println(lexer.getcon().toString());
+                    System.out.println(grammar.getAnswer().toString());
+                    System.exit(3);
+                }
             }
             else{
-                System.out.println("HIHI");
-                System.out.println(lexer.getcon().toString());
-                System.out.println(grammar.getAnswer().toString());
-                System.exit(3);
+                boolean flag = grammar.isGlobal();
+                if(flag){
+                    System.out.println(lexer.getcon());
+                    try{
+                        FileWriter writer = new FileWriter(String.valueOf(output_file));
+                        writer.write(grammar.getAnswer().toString());
+                        writer.flush();
+                        writer.close();
+
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                    System.exit(0);
+                }
+                else{
+                    System.out.println(lexer.getcon().toString());
+                    System.out.println(grammar.getAnswer().toString());
+                    System.exit(3);
+                }
             }
         }
         else{
