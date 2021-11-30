@@ -24,6 +24,7 @@ public class Analysis {
             int detectforglobal = grammar.detect();
             if(detectforglobal == 0) System.exit(5);
             else if(detectforglobal == 1){
+                grammar.checkForFunc();
                 boolean flag = grammar.isInt();
                 if(flag){
                     System.out.println(lexer.getcon());
