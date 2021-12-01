@@ -266,7 +266,7 @@ public class Grammar {
                 operator temp_op = (operator) this.tokenList.poll();
                 //全局变量去结束，进入函数区
                 if(Objects.equals(temp_op.getOperator(), "}")){
-                    this.blocklist.remove(key0);
+                    //this.blocklist.remove(key0);
                     checkForFunc();
                     this.reg_seq = 0;
                     return isInt();
@@ -412,7 +412,12 @@ public class Grammar {
             reg.setHasValue();
             this.reglist.get(name).setHasValue();
             if(this.reg_seq == old_value){
-                if(t_judge instanceof number) this.answer.append("    store i32 ").append(ans).append(", i32* %").append(reg.getSeq()).append("\n");
+                if(t_judge instanceof number){
+                    if(!this.reglist.get((obj).getId() + forJudgeNum(obj)).getIsGlobal())
+                        this.answer.append("    store i32 ").append(ans).append(", i32* %").append(reg.getSeq()).append("\n");
+                    else
+                        this.answer.append("    store i32 ").append(ans).append(", i32* ").append(this.reglist.get(obj.getId() + forJudgeNum(obj)).getGlobalname()).append("\n");
+                }
                 else if(t_judge instanceof ident){
                     if(!this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getIsGlobal()){
                         int s = this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getSeq();
