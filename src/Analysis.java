@@ -13,8 +13,6 @@ public class Analysis {
         Lexer lexer = Lexer.getLexerInstance();
         lexer.setFile(input_file);
         lexer.getContent();
-        System.out.println( lexer.getcon().toString());
-        System.exit(0);
         if(lexer.lexerAnalysis()){
             tokenlist = lexer.getTokenList();
             operator o = new operator("#", "Op", 28);
