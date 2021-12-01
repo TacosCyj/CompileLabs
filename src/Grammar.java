@@ -418,13 +418,15 @@ public class Grammar {
                         int s = this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getSeq();
                         this.reg_seq++;
                         this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + s + "\n");
-                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
+                        if(!reg.getIsGlobal()) this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
+                        else this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
                     }
                     else{
                         String s = this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getGlobalname();
                         this.reg_seq++;
                         this.answer.append("    %" + this.reg_seq + " = load i32, i32* " + s + "\n");
-                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
+                        if(!reg.getIsGlobal()) this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
+                        else this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
                     }
                 }
             }
@@ -445,18 +447,21 @@ public class Grammar {
                         int s = this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getSeq();
                         this.reg_seq++;
                         this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + s + "\n");
-                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
+                        if(!reg.getIsGlobal()) this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
+                        else this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
                     }
                     else{
                         String s = this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getGlobalname();
                         this.reg_seq++;
                         this.answer.append("    %" + this.reg_seq + " = load i32, i32* " + s + "\n");
-                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
+                        if(!reg.getIsGlobal()) this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
+                        else this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
                     }
                 }
             }
             else{
-                this.answer.append("    store i32 %").append(this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
+                if(!reg.getIsGlobal()) this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
+                else this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
             }
         }
         else{
@@ -499,12 +504,12 @@ public class Grammar {
                         if(f instanceof function){
                             if(Objects.equals(((function) f).getFuncName(), "getint")){
                                 this.answer.append("    %").append(++this.reg_seq).append("= call i32 @getint()\n");
-                                this.answer.append("    store i32 %" + this.reg_seq + ", i32* %" + this.reglist.get(temp_token.getId() + this.listnum).getSeq() + "\n");
+                                this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(this.reglist.get(temp_token.getId() + this.listnum).getSeq()).append("\n");
                                 this.reglist.get(temp_token.getId() + this.listnum).setHasValue();
                             }
                             else if(Objects.equals(((function) f).getFuncName(), "getch")){
                                 this.answer.append("    %").append(++this.reg_seq).append("= call i32 @getch()\n");
-                                this.answer.append("    store i32 %" + this.reg_seq + ", i32* %" + this.reglist.get(temp_token.getId() + this.listnum).getSeq() + "\n");
+                                this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(this.reglist.get(temp_token.getId() + this.listnum).getSeq()).append("\n");
                                 this.reglist.get(temp_token.getId() + this.listnum).setHasValue();
                             }
                             else{
@@ -783,12 +788,18 @@ public class Grammar {
                                 if(f instanceof function){
                                     if(Objects.equals(((function) f).getFuncName(), "getint")){
                                         this.answer.append("    %").append(++this.reg_seq).append("= call i32 @getint()\n");
-                                        this.answer.append("    store i32 %" + this.reg_seq + ", i32* %" + this.reglist.get(temp_ident.getId() + loc_list).getSeq() + "\n");
+                                        if(!this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getIsGlobal())
+                                            this.answer.append("    store i32 %" + this.reg_seq + ", i32* %" + this.reglist.get(temp_ident.getId() + loc_list).getSeq() + "\n");
+                                        else
+                                            this.answer.append("    store i32 %" + this.reg_seq + ", i32* " + this.reglist.get(temp_ident.getId() + 0).getGlobalname() + "\n");
                                         this.reglist.get(temp_ident.getId() + loc_list).setHasValue();
                                     }
                                     else if(Objects.equals(((function) f).getFuncName(), "getch")){
                                         this.answer.append("    %").append(++this.reg_seq).append("= call i32 @getch()\n");
-                                        this.answer.append("    store i32 %" + this.reg_seq + ", i32* %" + this.reglist.get(temp_ident.getId() + loc_list).getSeq() + "\n");
+                                        if(!this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getIsGlobal())
+                                            this.answer.append("    store i32 %" + this.reg_seq + ", i32* %" + this.reglist.get(temp_ident.getId() + loc_list).getSeq() + "\n");
+                                        else
+                                            this.answer.append("    store i32 %" + this.reg_seq + ", i32* " + this.reglist.get(temp_ident.getId() + 0).getGlobalname() + "\n");
                                         this.reglist.get(temp_ident.getId() + loc_list).setHasValue();
                                     }
                                     else{
