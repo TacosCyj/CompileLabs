@@ -436,7 +436,10 @@ public class Grammar {
                 }
             }
             else{
-                this.answer.append("    store i32 %").append(this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
+                if(!this.reglist.get((obj).getId() + forJudgeNum(obj)).getIsGlobal())
+                    this.answer.append("    store i32 %").append(this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
+                else
+                    this.answer.append("    store i32 %").append(this.reg_seq).append(", i32* ").append(this.reglist.get((obj).getId() + forJudgeNum(obj)).getGlobalname()).append("\n");
             }
         }
         //未赋值的常量赋值
