@@ -866,8 +866,14 @@ public class Grammar {
                                 }
                             }
                             else if(t_judge instanceof ident){
-                                int s = this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getSeq();
-                                this.answer.append("    %" + (++this.reg_seq) + " = " + "load i32, i32* %" + s + "\n");
+                                if(!this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getIsGlobal()){
+                                    int s = this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getSeq();
+                                    this.answer.append("    %" + (++this.reg_seq) + " = " + "load i32, i32* %" + s + "\n");
+                                }
+                                else{
+                                    String s = this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getGlobalname();
+                                    this.answer.append("    %" + (++this.reg_seq) + " = " + "load i32, i32* " + s + "\n");
+                                }
                                 if(Objects.equals(func_name, "putint")){
                                     this.answer.append("    call void @putint(i32 %" + this.reg_seq + ")\n");
                                 }
