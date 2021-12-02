@@ -1816,7 +1816,7 @@ public class expression {
         }
     }
     //public boolean calExp(){}
-    public boolean dealExp(char c, LinkedList<token> exp){
+    public boolean dealExp(char c, LinkedList<token> exp, boolean is_cond){
         boolean flag = true;
         int i, j, p;
         flag = initExp(c);
@@ -1869,9 +1869,9 @@ public class expression {
                             }
                         }
                         else if(j == 0){
-                            if(numstack.size() == 1 && numstack.peek() instanceof number n){
+                            if(numstack.size() == 1 && numstack.peek() instanceof number n && is_cond){
                                 int a = n.getValue();
-                                this.ans.append("    %").append(++this.reg_seq).append(" = icmp neq i32 ").append(a).append(", 0\n");
+                                this.ans.append("    %").append(++this.reg_seq).append(" = icmp ne i32 ").append(a).append(", 0\n");
                                 opstack.pop();
                             }
                             else opstack.pop();
