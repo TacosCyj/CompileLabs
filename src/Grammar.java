@@ -389,7 +389,7 @@ public class Grammar {
             exper.getExp(expList);
             exper.setFinal_layer(this.listnum);
             exper.getMap(vl, reglist, reg_seq, answer);
-            flag = exper.dealExp(((operator) check).getOperator().charAt(0), expList);
+            flag = exper.dealExp(((operator) check).getOperator().charAt(0), expList, false);
             if(flag){
                 this.ans = exper.passAns();
                 this.reg_seq = exper.passRegSeq();
@@ -591,7 +591,7 @@ public class Grammar {
             exper.getExp(expList);
             exper.setFinal_layer(this.listnum);
             exper.getMap(vl, reglist, reg_seq, answer);
-            flag = exper.dealExp(((operator) check).getOperator().charAt(0), expList);
+            flag = exper.dealExp(((operator) check).getOperator().charAt(0), expList, true);
             if(flag){
                 this.reg_seq = exper.passRegSeq();
                 this.answer = exper.getAns();
@@ -662,7 +662,7 @@ public class Grammar {
             exper.getExp(expList);
             exper.setFinal_layer(this.listnum);
             exper.getMap(vl, reglist, reg_seq, answer);
-            flag = exper.dealExp(((operator) check).getOperator().charAt(0), expList);
+            flag = exper.dealExp(((operator) check).getOperator().charAt(0), expList, true);
             if(flag){
                 this.reg_seq = exper.passRegSeq();
                 this.answer = exper.getAns();
@@ -1059,7 +1059,8 @@ public class Grammar {
                                 return flag;
                             }
                             else{
-                                this.answer.append("    br label %").append(this.three.peek().getDst() + "\n");
+                                if(!has_jump)
+                                    this.answer.append("    br label %").append(this.three.peek().getDst() + "\n");
                             }
                         }
                         else{
