@@ -26,6 +26,7 @@ public class Grammar {
     private String label_while = "y";
     private int labelseq = 1;
     private int labelseq_while = 1;
+    private int func_var = 1;
     private token t_judge;
     private Grammar(){}
     static{
@@ -432,6 +433,10 @@ public class Grammar {
                         if(!reg.getIsGlobal()) this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
                         else this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
                     }
+                    else if(this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getCreatedWhenOp() == 1){
+                        if(!reg.getIsGlobal()) this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
+                        else this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
+                    }
                     else{
                         String s = this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getGlobalname();
                         this.reg_seq++;
@@ -738,6 +743,38 @@ public class Grammar {
         }
         return flag;
     }
+    public void dealWithFuncInExp(int ln){
+        int i;
+        for(i = 0; i < this.tokenList.toArray().length; i++){
+            if(this.tokenList.get(i) instanceof operator op){
+                if(Objects.equals(op.getOperator(), ";") || Objects.equals(op.getOperator(), ","))
+                    break;
+            }
+            else if(this.tokenList.get(i) instanceof function func){
+                ident temp = new ident("func" + this.func_var, "Ident", 11, 1, 1);
+                this.func_var++;
+                register reg = new register();
+                this.reg_seq++;
+                reg.setSeq(this.reg_seq);
+                reg.setValueOfReg(-1);
+                reg.setCreatedWhenOp(1);
+                reg.setIsConst(false);
+                reg.setHasValue();
+                if(Objects.equals(func.getFuncName(), "getint")){
+                    this.answer.append("    %").append(this.reg_seq).append("= call i32 @getint()\n");
+                }
+                else{
+                    this.answer.append("    %").append(this.reg_seq).append("= call i32 @getch()\n");
+                }
+                this.reglist.put(temp.getId() + ln,  reg);
+                //去除两个括号;
+                this.tokenList.remove(i);
+                this.tokenList.remove(i);
+                this.tokenList.remove(i);
+                this.tokenList.add(i, temp);
+            }
+        }
+    }
     public boolean isStmt(int is_one, int mark_return, int mark_isElseIf, boolean hasFollowingElse, String key_sub_varlist){
         int mr = mark_return;
         boolean has_jump = false;
@@ -818,6 +855,7 @@ public class Grammar {
                         if(this.tokenList.peek() instanceof operator){
                             if(Objects.equals(((operator) this.tokenList.peek()).getOperator(), "=")){
                                 this.tokenList.poll();
+                                dealWithFuncInExp(this.listnum);
                                 token f = this.tokenList.peek();
                                 if(f instanceof function){
                                     if(Objects.equals(((function) f).getFuncName(), "getint")){
@@ -880,6 +918,7 @@ public class Grammar {
                         if(this.tokenList.peek() instanceof operator){
                             if(Objects.equals(((operator) this.tokenList.peek()).getOperator(), "=")){
                                 this.tokenList.poll();
+                                dealWithFuncInExp(this.listnum);
                                 token f = this.tokenList.peek();
                                 if(f instanceof function){
                                     if(Objects.equals(((function) f).getFuncName(), "getint")){
