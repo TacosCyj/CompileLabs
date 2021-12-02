@@ -246,32 +246,29 @@ public class Grammar {
         String key0 = initGlobalArea();
         HashMap<String, Integer> vl = this.blocklist.get(key0);
         while(flag){
-            if(this.tokenList.peek() instanceof ident){
-                ident temp_ident = (ident)this.tokenList.peek();
+            if(this.tokenList.peek() instanceof ident) {
+                ident temp_ident = (ident) this.tokenList.peek();
                 //int
                 //块内定义一个变量
-                if(Objects.equals(temp_ident.getId(), "int")){
+                if (Objects.equals(temp_ident.getId(), "int")) {
                     this.tokenList.poll();
-                    if(this.tokenList.peek() instanceof ident) flag = isIndentifyNew_Global(false, vl);
+                    if (this.tokenList.peek() instanceof ident) flag = isIndentifyNew_Global(false, vl);
                     else flag = false;
                 }
                 //const int
                 //块内定义一个常量
-                else if(Objects.equals(temp_ident.getId(), "const")){
+                else if (Objects.equals(temp_ident.getId(), "const")) {
                     this.tokenList.poll();
-                    if(this.tokenList.peek() instanceof ident){
-                        if(Objects.equals(((ident) this.tokenList.peek()).getId(), "int")){
+                    if (this.tokenList.peek() instanceof ident) {
+                        if (Objects.equals(((ident) this.tokenList.peek()).getId(), "int")) {
                             this.tokenList.poll();
-                            if(this.tokenList.peek() instanceof ident) flag = isIndentifyNew_Global(true, vl);
+                            if (this.tokenList.peek() instanceof ident) flag = isIndentifyNew_Global(true, vl);
                             else flag = false;
-                        }
-                        else flag= false;
-                    }
-                    else flag = false;
+                        } else flag = false;
+                    } else flag = false;
                 }
-                else flag = false;
             }
-            else if(this.tokenList.peek() instanceof  operator){
+            else if(this.tokenList.peek() instanceof operator){
                 operator temp_op = (operator) this.tokenList.poll();
                 //全局变量去结束，进入函数区
                 if(Objects.equals(temp_op.getOperator(), "}")){
@@ -743,6 +740,7 @@ public class Grammar {
     }
     public boolean isStmt(int is_one, int mark_return, int mark_isElseIf, boolean hasFollowingElse, String key_sub_varlist){
         int mr = mark_return;
+        boolean has_jump = false;
         boolean flag = true;
         //查找变量若无，则可搜索外层表
         //查找变量若有，则一切变量的属性按照内层表来，包括值、是否赋值、是否是常量等
@@ -783,6 +781,33 @@ public class Grammar {
                     //对应着isExp()要加参数
                     flag = isReturn(vl);
                     if(flag) mr = 1;
+                }
+                else if(Objects.equals(temp_ident.getId(), "continue")){
+                    this.tokenList.poll();
+                    this.answer.append("    br label %").append(while_info.peek().getCond_target()).append("\n");
+                    if(this.tokenList.peek() instanceof operator op){
+                        if(Objects.equals(op.getOperator(), ";")){
+                            this.tokenList.poll();
+                            has_jump= true;
+                        }
+                        else
+                            flag = false;
+                    }
+                    else flag = false;
+                }
+                else if(Objects.equals(temp_ident.getId(), "break")){
+                    this.tokenList.poll();
+                    this.answer.append("    br label %").append(while_info.peek().getAnti_cond_target()).append("\n");
+                    if(this.tokenList.peek() instanceof operator op){
+                        if(Objects.equals(op.getOperator(), ";")){
+                            this.tokenList.poll();
+                            has_jump = true;
+                        }
+                        else
+                            flag = false;
+                    }
+                    else
+                        flag = false;
                 }
                 //赋值或函数语句
                 else{
@@ -1048,7 +1073,8 @@ public class Grammar {
                             }
                             else{
                                 if(this.three.size() < 2){
-                                    this.answer.append("    br label %").append(this.three.peek().getDst() + "\n");
+                                    if(!has_jump)
+                                        this.answer.append("    br label %").append(this.three.peek().getDst() + "\n");
                                     this.answer.append(this.three.pop().getDst()).append(":").append("\n");
                                 }
                                 else{
@@ -1064,7 +1090,8 @@ public class Grammar {
                             this.answer.append(this.three.pop().getDst()).append(":").append("\n");
                         }
                         else{
-                            this.answer.append("    br label %").append(this.three.peek().getDst() + "\n");
+                            if(!has_jump)
+                                this.answer.append("    br label %").append(this.three.peek().getDst() + "\n");
                             this.answer.append(this.three.pop().getDst()).append(":").append("\n");
                         }
                         this.deletelist(key_sub_varlist);
