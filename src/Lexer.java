@@ -256,6 +256,19 @@ public class Lexer {
                     }
                 }
             }
+            else if(Objects.equals(ident, "continue")){
+                symbol = 37;
+                ident id = new ident(ident, "Ident", symbol, 0, is_neg);
+                this.tokenList.offer(id);
+                is_neg = 1;
+            }
+            else if(Objects.equals(ident, "break")){
+                symbol = 38;
+                ident id = new ident(ident, "Ident", symbol, 0, is_neg);
+                this.tokenList.offer(id);
+                is_neg = 1;
+            }
+
             else {
                 symbol = 21;
                 ident id = new ident(ident, "Ident", symbol, 0, is_neg);
