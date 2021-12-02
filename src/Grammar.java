@@ -999,7 +999,10 @@ public class Grammar {
             }
             else if(this.tokenList.peek() instanceof operator){
                 operator op = (operator) this.tokenList.peek();
-                if(Objects.equals(op.getOperator(), "+") || Objects.equals(op.getOperator(), "-") || Objects.equals(op.getOperator(), "(")){
+                //part10 ;
+                if(Objects.equals(op.getOperator(), ";"))
+                    this.tokenList.poll();
+                else if(Objects.equals(op.getOperator(), "+") || Objects.equals(op.getOperator(), "-") || Objects.equals(op.getOperator(), "(")){
                     flag = isExp(vl, 0);
                     if(flag && this.tokenList.peek() instanceof operator){
                         operator temp_opp = (operator) this.tokenList.peek();
