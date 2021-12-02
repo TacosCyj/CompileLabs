@@ -1582,7 +1582,7 @@ public class expression {
         if(this.numstack.size() == 1 && !Objects.equals(this.opstack.peek().getOperator(), "!")){
             temp_t1 = numstack.pop();
             String op = opstack.peek().getOperator();
-            if(temp_t1 instanceof number){
+            if(temp_t1 instanceof number && !Objects.equals(op, "(")){
                 number n;
                 a = ((number) temp_t1).getValue();
                 if(!isDivZero(a, op)) System.exit(3);
@@ -1869,7 +1869,12 @@ public class expression {
                             }
                         }
                         else if(j == 0){
-                            opstack.pop();
+                            if(numstack.size() == 1 && numstack.peek() instanceof number n){
+                                int a = n.getValue();
+                                this.ans.append("    %").append(++this.reg_seq).append(" = icmp neq i32 ").append(a).append(", 0\n");
+                                opstack.pop();
+                            }
+                            else opstack.pop();
                         }
                     }
                 }
