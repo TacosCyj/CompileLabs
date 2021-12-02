@@ -40,6 +40,8 @@ public class Analysis {
                     System.exit(0);
                 }
                 else{
+                    System.out.println(lexer.getcon().toString());
+                    System.out.println(grammar.getAnswer().toString());
                     System.exit(3);
                 }
             }
@@ -59,6 +61,8 @@ public class Analysis {
                     System.exit(0);
                 }
                 else{
+                    System.out.println(lexer.getcon().toString());
+                    System.out.println(grammar.getAnswer().toString());
                     System.exit(3);
                 }
             }
