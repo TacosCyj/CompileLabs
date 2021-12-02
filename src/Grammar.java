@@ -690,6 +690,7 @@ public class Grammar {
         for(i = 0; i < this.tokenList.toArray().length; i++){
             token temp = this.tokenList.get(i);
             if(temp instanceof cond){
+                if((Objects.equals(((cond) temp).getCondid(), "if")&& ((cond) temp).getTabnums() == tab)) break;
                 if((Objects.equals(((cond) temp).getCondid(), "else") || Objects.equals(((cond) temp).getCondid(), "else if"))
                         && ((cond) temp).getTabnums() == tab){
                     numofelse++;
