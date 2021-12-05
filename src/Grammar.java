@@ -31,6 +31,8 @@ public class Grammar {
     private int arr_len = 0;
     private int arrayname = 0;
     private token t_judge;
+    //for debug
+    private String content;
     private Grammar(){}
     static{
         grammar = new Grammar();
@@ -684,7 +686,10 @@ public class Grammar {
             //弹出'['
             this.tokenList.poll();
             flag = isArrayExp();
-            if(!flag) System.exit(7);
+            if(!flag){
+                System.out.println(this.content);
+                System.exit(7);
+            }
             //arr_len是isArrayExp计算出来的值
             return arr_len;
         }
@@ -694,7 +699,10 @@ public class Grammar {
                 //弹出'['
                 this.tokenList.poll();
                 flag = isArrayExp();
-                if(!flag) System.exit(7);
+                if(!flag){
+                    System.out.println(this.content);
+                    System.exit(7);
+                }
                 return arr_len;
             }
         }
@@ -1768,4 +1776,5 @@ public class Grammar {
         return false;
     }
     public StringBuilder getAnswer(){return this.answer;}
+    public void setContent(String c){this.content = c;}
 }
