@@ -532,6 +532,16 @@ public class Lexer {
                         operator o = new operator(String.valueOf(c), "Op_cond", s);
                         this.tokenList.offer(o);
                     }
+                    case '[' -> {
+                        s = 36;
+                        operator o = new operator(String.valueOf(c), "Op_array", s);
+                        this.tokenList.offer(o);
+                    }
+                    case ']' -> {
+                        s = 37;
+                        operator o = new operator(String.valueOf(c), "Op_array", s);
+                        this.tokenList.offer(o);
+                    }
                     default -> flag = false;
                 }
                 this.jump_i = ++l;
