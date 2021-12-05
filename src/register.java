@@ -100,6 +100,17 @@ public class register {
             return " getelementptr i32, i32* %" +  this.useaddr +", i32 " + y + "\n";
         }
     }
+    public String getArray_certainaddr_2(String x, int y){
+        //二维数组
+        if(this.demension == 2){
+            return "";
+            //return " getelementptr i32, i32* %" +  this.useaddr +", i32 " + (x * y_d + y) + "\n";
+        }
+        else{
+
+            return " getelementptr i32, i32* %" +  this.useaddr +", i32 %" + y + "\n";
+        }
+    }
     public String memsetStep(){
         return "    call void @memset(i32* %" +  this.useaddr +", i32 0, i32 " + (x_d * y_d * 4) +")\n";
     }
