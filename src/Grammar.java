@@ -476,7 +476,15 @@ public class Grammar {
                     }
                     else{
                         this.reg_seq++;
-                        this.answer.append("    %" + this.reg_seq + " =" + this.reglist.get(id.getId() + forJudgeNum(id)).getArray_certainaddr(x, x));
+                        if(t_judge instanceof number){
+                            this.answer.append("    %" + this.reg_seq + " =" + this.reglist.get(id.getId() + forJudgeNum(id)).getArray_certainaddr(x, x));
+                        }
+                        if( t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
+                            this.answer.append("    %" + this.reg_seq + " =" + this.reglist.get(id.getId() + forJudgeNum(id)).getArray_certainaddr_2("", this.reglist.get(d.getId() + forJudgeNum(d)).getSeq()));
+                        }
+                        else{
+                            this.answer.append("    %" + this.reg_seq + " =" + this.reglist.get(id.getId() + forJudgeNum(id)).getArray_certainaddr_2("", this.reg_seq));
+                        }
                     }
                     ident idd = new ident(getArrayName(), "Ident", 9, 1, 1);
                     register reg = new register();
