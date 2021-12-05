@@ -292,7 +292,14 @@ public class Grammar {
                 else if(Objects.equals(temp_op.getOperator(), "=")){
                     this.reglist.get(temp_token.getId() + 0).setGlobalname("@" + temp_token.getId());
                     this.tokenList.poll();
-                    flag = giveArrayValue(temp_token, 0, 0, 0, this.reglist.get(temp_token.getId()+forJudgeNum(temp_token)).getDemension(), 0);
+                    token temp1 = this.tokenList.get(0);
+                    token temp2 = this.tokenList.get(1);
+                    if(temp1 instanceof operator op1 && temp2 instanceof operator op2 && Objects.equals(op1.getOperator(), "{") && Objects.equals(op2.getOperator(), "}")){
+                        this.answer.append("zeroinitializer");
+                        this.tokenList.poll();
+                        this.tokenList.poll();
+                    }
+                    else flag = giveArrayValue(temp_token, 0, 0, 0, this.reglist.get(temp_token.getId()+forJudgeNum(temp_token)).getDemension(), 0);
                     if(this.tokenList.peek() instanceof operator && flag){
                         this.answer.append("\n");
                         operator temp_op_2 = (operator) this.tokenList.peek();
