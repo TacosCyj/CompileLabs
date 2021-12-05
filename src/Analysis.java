@@ -21,6 +21,7 @@ public class Analysis {
             expression exp = expression.getInstance();
             grammar.setTokenList(tokenlist);
             grammar.setExper(exp);
+            grammar.setContent(lexer.getcon().toString());
             int detectforglobal = grammar.detect();
             if(detectforglobal == 0) System.exit(5);
             else if(detectforglobal == 1){
