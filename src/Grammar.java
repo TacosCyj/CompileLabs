@@ -649,7 +649,7 @@ public class Grammar {
         boolean flag = true;
         token check = null;
         this.expList2.clear();
-        while((this.tokenList.peek() instanceof operator || this.tokenList.peek() instanceof number || (this.tokenList.peek() instanceof ident id1 && this.reglist.get(id1.getId() + forJudgeNum(id1)).getIsConst() && this.reglist.get(id1.getId() + forJudgeNum(id1)).getHasValue()))){
+        while((this.tokenList.peek() instanceof operator || this.tokenList.peek() instanceof number || (this.tokenList.peek() instanceof ident id1 && this.reglist.get(id1.getId() + forJudgeNum(id1)).getHasValue()))){
             check = this.tokenList.peek();
             this.expList2.offer(this.tokenList.poll());
             if(check instanceof operator){
@@ -688,6 +688,7 @@ public class Grammar {
             flag = isArrayExp();
             if(!flag){
                 System.out.println(this.content);
+                System.out.println(this.answer);
                 System.exit(7);
             }
             //arr_len是isArrayExp计算出来的值
@@ -701,6 +702,7 @@ public class Grammar {
                 flag = isArrayExp();
                 if(!flag){
                     System.out.println(this.content);
+                    System.out.println(this.answer);
                     System.exit(7);
                 }
                 return arr_len;
