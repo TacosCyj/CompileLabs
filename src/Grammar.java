@@ -482,7 +482,10 @@ public class Grammar {
                         }
                         //本来是一个已经被定义过的变量，而不是计算时产生的变量
                         else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
-                            this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                            if(!this.reglist.get(d.getId()+forJudgeNum(d)).getIsGlobal())
+                                this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                            else
+                                this.answer.append("    %" + this.reg_seq + " = load i32, i32* " + this.reglist.get(d.getId() + forJudgeNum(d)).getGlobalname() + "\n");
                             this.answer.append("    %" + (++this.reg_seq) + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + (this.reg_seq - 1) + "\n");
                         }
                         else{
@@ -568,10 +571,10 @@ public class Grammar {
                     else
                         this.answer.append("    store i32 ").append(ans).append(", i32* %").append(reg.getPresent_use()).append("\n");
                 else
-                if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
-                    this.answer.append("    store i32 ").append(ans).append(", i32* ").append(this.reglist.get(obj.getId() + forJudgeNum(obj)).getGlobalname()).append("\n");
-                else
-                    this.answer.append("    store i32 ").append(ans).append(", i32* %").append(reg.getPresent_use()).append("\n");
+                    if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
+                        this.answer.append("    store i32 ").append(ans).append(", i32* ").append(this.reglist.get(obj.getId() + forJudgeNum(obj)).getGlobalname()).append("\n");
+                    else
+                        this.answer.append("    store i32 ").append(ans).append(", i32* %").append(reg.getPresent_use()).append("\n");
             }
             else if(t_judge instanceof ident id && this.reglist.containsKey((id).getId() + forJudgeNum(id))){
                 if(!this.reglist.get(id.getId() + forJudgeNum(id)).getIsGlobal()){
@@ -599,10 +602,10 @@ public class Grammar {
                         else
                             this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getPresent_use()).append("\n");
                     else
-                    if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
-                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
-                    else
-                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getPresent_use()).append("\n");
+                        if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
+                            this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
+                        else
+                            this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getPresent_use()).append("\n");
                 }
             }
             else{
@@ -613,7 +616,7 @@ public class Grammar {
                         this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getPresent_use()).append("\n");
                 else
                     if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
-                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(this.reglist.get((obj).getId() + forJudgeNum(obj)).getGlobalname()).append("\n");
+                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(this.reglist.get((obj).getId() + forJudgeNum(obj)).getGlobalname()).append("\n");
                     else
                         this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getPresent_use()).append("\n");
 
@@ -1053,7 +1056,10 @@ public class Grammar {
                     }
                     //本来是一个已经被定义过的变量，而不是计算时产生的变量
                     else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
-                        this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                        if(!this.reglist.get(d.getId()+forJudgeNum(d)).getIsGlobal())
+                            this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                        else
+                            this.answer.append("    %" + this.reg_seq + " = load i32, i32* " + this.reglist.get(d.getId() + forJudgeNum(d)).getGlobalname() + "\n");
                         this.answer.append("    %" + (++this.reg_seq) + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + (this.reg_seq - 1) + "\n");
                     }
                     else{
@@ -1170,7 +1176,10 @@ public class Grammar {
                     }
                     //本来是一个已经被定义过的变量，而不是计算时产生的变量
                     else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
-                        this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                        if(!this.reglist.get(d.getId()+forJudgeNum(d)).getIsGlobal())
+                            this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                        else
+                            this.answer.append("    %" + this.reg_seq + " = load i32, i32* " + this.reglist.get(d.getId() + forJudgeNum(d)).getGlobalname() + "\n");
                         this.answer.append("    %" + (++this.reg_seq) + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + (this.reg_seq - 1) + "\n");
                     }
                     else{
@@ -1453,7 +1462,10 @@ public class Grammar {
                                 }
                                 //本来是一个已经被定义过的变量，而不是计算时产生的变量
                                 else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
-                                    this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                                    if(!this.reglist.get(d.getId()+forJudgeNum(d)).getIsGlobal())
+                                        this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                                    else
+                                        this.answer.append("    %" + this.reg_seq + " = load i32, i32* " + this.reglist.get(d.getId() + forJudgeNum(d)).getGlobalname() + "\n");
                                     this.answer.append("    %" + (++this.reg_seq) + " = getelementptr i32, i32* %" + this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getUseaddr() +  ", i32 %" + (this.reg_seq - 1) + "\n");
                                 }
                                 else{
@@ -1560,7 +1572,10 @@ public class Grammar {
                                 }
                                 //本来是一个已经被定义过的变量，而不是计算时产生的变量
                                 else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
-                                    this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                                    if(!this.reglist.get(d.getId()+forJudgeNum(d)).getIsGlobal())
+                                        this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                                    else
+                                        this.answer.append("    %" + this.reg_seq + " = load i32, i32* " + this.reglist.get(d.getId() + forJudgeNum(d)).getGlobalname() + "\n");
                                     this.answer.append("    %" + (++this.reg_seq) + " = getelementptr i32, i32* %" + this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getUseaddr() +  ", i32 %" + (this.reg_seq - 1) + "\n");
                                 }
                                 else{
