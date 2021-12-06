@@ -577,10 +577,10 @@ public class Grammar {
                     else
                         this.answer.append("    store i32 ").append(ans).append(", i32* %").append(reg.getPresent_use()).append("\n");
                 else
-                if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
-                    this.answer.append("    store i32 ").append(ans).append(", i32* ").append(this.reglist.get(obj.getId() + forJudgeNum(obj)).getGlobalname()).append("\n");
-                else
-                    this.answer.append("    store i32 ").append(ans).append(", i32* %").append(reg.getPresent_use()).append("\n");
+                    if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
+                        this.answer.append("    store i32 ").append(ans).append(", i32* ").append(this.reglist.get(obj.getId() + forJudgeNum(obj)).getGlobalname()).append("\n");
+                    else
+                        this.answer.append("    store i32 ").append(ans).append(", i32* %").append(reg.getPresent_use()).append("\n");
             }
             else if(t_judge instanceof ident id && this.reglist.containsKey((id).getId() + forJudgeNum(id))){
                 if(!this.reglist.get(id.getId() + forJudgeNum(id)).getIsGlobal()){
@@ -601,17 +601,17 @@ public class Grammar {
                 else{
                     String s = this.reglist.get(id.getId() + forJudgeNum(id)).getGlobalname();
                     if(this.reglist.get(id.getId() + forJudgeNum(id)).getCreatedWhenOp() == 0)
-                        this.answer.append("    %" + (++this.reg_seq) + " = load i32, i32* %" + s + "\n");
+                        this.answer.append("    %" + (++this.reg_seq) + " = load i32, i32* " + s + "\n");
                     if(!reg.getIsGlobal())
                         if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
                             this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
                         else
                             this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getPresent_use()).append("\n");
                     else
-                    if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
-                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
-                    else
-                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getPresent_use()).append("\n");
+                        if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
+                            this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
+                        else
+                            this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getPresent_use()).append("\n");
                 }
             }
             else{
