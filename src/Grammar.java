@@ -497,7 +497,7 @@ public class Grammar {
                         String str_y = temp_n_y == -1 ? ("%" + temp_reg_y) : String.valueOf(temp_n_y);
                         this.answer.append("    %").append(++this.reg_seq).append(" = ").append(this.reglist.get(id.getId() + forJudgeNum(id)).getArray_DD());
                         this.answer.append("    %").append(++this.reg_seq).append(" = ").append(this.reglist.get(id.getId() + forJudgeNum(id)).getArray_ONE_in_DD(this.reg_seq - 1)).append("i32 " + str_x + ", i32 " +  str_y +"\n");
-                        this.reglist.get(id.getId() + forJudgeNum(id)).setPresent_use(this.reg_seq);
+                        //this.reglist.get(id.getId() + forJudgeNum(id)).setPresent_use(this.reg_seq);
                     }
                     else{
                         if(this.reglist.get(id.getId() + forJudgeNum(id)).getIsGlobal()){
@@ -519,7 +519,7 @@ public class Grammar {
                         else{
                             this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + old_seq + "\n");
                         }
-                        this.reglist.get(id.getId() + forJudgeNum(id)).setPresent_use(this.reg_seq);
+                        //this.reglist.get(id.getId() + forJudgeNum(id)).setPresent_use(this.reg_seq);
                     }
                     ident idd = new ident(getArrayName(), "Ident", 9, 1, 1);
                     register reg = new register();
@@ -1543,7 +1543,6 @@ public class Grammar {
                                 System.exit(8);
                             }
                             x = getdemension(Array, 1);
-                            //使用全局数据的准备工作
                             //如果是二维
                             if(Array == 2){
                                 int temp_n_x = -1, temp_reg_x = -1;
