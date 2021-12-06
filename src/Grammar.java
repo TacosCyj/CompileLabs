@@ -692,6 +692,9 @@ public class Grammar {
         //this.expList2.clear();
         while((this.tokenList.peek() instanceof operator || this.tokenList.peek() instanceof number || (this.tokenList.peek() instanceof ident id1 && this.reglist.get(id1.getId() + forJudgeNum(id1)).getHasValue()))){
             check = this.tokenList.peek();
+            //对全局数组赋值时的长度表达式进行检查
+            if(check instanceof ident id && listnum == 0 && !this.reglist.get(id.getId() + listnum).getIsConst())
+                break;
             if(check instanceof ident id && this.reglist.get(id.getId() + forJudgeNum(id)).getIsArray()){
                 this.tokenList.poll();
                 int x, y;
