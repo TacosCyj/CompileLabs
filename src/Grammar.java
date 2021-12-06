@@ -1442,7 +1442,10 @@ public class Grammar {
                             this.tokenList.poll();
                             //处理角标
                             int Array = isArray();
-                            if(Array != this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getDemension()) System.exit(8);
+                            if(Array != this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getDemension()) {
+                                System.out.println(this.content);
+                                System.exit(8);
+                            }
                             x = getdemension(Array, 1);
                             //使用全局数据的准备工作
                             if(this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getIsGlobal()){
@@ -1554,7 +1557,10 @@ public class Grammar {
                             this.tokenList.poll();
                             //处理角标
                             int Array = isArray();
-                            if(Array != this.reglist.get(temp_ident.getId() + loc_list).getDemension()) System.exit(8);
+                            if(Array != this.reglist.get(temp_ident.getId() + loc_list).getDemension()) {
+                                System.out.println(this.content);
+                                System.exit(8);
+                            }
                             x = getdemension(Array, 1);
                             if(this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getIsGlobal()){
                                 dealWithGlobalArray(temp_ident);
