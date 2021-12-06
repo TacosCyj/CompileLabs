@@ -113,6 +113,6 @@ public class register {
         }
     }
     public String memsetStep(){
-        return "    call void @memset(i32* %" +  this.useaddr +", i32 0, i32 " + (x_d * y_d * 4) +")\n";
+        return "    call void @memset(i32* %" +  this.useaddr +", i32 0, i32 " + (x_d * (y_d == 0 ? 1 : y_d) * 4) +")\n";
     }
 }
