@@ -1633,30 +1633,28 @@ public class Grammar {
                 if(flag && this.tokenList.peek() instanceof operator){
                     operator temp_opp = (operator) this.tokenList.peek();
                     if(Objects.equals(temp_opp.getOperator(), ";")){
-                        if(this.reg_seq == old_value){
-                            if(t_judge instanceof number){
-                                if(Objects.equals(func_name, "putint")){
-                                    this.answer.append("    call void @putint(i32 " + ans + ")\n");
-                                }
-                                else{
-                                    this.answer.append("    call void @putch(i32 " + ans + ")\n");
-                                }
+                        if(t_judge instanceof number){
+                            if(Objects.equals(func_name, "putint")){
+                                this.answer.append("    call void @putint(i32 " + ans + ")\n");
                             }
-                            else if(t_judge instanceof ident){
-                                if(!this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getIsGlobal()){
-                                    int s = this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getSeq();
-                                    this.answer.append("    %" + (++this.reg_seq) + " = " + "load i32, i32* %" + s + "\n");
-                                }
-                                else{
-                                    String s = this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getGlobalname();
-                                    this.answer.append("    %" + (++this.reg_seq) + " = " + "load i32, i32* " + s + "\n");
-                                }
-                                if(Objects.equals(func_name, "putint")){
-                                    this.answer.append("    call void @putint(i32 %" + this.reg_seq + ")\n");
-                                }
-                                else{
-                                    this.answer.append("    call void @putch(i32 %" + this.reg_seq + ")\n");
-                                }
+                            else{
+                                this.answer.append("    call void @putch(i32 " + ans + ")\n");
+                            }
+                        }
+                        else if(t_judge instanceof ident id && this.reglist.containsKey(id.getId() + forJudgeNum(id))){
+                            if(!this.reglist.get(id.getId() + forJudgeNum(id)).getIsGlobal()){
+                                int s = this.reglist.get(id.getId() + forJudgeNum(id)).getSeq();
+                                this.answer.append("    %" + (++this.reg_seq) + " = " + "load i32, i32* %" + s + "\n");
+                            }
+                            else{
+                                String s = this.reglist.get(id.getId() + forJudgeNum(id)).getGlobalname();
+                                this.answer.append("    %" + (++this.reg_seq) + " = " + "load i32, i32* " + s + "\n");
+                            }
+                            if(Objects.equals(func_name, "putint")){
+                                this.answer.append("    call void @putint(i32 %" + this.reg_seq + ")\n");
+                            }
+                            else{
+                                this.answer.append("    call void @putch(i32 %" + this.reg_seq + ")\n");
                             }
                         }
                         else{
