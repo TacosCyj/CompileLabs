@@ -475,15 +475,18 @@ public class Grammar {
                         this.answer.append("    %" + this.reg_seq + " =" + this.reglist.get(id.getId() + forJudgeNum(id)).getArray_certainaddr(x, y));
                     }
                     else{
+                        int old_seq = this.reg_seq;
                         this.reg_seq++;
-                        if(t_judge instanceof number){
-                            this.answer.append("    %" + this.reg_seq + " =" + this.reglist.get(id.getId() + forJudgeNum(id)).getArray_certainaddr(x, x));
+                        if(t_judge instanceof number n){
+                            this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 " + n.getValue() + "\n");
                         }
-                        if( t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
-                            this.answer.append("    %" + this.reg_seq + " =" + this.reglist.get(id.getId() + forJudgeNum(id)).getArray_certainaddr_2("", this.reglist.get(d.getId() + forJudgeNum(d)).getSeq()));
+                        //本来是一个已经被定义过的变量，而不是计算时产生的变量
+                        else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
+                            this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                            this.answer.append("    %" + (++this.reg_seq) + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + (this.reg_seq - 1) + "\n");
                         }
                         else{
-                            this.answer.append("    %" + this.reg_seq + " =" + this.reglist.get(id.getId() + forJudgeNum(id)).getArray_certainaddr_2("", this.reg_seq));
+                            this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + old_seq + "\n");
                         }
                     }
                     ident idd = new ident(getArrayName(), "Ident", 9, 1, 1);
@@ -670,7 +673,7 @@ public class Grammar {
             }
         }
         if(check instanceof operator && (Objects.equals(((operator) check).getOperator(), "]"))){
-            String temp_ans = this.answer.toString();
+            //String temp_ans = this.answer.toString();
             exper.getExp(expList2);
             exper.setFinal_layer(this.listnum);
             exper.getMap(null, reglist, reg_seq, answer);
@@ -679,8 +682,8 @@ public class Grammar {
                 this.arr_len = exper.passAns();
                 this.reg_seq = exper.passRegSeq();
                 this.t_judge = exper.forJudge();
-                this.answer.delete(0, this.answer.length());
-                this.answer.insert(0, temp_ans);
+                //this.answer.delete(0, this.answer.length());
+                //this.answer.insert(0, temp_ans);
                 exper.clearExp();
             }
         }
@@ -1421,8 +1424,19 @@ public class Grammar {
                                 this.answer.append("    %" + this.reg_seq + " =" + this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getArray_certainaddr(x, y));
                             }
                             else{
+                                int old_seq = this.reg_seq;
                                 this.reg_seq++;
-                                this.answer.append("    %" + this.reg_seq + " =" + this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getArray_certainaddr(x, x));
+                                if(t_judge instanceof number n){
+                                    this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getUseaddr() +  ", i32 " + n.getValue() + "\n");
+                                }
+                                //本来是一个已经被定义过的变量，而不是计算时产生的变量
+                                else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
+                                    this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                                    this.answer.append("    %" + (++this.reg_seq) + " = getelementptr i32, i32* %" + this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getUseaddr() +  ", i32 %" + (this.reg_seq - 1) + "\n");
+                                }
+                                else{
+                                    this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getUseaddr() +  ", i32 %" + old_seq + "\n");
+                                }
                             }
                             if(this.tokenList.peek() instanceof operator op){
                                 if(Objects.equals(((operator) this.tokenList.peek()).getOperator(), "=")){
@@ -1516,8 +1530,19 @@ public class Grammar {
                                 this.answer.append("    %" + this.reg_seq + " =" + this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getArray_certainaddr(x, y));
                             }
                             else{
+                                int old_seq = this.reg_seq;
                                 this.reg_seq++;
-                                this.answer.append("    %" + this.reg_seq + " =" + this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getArray_certainaddr(x, x));
+                                if(t_judge instanceof number n){
+                                    this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getUseaddr() +  ", i32 " + n.getValue() + "\n");
+                                }
+                                //本来是一个已经被定义过的变量，而不是计算时产生的变量
+                                else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
+                                    this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                                    this.answer.append("    %" + (++this.reg_seq) + " = getelementptr i32, i32* %" + this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getUseaddr() +  ", i32 %" + (this.reg_seq - 1) + "\n");
+                                }
+                                else{
+                                    this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getUseaddr() +  ", i32 %" + old_seq + "\n");
+                                }
                             }
                             if(this.tokenList.peek() instanceof operator op){
                                 if(Objects.equals(((operator) this.tokenList.peek()).getOperator(), "=")){
