@@ -168,7 +168,7 @@ public class Lexer {
         int symbol = 0, j = i;
         // a function call
         this.jump_i = i;
-        if(this.content.charAt(j) == '(' || this.content.charAt(j + 1) == '('){
+        if(this.content.charAt(j) == '(' || (this.content.charAt(j + 1) == '(' && this.content.charAt(j) == ' ')){
             int k;
             if(this.content.charAt(j) == '(') k = j;
             else k = j + 1;
@@ -600,7 +600,10 @@ public class Lexer {
             //deal with operators
             else{
                flag = getOperator(this.content.charAt(i), i);
-               if(!flag) return false;
+               if(!flag) {
+                   //System.out.println("Ishere");
+                   return false;
+               }
                else i = jump_i;
             }
         }
