@@ -69,6 +69,7 @@ public class Analysis {
             }
         }
         else{
+            System.out.println(lexer.getcon().toString());
             System.exit(2);
         }
     }
