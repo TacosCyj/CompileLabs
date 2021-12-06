@@ -566,12 +566,12 @@ public class Grammar {
                     if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
                         this.answer.append("    store i32 ").append(ans).append(", i32* %").append(reg.getSeq()).append("\n");
                     else
-                        this.answer.append("    store i32 ").append(ans).append(", i32* %").append(old_value).append("\n");
+                        this.answer.append("    store i32 ").append(ans).append(", i32* %").append(reg.getPresent_use()).append("\n");
                 else
                 if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
                     this.answer.append("    store i32 ").append(ans).append(", i32* ").append(this.reglist.get(obj.getId() + forJudgeNum(obj)).getGlobalname()).append("\n");
                 else
-                    this.answer.append("    store i32 ").append(ans).append(", i32* %").append(old_value).append("\n");
+                    this.answer.append("    store i32 ").append(ans).append(", i32* %").append(reg.getPresent_use()).append("\n");
             }
             else if(t_judge instanceof ident id && this.reglist.containsKey((id).getId() + forJudgeNum(id))){
                 if(!this.reglist.get(id.getId() + forJudgeNum(id)).getIsGlobal()){
@@ -582,12 +582,12 @@ public class Grammar {
                         if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
                             this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
                         else
-                            this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(old_value).append("\n");
+                            this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getPresent_use()).append("\n");
                     else
-                    if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
-                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
-                    else
-                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(old_value).append("\n");
+                        if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
+                            this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
+                        else
+                            this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getPresent_use()).append("\n");
                 }
                 else{
                     String s = this.reglist.get(id.getId() + forJudgeNum(id)).getGlobalname();
@@ -597,12 +597,12 @@ public class Grammar {
                         if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
                             this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
                         else
-                            this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(old_value).append("\n");
+                            this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getPresent_use()).append("\n");
                     else
                     if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
                         this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
                     else
-                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(old_value).append("\n");
+                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getPresent_use()).append("\n");
                 }
             }
             else{
@@ -610,12 +610,12 @@ public class Grammar {
                     if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
                         this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
                     else
-                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(old_value).append("\n");
+                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getPresent_use()).append("\n");
                 else
                     if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
                         this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(this.reglist.get((obj).getId() + forJudgeNum(obj)).getGlobalname()).append("\n");
                     else
-                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(old_value).append("\n");
+                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getPresent_use()).append("\n");
 
             }
         }
@@ -671,7 +671,7 @@ public class Grammar {
             }
         }
         if(check instanceof operator && (Objects.equals(((operator) check).getOperator(), "]"))){
-            //String temp_ans = this.answer.toString();
+            String temp_ans = this.answer.toString();
             exper.getExp(expList2);
             exper.setFinal_layer(this.listnum);
             exper.getMap(null, reglist, reg_seq, answer);
@@ -680,8 +680,10 @@ public class Grammar {
                 this.arr_len = exper.passAns();
                 this.reg_seq = exper.passRegSeq();
                 this.t_judge = exper.forJudge();
-                //this.answer.delete(0, this.answer.length());
-                //this.answer.insert(0, temp_ans);
+                if(this.listnum == 0){
+                    this.answer.delete(0, this.answer.length());
+                    this.answer.insert(0, temp_ans);
+                }
                 exper.clearExp();
             }
         }
@@ -989,7 +991,7 @@ public class Grammar {
                     }
                     else if(Objects.equals(temp_op.getOperator(), "=")){
                         this.tokenList.poll();
-                        //dealWithFuncInExp(this.listnum);
+                        dealWithFuncInExp(this.listnum);
                         //token f = this.tokenList.peek();
                         flag = giveArrayValue(temp_token, this.listnum, 0, 0, this.reglist.get(temp_token.getId()+forJudgeNum(temp_token)).getDemension(), 0);
                         if(this.tokenList.peek() instanceof operator && flag){
@@ -1044,8 +1046,19 @@ public class Grammar {
                     this.answer.append("    %" + this.reg_seq + " =" + this.reglist.get(id.getId() + forJudgeNum(id)).getArray_certainaddr(x, y));
                 }
                 else{
+                    int old_seq = this.reg_seq;
                     this.reg_seq++;
-                    this.answer.append("    %" + this.reg_seq + " =" + this.reglist.get(id.getId() + forJudgeNum(id)).getArray_certainaddr(x, x));
+                    if(t_judge instanceof number n){
+                        this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 " + n.getValue() + "\n");
+                    }
+                    //本来是一个已经被定义过的变量，而不是计算时产生的变量
+                    else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
+                        this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                        this.answer.append("    %" + (++this.reg_seq) + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + (this.reg_seq - 1) + "\n");
+                    }
+                    else{
+                        this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + old_seq + "\n");
+                    }
                 }
                 ident idd = new ident(getArrayName(), "Ident", 9, 1, 1);
                 register reg = new register();
@@ -1150,8 +1163,19 @@ public class Grammar {
                     this.answer.append("    %" + this.reg_seq + " =" + this.reglist.get(id.getId() + forJudgeNum(id)).getArray_certainaddr(x, y));
                 }
                 else{
+                    int old_seq = this.reg_seq;
                     this.reg_seq++;
-                    this.answer.append("    %" + this.reg_seq + " =" + this.reglist.get(id.getId() + forJudgeNum(id)).getArray_certainaddr(x, x));
+                    if(t_judge instanceof number n){
+                        this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 " + n.getValue() + "\n");
+                    }
+                    //本来是一个已经被定义过的变量，而不是计算时产生的变量
+                    else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
+                        this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                        this.answer.append("    %" + (++this.reg_seq) + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + (this.reg_seq - 1) + "\n");
+                    }
+                    else{
+                        this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + old_seq + "\n");
+                    }
                 }
                 ident idd = new ident(getArrayName(), "Ident", 9, 1, 1);
                 register reg = new register();
@@ -1435,6 +1459,7 @@ public class Grammar {
                                 else{
                                     this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getUseaddr() +  ", i32 %" + old_seq + "\n");
                                 }
+                                this.reglist.get(temp_ident.getId() + this.listnum).setPresent_use(this.reg_seq);
                             }
                             if(this.tokenList.peek() instanceof operator op){
                                 if(Objects.equals(((operator) this.tokenList.peek()).getOperator(), "=")){
@@ -1514,7 +1539,7 @@ public class Grammar {
                         else{
                             int x, y;
                             //先获取变量
-                            token back = this.tokenList.poll();
+                            this.tokenList.poll();
                             //处理角标
                             int Array = isArray();
                             if(Array != this.reglist.get(temp_ident.getId() + loc_list).getDemension()) System.exit(8);
@@ -1541,6 +1566,7 @@ public class Grammar {
                                 else{
                                     this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getUseaddr() +  ", i32 %" + old_seq + "\n");
                                 }
+                                this.reglist.get(temp_ident.getId() + loc_list).setPresent_use(this.reg_seq);
                             }
                             if(this.tokenList.peek() instanceof operator op){
                                 if(Objects.equals(((operator) this.tokenList.peek()).getOperator(), "=")){
