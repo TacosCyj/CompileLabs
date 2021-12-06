@@ -13,6 +13,7 @@ public class Analysis {
         Lexer lexer = Lexer.getLexerInstance();
         lexer.setFile(input_file);
         lexer.getContent();
+        System.out.println(lexer.getcon().toString());
         if(lexer.lexerAnalysis()){
             tokenlist = lexer.getTokenList();
             operator o = new operator("#", "Op", 28);
@@ -69,13 +70,7 @@ public class Analysis {
             }
         }
         else{
-            System.out.println(lexer.getcon().toString());
-            for(int i = 0; i < lexer.getTokenList().size(); i++){
-                if(lexer.getTokenList().get(i) instanceof number n) System.out.print(n.getValue());
-                else if(lexer.getTokenList().get(i) instanceof operator o) System.out.print(o.getOperator());
-                else if(lexer.getTokenList().get(i) instanceof ident id) System.out.print(id.getId());
-                else if(lexer.getTokenList().get(i) instanceof function func) System.out.print(func.getFuncName());
-            }
+            System.out.println("Syntax Error");
             System.exit(2);
         }
     }
