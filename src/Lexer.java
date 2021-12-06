@@ -184,7 +184,7 @@ public class Lexer {
             }
             else if(Objects.equals(ident, "putint") && checkFuncRParamsNum(k, 1)){
                 symbol = 17;
-                function func = new function("putint", "void", "Function", symbol);
+                function func = new function("putint", "void","Function", symbol);
                 this.tokenList.offer(func);
             }
             else if(Objects.equals(ident, "putch") && checkFuncRParamsNum(k, 1)){
@@ -192,7 +192,7 @@ public class Lexer {
                 function func = new function("putch", "void", "Function", symbol);
                 this.tokenList.offer(func);
             }
-            else if(Objects.equals(ident, "main") && checkFuncRParamsNum(k, 0)){
+            else if(Objects.equals(ident, "main")){
                 symbol = 11;
                 function func = new function("main", "int", "Function", symbol);
                 this.tokenList.offer(func);

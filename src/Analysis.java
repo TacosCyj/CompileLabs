@@ -8,8 +8,8 @@ public class Analysis {
         StringBuilder input_file = new StringBuilder();
         StringBuilder output_file = new StringBuilder();
         LinkedList<token> tokenlist;
-        input_file.append(args[0]);
-        output_file.append(args[1]);
+        input_file.append("E:\\编译原理\\lab7\\testfile\\a.txt");
+        output_file.append("E:\\编译原理\\lab7\\testfile\\b.txt");
         Lexer lexer = Lexer.getLexerInstance();
         lexer.setFile(input_file);
         lexer.getContent();
@@ -70,6 +70,12 @@ public class Analysis {
         }
         else{
             System.out.println(lexer.getcon().toString());
+            for(int i = 0; i < lexer.getTokenList().size(); i++){
+                if(lexer.getTokenList().get(i) instanceof number n) System.out.print(n.getValue());
+                else if(lexer.getTokenList().get(i) instanceof operator o) System.out.print(o.getOperator());
+                else if(lexer.getTokenList().get(i) instanceof ident id) System.out.print(id.getId());
+                else if(lexer.getTokenList().get(i) instanceof function func) System.out.print(func.getFuncName());
+            }
             System.exit(2);
         }
     }
