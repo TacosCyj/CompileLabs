@@ -54,8 +54,9 @@ public class Lexer {
         if(n == num) return true;
         else return false;
     }
+    //part12-03
     public boolean checkforLbrace(int i){
-        int s = i, numoflbrace = 0;
+        int s = i, numoflbrace = 0, numoflbrace_part12_03 = 0;
         while(this.content.charAt(s) != '\n' && this.content.charAt(s) != '\r'){
             if(this.content.charAt(s) == '{'){
                 numoflbrace++;
@@ -63,7 +64,12 @@ public class Lexer {
             }
             else s++;
         }
-        return numoflbrace > 0;
+        while(this.content.charAt(s) != ')') s++;
+        s++;
+        while(this.content.charAt(s) == ' ' || this.content.charAt(s) == '\t' || this.content.charAt(s) == '\n'|| this.content.charAt(s) == '\r') s++;
+        if(this.content.charAt(s) == '{') numoflbrace_part12_03++;
+        //System.out.println(numoflbrace_part12_03 > 0);
+        return numoflbrace > 0 || numoflbrace_part12_03 > 0;
     }
     public int getnumofTab(int i){
         int s = i - 1;
@@ -164,11 +170,18 @@ public class Lexer {
         this.content.insert(s, '{');
         addRbrace(s, numoftabs, while_sign);
     }
+    //part12-03
+    public boolean findLbrace(int i){
+        int s = i;
+        while(this.content.charAt(s) == ' ' || this.content.charAt(s) == '\t' || this.content.charAt(s) == '\n' || this.content.charAt(s) == '\r')s++;
+        if(this.content.charAt(s) == '(') return true;
+        else return false;
+    }
     public boolean getIdent(String ident, int i){
         int symbol = 0, j = i;
         // a function call
         this.jump_i = i;
-        if(this.content.charAt(j) == '(' || (this.content.charAt(j + 1) == '(' && this.content.charAt(j) == ' ')){
+        if(this.content.charAt(j) == '(' || (this.content.charAt(j + 1) == '(' && this.content.charAt(j) == ' ') || findLbrace(i)){
             int k;
             if(this.content.charAt(j) == '(') k = j;
             else k = j + 1;
