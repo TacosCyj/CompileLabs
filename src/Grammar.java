@@ -561,50 +561,48 @@ public class Grammar {
             reg.setValueOfReg(ans);
             reg.setHasValue();
             this.reglist.get(name).setHasValue();
-            if(this.reg_seq == old_value){
-                if(t_judge instanceof number){
-                    if(!this.reglist.get((obj).getId() + forJudgeNum(obj)).getIsGlobal())
-                        if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
-                            this.answer.append("    store i32 ").append(ans).append(", i32* %").append(reg.getSeq()).append("\n");
-                        else
-                            this.answer.append("    store i32 ").append(ans).append(", i32* %").append(old_value).append("\n");
+            if(t_judge instanceof number){
+                if(!this.reglist.get((obj).getId() + forJudgeNum(obj)).getIsGlobal())
+                    if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
+                        this.answer.append("    store i32 ").append(ans).append(", i32* %").append(reg.getSeq()).append("\n");
                     else
+                        this.answer.append("    store i32 ").append(ans).append(", i32* %").append(old_value).append("\n");
+                else
+                if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
+                    this.answer.append("    store i32 ").append(ans).append(", i32* ").append(this.reglist.get(obj.getId() + forJudgeNum(obj)).getGlobalname()).append("\n");
+                else
+                    this.answer.append("    store i32 ").append(ans).append(", i32* %").append(old_value).append("\n");
+            }
+            else if(t_judge instanceof ident id && this.reglist.containsKey((id).getId() + forJudgeNum(id))){
+                if(!this.reglist.get(id.getId() + forJudgeNum(id)).getIsGlobal()){
+                    int s = this.reglist.get(id.getId() + forJudgeNum(id)).getSeq();
+                    if(this.reglist.get(id.getId() + forJudgeNum(id)).getCreatedWhenOp() == 0)
+                        this.answer.append("    %" + (++this.reg_seq) + " = load i32, i32* %" + s + "\n");
+                    if(!reg.getIsGlobal())
                         if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
-                            this.answer.append("    store i32 ").append(ans).append(", i32* ").append(this.reglist.get(obj.getId() + forJudgeNum(obj)).getGlobalname()).append("\n");
+                            this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
                         else
-                            this.answer.append("    store i32 ").append(ans).append(", i32* %").append(old_value).append("\n");
+                            this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(old_value).append("\n");
+                    else
+                    if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
+                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
+                    else
+                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(old_value).append("\n");
                 }
-                else if(t_judge instanceof ident){
-                    if(!this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getIsGlobal()){
-                        int s = this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getSeq();
-                        if(this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getCreatedWhenOp() == 0)
-                            this.answer.append("    %" + (++this.reg_seq) + " = load i32, i32* %" + s + "\n");
-                        if(!reg.getIsGlobal())
-                            if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
-                                this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
-                            else
-                                this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(old_value).append("\n");
+                else{
+                    String s = this.reglist.get(id.getId() + forJudgeNum(id)).getGlobalname();
+                    if(this.reglist.get(id.getId() + forJudgeNum(id)).getCreatedWhenOp() == 0)
+                        this.answer.append("    %" + (++this.reg_seq) + " = load i32, i32* %" + s + "\n");
+                    if(!reg.getIsGlobal())
+                        if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
+                            this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
                         else
-                            if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
-                                this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
-                            else
-                                this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(old_value).append("\n");
-                    }
-                    else{
-                        String s = this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getGlobalname();
-                        if(this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getCreatedWhenOp() == 0)
-                            this.answer.append("    %" + (++this.reg_seq) + " = load i32, i32* %" + s + "\n");
-                        if(!reg.getIsGlobal())
-                            if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
-                                this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(reg.getSeq()).append("\n");
-                            else
-                                this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(old_value).append("\n");
-                        else
-                            if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
-                                this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
-                            else
-                                this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(old_value).append("\n");
-                    }
+                            this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* %").append(old_value).append("\n");
+                    else
+                    if(!this.reglist.get(obj.getId()+forJudgeNum(obj)).getIsArray())
+                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(reg.getGlobalname()).append("\n");
+                    else
+                        this.answer.append("    store i32 ").append("%" + this.reg_seq).append(", i32* ").append(old_value).append("\n");
                 }
             }
             else{
