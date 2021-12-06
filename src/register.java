@@ -18,6 +18,9 @@ public class register {
     private int useaddr = 0;
     private int demension = 0;
 
+    //储存数组元素赋值时，在计算表达式前，确定的目标元素的角标
+    private int present_use = 0;
+
     public void setSeq(int s){this.seq = s;}
     public void setHasValue(){this.hasValue = true;}
     public Boolean getHasValue(){return this.hasValue;}
@@ -45,6 +48,8 @@ public class register {
     public int getDemension(){return this.demension;}
     public int getUseaddr(){return this.useaddr;}
     public void setUseaddr(int ua){this.useaddr = ua;}
+    public void setPresent_use(int pu){this.present_use = pu;}
+    public int getPresent_use(){return this.present_use;}
     //初始化一个数组
     public String initArray(){
         if(this.demension == 1){
@@ -98,17 +103,6 @@ public class register {
         else{
             if(y < 0 || y >= x_d) System.exit(9);
             return " getelementptr i32, i32* %" +  this.useaddr +", i32 " + y + "\n";
-        }
-    }
-    public String getArray_certainaddr_2(String x, int y){
-        //二维数组
-        if(this.demension == 2){
-            return "";
-            //return " getelementptr i32, i32* %" +  this.useaddr +", i32 " + (x * y_d + y) + "\n";
-        }
-        else{
-
-            return " getelementptr i32, i32* %" +  this.useaddr +", i32 %" + y + "\n";
         }
     }
     public String memsetStep(){
