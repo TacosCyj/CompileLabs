@@ -1870,10 +1870,17 @@ public class expression {
                             }
                         }
                         else if(j == 0){
-                            if(numstack.size() == 1 && numstack.peek() instanceof number n && is_cond){
-                                int a = n.getValue();
-                                this.ans.append("    %").append(++this.reg_seq).append(" = icmp ne i32 ").append(a).append(", 0\n");
-                                opstack.pop();
+                            if(numstack.size() == 1 && is_cond){
+                                if(numstack.peek() instanceof number n){
+                                    int a = n.getValue();
+                                    this.ans.append("    %").append(++this.reg_seq).append(" = icmp ne i32 ").append(a).append(", 0\n");
+                                    opstack.pop();
+                                }
+                                else if(numstack.peek() instanceof ident id){
+                                    this.ans.append("    %").append(++this.reg_seq).append(" = load i32, i32* %").append(this.reglist.get(id.getId() + getRegTail(id)).getSeq()).append("\n");
+                                    this.ans.append("    %").append(++this.reg_seq).append(" = icmp ne i32 %").append(this.reg_seq - 1).append(", 0\n");
+                                    opstack.pop();
+                                }
                             }
                             else opstack.pop();
                         }
