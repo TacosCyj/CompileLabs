@@ -64,10 +64,12 @@ public class Lexer {
             }
             else s++;
         }
-        while(this.content.charAt(s) != ')') s++;
-        s++;
-        while(this.content.charAt(s) == ' ' || this.content.charAt(s) == '\t' || this.content.charAt(s) == '\n'|| this.content.charAt(s) == '\r') s++;
-        if(this.content.charAt(s) == '{') numoflbrace_part12_03++;
+       if(numoflbrace == 0){
+           while(this.content.charAt(s) != ')') s++;
+           s++;
+           while(this.content.charAt(s) == ' ' || this.content.charAt(s) == '\t' || this.content.charAt(s) == '\n'|| this.content.charAt(s) == '\r') s++;
+           if(this.content.charAt(s) == '{') numoflbrace_part12_03++;
+       }
         //System.out.println(numoflbrace_part12_03 > 0);
         return numoflbrace > 0 || numoflbrace_part12_03 > 0;
     }
