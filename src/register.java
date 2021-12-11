@@ -83,6 +83,13 @@ public class register {
         }
         else return "";
     }
+    public String getArray_DD(){
+        return "getelementptr [" + x_d + " x [" + y_d + " x i32]], [" + x_d + " x [" + y_d + " x i32]]* " + (isGlobal ? globalname : "%" + seq) +", i32 0, i32 0\n";
+    }
+    public String getArray_ONE_in_DD(int p){
+        return "getelementptr [" + y_d + " x i32], [" + y_d +" x i32]* %" + p + ", ";
+    }
+
     public String getArray_useaddr(int p){
         if(this.demension == 1){
             this.useaddr = this.firstaddr;
@@ -106,6 +113,6 @@ public class register {
         }
     }
     public String memsetStep(){
-        return "    call void @memset(i32* %" +  this.useaddr +", i32 0, i32 " + (x_d * y_d * 4) +")\n";
+        return "    call void @memset(i32* %" +  this.useaddr +", i32 0, i32 " + (x_d * (y_d == 0 ? 1 : y_d) * 4) +")\n";
     }
 }
