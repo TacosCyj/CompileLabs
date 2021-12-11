@@ -1,0 +1,27 @@
+declare void @memset(i32*, i32, i32)
+define dso_local i32 @func1( i32* %0, i32 %1){
+    %2 = alloca i32
+    store i32* %0, i32* * %2
+    %3 = load i32* , i32* * %2
+    %4 = alloca i32
+    store i32 %1, i32* %4
+    %6 = alloca i32
+    %7 = getelementptr i32, i32* %3, i32 1
+    %8 = load i32, i32* %4
+    %9 = load i32, i32* %7
+    %10 = add i32 %9, %8
+    store i32 %10, i32* %6
+    %11 = getelementptr i32, i32* %3, i32 3
+    store i32 10, i32* %11
+    %12 = load i32, i32* %6
+    ret i32 %12
+}
+define dso_local i32 @main(){
+    %1 = alloca [10 x i32]
+    %2 = getelementptr [10 x i32], [10 x i32]* %1, i32 0, i32 0
+    call void @memset(i32* %2, i32 0, i32 40)
+    %3 = getelementptr i32, i32* %2, i32 2
+    store i32 7, i32* %3
+    %4 = getelementptr i32, i32* %2, i32 2
+    ret i32 %4
+}
