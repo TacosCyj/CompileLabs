@@ -70,8 +70,7 @@ public class Lexer {
            while(this.content.charAt(s) == ' ' || this.content.charAt(s) == '\t' || this.content.charAt(s) == '\n'|| this.content.charAt(s) == '\r') s++;
            if(this.content.charAt(s) == '{') numoflbrace_part12_03++;
        }
-        //System.out.println(numoflbrace_part12_03 > 0);
-        return numoflbrace > 0 || numoflbrace_part12_03 > 0;
+       return numoflbrace > 0 || numoflbrace_part12_03 > 0;
     }
     public int getnumofTab(int i){
         int s = i - 1;
@@ -179,38 +178,90 @@ public class Lexer {
         if(this.content.charAt(s) == '(') return true;
         else return false;
     }
+    //part13 检查函数定义时没有参数的情况
+    public boolean isEmptyParams(int i){
+        int others = 0, j;
+        for(j = i; j < this.content.length(); j++){
+            if(this.content.charAt(j) == '{')
+                break;
+            else if(this.content.charAt(j) != '(' && this.content.charAt(j) != ')'
+            && this.content.charAt(j) != ' ' && this.content.charAt(j) != '\t')
+                others++;
+        }
+        return others == 0;
+    }
+    //part13 获取参数个数
+    //传入参数是函数参数定义部分的(索引值，有逗号作为分隔符
+    public int numofParams(int i){
+        int j = 0;
+        for(j = i; j < this.content.length(); j++){
+            if(this.content.charAt(j) == '{')
+                break;
+        }
+        String temp = this.content.toString().substring(i, j);
+        String [] sp = temp.split(",");
+        return isEmptyParams(i) ? 0 : sp.length;
+    }
+    //part13 检查使用函数的语句出现时，该函数是否已经被定义
+    public function getFuncDecl(String funcname){
+        for(token t : tokenList){
+            if(t instanceof function f && Objects.equals(f.getFuncName(), funcname))
+                return f;
+        }
+        return null;
+    }
     public boolean getIdent(String ident, int i){
         int symbol = 0, j = i;
         // a function call
         this.jump_i = i;
+        //part13 加入对函数ident的识别
         if(this.content.charAt(j) == '(' || (this.content.charAt(j + 1) == '(' && this.content.charAt(j) == ' ') || findLbrace(i)){
             int k;
+            boolean f = false;
             if(this.content.charAt(j) == '(') k = j;
             else k = j + 1;
             if(Objects.equals(ident, "getint") && checkFuncRParamsNum(k, 0)){
                 symbol = 15;
                 function func = new function("getint", "int", "Function", symbol);
                 this.tokenList.offer(func);
+                f = true;
             }
             else if(Objects.equals(ident, "getch") && checkFuncRParamsNum(k, 0)){
                 symbol = 16;
                 function func = new function("getch", "int", "Function", symbol);
                 this.tokenList.offer(func);
+                f = true;
             }
             else if(Objects.equals(ident, "putint") && checkFuncRParamsNum(k, 1)){
                 symbol = 17;
                 function func = new function("putint", "void","Function", symbol);
                 this.tokenList.offer(func);
+                f = true;
             }
             else if(Objects.equals(ident, "putch") && checkFuncRParamsNum(k, 1)){
                 symbol = 18;
                 function func = new function("putch", "void", "Function", symbol);
                 this.tokenList.offer(func);
+                f = true;
+            }
+            //part13 对getarray和putarray的支持
+            else if(Objects.equals(ident, "getarray") && checkFuncRParamsNum(k, 1)){
+                symbol = 11;
+                function func = new function("getarray", "int", "Function", symbol);
+                this.tokenList.offer(func);
+                f = true;
+            }
+            else if(Objects.equals(ident, "putarray") && checkFuncRParamsNum(k, 2)){
+                symbol = 11;
+                function func = new function("putarray", "void", "Function", symbol);
+                this.tokenList.offer(func);
+                f = true;
             }
             else if(Objects.equals(ident, "main")){
                 symbol = 11;
                 function func = new function("main", "int", "Function", symbol);
                 this.tokenList.offer(func);
+                f = true;
             }
             //需要检查if是否以{结束，若不是则加上
             else if(Objects.equals(ident, "if")){
@@ -220,6 +271,7 @@ public class Lexer {
                 if(!checkforLbrace(i)){
                     addLbrace(i, getnumofTab(i), 0);
                 }
+                f = true;
             }
             //while循环
             else if(Objects.equals(ident, "while")){
@@ -229,8 +281,41 @@ public class Lexer {
                 if(!checkforLbrace(i)){
                     addLbrace(i, getnumofTab(i), 1);
                 }
+                f = true;
             }
-            else return false;
+            //part13 普通函数
+            else{
+                //函数定义
+                if(tokenList.getLast() instanceof ident id && (Objects.equals(id.getId(), "int") || Objects.equals(id.getId(), "void"))){
+                    //获得函数的返回值
+                    String ret_type = id.getId();
+                    int params_decl = numofParams(k);
+                    //for debug
+                    System.out.println(ret_type + "||" + params_decl);
+                    symbol = 11;
+                    function func = new function(ident, ret_type, "Function", symbol);
+                    func.setSelfDecl(true);
+                    func.setParams_num(params_decl);
+                    this.tokenList.offer(func);
+                    f = true;
+                }
+                //函数使用
+                //先检查这个函数有没有被定义过(根据func.getfuncname检查)
+                //若存在则获得相应值（还需要检查参数个数的匹配性）
+                //若不存在则直接错误退出
+                else{
+                    function func = getFuncDecl(ident);
+                    if(func != null){
+                        symbol = 11;
+                        function _use = new function(ident, func.getTypeOfRetValue(), "Function", symbol);
+                        _use.setSelfDecl(true);
+                        _use.setParams_num(func.getParams_num());
+                        this.tokenList.offer(_use);
+                        f = true;
+                    }
+                }
+            }
+            if(!f) return false;
         }
         else{
             if(Objects.equals(ident, "int")){
@@ -258,7 +343,6 @@ public class Lexer {
                         cond cond_else_if = new cond("else if", "Cond_if", symbol, getnumofTab2(i));
                         this.elsenum++;
                         this.tokenList.offer(cond_else_if);
-                        //this.jump_i = j + 3;
                     }
                 }
                 else{
@@ -283,7 +367,6 @@ public class Lexer {
                 this.tokenList.offer(id);
                 is_neg = 1;
             }
-
             else {
                 symbol = 21;
                 ident id = new ident(ident, "Ident", symbol, 0, is_neg);

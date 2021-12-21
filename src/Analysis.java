@@ -8,12 +8,14 @@ public class Analysis {
         StringBuilder input_file = new StringBuilder();
         StringBuilder output_file = new StringBuilder();
         LinkedList<token> tokenlist;
-        input_file.append(args[0]);
-        output_file.append(args[1]);
+        input_file.append("E:\\编译原理\\lab8\\testfile\\a.txt");
+        output_file.append("E:\\编译原理\\lab8\\testfile\\b.txt");
         Lexer lexer = Lexer.getLexerInstance();
         lexer.setFile(input_file);
         lexer.getContent();
         if(lexer.lexerAnalysis()){
+            //for debug
+            //System.exit(0);
             tokenlist = lexer.getTokenList();
             operator o = new operator("#", "Op", 28);
             tokenlist.offer(o);
@@ -24,6 +26,7 @@ public class Analysis {
             grammar.setContent(lexer.getcon().toString());
             int detectforglobal = grammar.detect();
             if(detectforglobal == 0) System.exit(5);
+            //不存在全局定义，包括全局变量和函数定义
             else if(detectforglobal == 1){
                 grammar.checkForFunc();
                 boolean flag = grammar.isInt();
@@ -46,6 +49,7 @@ public class Analysis {
                     System.exit(3);
                 }
             }
+            //存在全局定义区
             else{
                 boolean flag = grammar.isGlobal();
                 if(flag){

@@ -18,6 +18,8 @@ public class register {
     private int useaddr = 0;
     private int demension = 0;
 
+    private boolean CreatedInParams = false;
+
     //储存数组元素赋值时，在计算表达式前，确定的目标元素的角标
     private int present_use = 0;
 
@@ -110,6 +112,16 @@ public class register {
         else{
             if(y < 0 || y >= x_d) System.exit(9);
             return " getelementptr i32, i32* %" +  this.useaddr +", i32 " + y + "\n";
+        }
+    }
+    public String deal_getarray_addr_two_d(int size, int consq){
+        //传进来一个数字
+        if(consq == 1){
+            return " = getelementptr [" + this.y_d + " x i32], [" + this.y_d + " x i32]* %" + this.firstaddr +", i32 0, i32 " + size + "\n";
+        }
+        //传进来一个寄存器
+        else{
+            return " = getelementptr [" + this.y_d + " x i32], [" + this.y_d + " x i32]* %" + this.firstaddr +", i32 0, i32 %" + size + "\n";
         }
     }
     public String memsetStep(){
