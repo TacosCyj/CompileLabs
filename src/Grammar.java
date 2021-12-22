@@ -76,6 +76,17 @@ public class Grammar {
         this.blocklist.remove(key1);
         this.listnum--;
     }
+    public void deletelist_inparams(){
+        //全局变量表
+        int loc = this.listnum + 1;
+        System.out.println(loc);
+        HashMap<String, Integer> temp = this.blocklist.get("var" + 0);
+        for(String keys : temp.keySet()){
+            //移除块中的在寄存表中的变量
+            //这些变量有统一的命名形式，即变量名加块号
+            this.reglist.remove(keys + loc);
+        }
+    }
     //查看这个变量属于那一层
     //从内层向外层搜索
     public int forJudgeNum(ident id){
@@ -183,6 +194,7 @@ public class Grammar {
                     reg.setHasValue();
                     reg.setCreatedWhenOp(0);
                     reg.setSeq(this.reg_seq);
+                    //System.out.println(this.listnum + 1);
                     this.reglist.put(idd.getId() + (this.listnum + 1), reg);
                     this.answer.append(" i32 %").append((this.reg_seq++)).append(",");
                     this.pre_funcdecl.offer(idd);
@@ -615,6 +627,7 @@ public class Grammar {
     public void putParamsIntoFunc(String key){
         HashMap<String, Integer> vl = this.blocklist.get(key);
         int loc = this.listnum;
+        System.out.println(loc);
         while(!pre_funcdecl.isEmpty()){
             ident temp = pre_funcdecl.poll();
             //一个int 型变量
@@ -877,6 +890,7 @@ public class Grammar {
         int old_value = this.reg_seq;
         HashMap<String, Integer> vl = this.blocklist.get("var" + target);
         String name = obj.getId() + target;
+        boolean is_g = this.reglist.get(name).getIsGlobal();
         //变量赋值
         if(!this.reglist.get(name).getIsConst() && isExp(vl, 0, 0, 0, 0, 0)){
             register reg = this.reglist.get(obj.getId() + target);
@@ -2087,6 +2101,7 @@ public class Grammar {
                     //本块内不存在这个变量，查找外层块
                     else if((loc_list = forJudgeNum(temp_ident)) != -1){
                         //非数组型变量
+                        System.out.println("Here" + loc_list);
                         if(!this.reglist.get(temp_ident.getId() + loc_list).getIsArray()){
                             token back = this.tokenList.poll();
                             if(this.tokenList.peek() instanceof operator){
@@ -2399,7 +2414,7 @@ public class Grammar {
                         }
                         else{
                             if(mr == 1){
-                                if(this.three.size() <= 2){
+                                if(this.three.size() < 2){
                                     this.answer.append(this.three.pop().getDst()).append(":").append("\n");
                                     return flag;
                                 }
@@ -2459,6 +2474,7 @@ public class Grammar {
                         //this.answer.delete(func_sign, this.answer.length());
                         //func_sign = 0;
                         this.deletelist(key_sub_varlist);
+                        this.deletelist_inparams();
                         this.reg_seq = 0;
                     }
                     return flag;
