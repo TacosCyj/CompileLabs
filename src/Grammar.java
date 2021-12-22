@@ -41,6 +41,7 @@ public class Grammar {
     private int func_sign = 0;
     private int func_seq = 6;
     private StringBuilder funcstr = new StringBuilder();
+    private function func_now;
     private Grammar(){}
     static{
         grammar = new Grammar();
@@ -229,10 +230,18 @@ public class Grammar {
                 else if(Objects.equals(((function) temp).getFuncName(), "putint") && !this.funclist.containsKey("putint")){
                     this.answer.append("\ndeclare void @putint(i32)\n");
                     this.funclist.put("putint", 3);
+                    function f = new function("putint", "void", "Function", 11);
+                    f.setParams_num(1);
+                    f.setFuncVar("one_var");
+                    this.ff.put("putint", f);
                 }
                 else if(Objects.equals(((function) temp).getFuncName(), "putch") && !this.funclist.containsKey("putch")){
                     this.answer.append("\ndeclare void @putch(i32)\n");
                     this.funclist.put("putch", 4);
+                    function f = new function("putch", "void", "Function", 11);
+                    f.setParams_num(1);
+                    f.setFuncVar("one_var");
+                    this.ff.put("putch", f);
                 }
                 if(Objects.equals(((function) temp).getFuncName(), "getarray") && !this.funclist.containsKey("getarray")){
                     this.answer.append("\ndeclare i32 @getarray(i32*)\n");
@@ -336,6 +345,7 @@ public class Grammar {
         return flag;
     }
     public String initGlobalArea(){
+        checkForFunc();
         return setNewVarlist_global();
     }
     public boolean isGivenOldValue_Global(ident obj, int target) {
@@ -517,6 +527,7 @@ public class Grammar {
                         declfunc(f.getTypeOfRetValue(), f.getFuncName());
                         this.tokenList.poll();
                         dealwithParams(f);
+                        func_now = f;
                         //进入函数块
                         this.reg_seq++;
                         flag = isLbrace(5, 0, 0, false, true);
@@ -545,6 +556,7 @@ public class Grammar {
                         declfunc(f.getTypeOfRetValue(), f.getFuncName());
                         this.tokenList.poll();
                         dealwithParams(f);
+                        func_now = f;
                         //进入函数块
                         this.reg_seq++;
                         flag = isLbrace(5, 0, 0, false, true);
@@ -558,9 +570,8 @@ public class Grammar {
                 operator temp_op = (operator) this.tokenList.poll();
                 //全局变量去结束，进入函数区
                 if(Objects.equals(temp_op.getOperator(), "}")){
-                    checkForFunc();
+                    //checkForFunc();
                     this.reg_seq = 0;
-                    //this.answer.append(this.answer_decl.toString());
                     return isInt();
                 }
                 else{
@@ -1769,17 +1780,19 @@ public class Grammar {
                 reg.setIsConst(false);
                 reg.setHasValue();
                 if(Objects.equals(func.getFuncName(), "getint")){
-                    this.answer.append("    %").append(++this.reg_seq).append("= call i32 @getint()\n");
+                    //System.out.println("youxui");
+                    this.answer.append("    %").append(++this.reg_seq).append(" = call i32 @getint()\n");
                     reg.setSeq(this.reg_seq);
                     this.reglist.put(temp.getId() + ln,  reg);
                     //去除两个括号;
+                    //forBug(this.tokenList);
                     this.tokenList.remove(i);
                     this.tokenList.remove(i);
                     this.tokenList.remove(i);
                     this.tokenList.add(i, temp);
                 }
                 else if(Objects.equals(func.getFuncName(), "getch")){
-                    this.answer.append("    %").append(++this.reg_seq).append("= call i32 @getch()\n");
+                    this.answer.append("    %").append(++this.reg_seq).append(" = call i32 @getch()\n");
                     reg.setSeq(this.reg_seq);
                     this.reglist.put(temp.getId() + ln,  reg);
                     //去除两个括号;
@@ -1801,27 +1814,21 @@ public class Grammar {
                     if (Objects.equals(func.getTypeOfRetValue(), "void")) {
                         //函数不需要传参
                         if(func.getParams_num() == 0){
-                            if(judge_isParamsNumLegal(func.getParams_num()))
-                                this.answer.append("    call void @").append(func.getFuncName()).append("()\n");
+                            this.answer.append("    call void @").append(func.getFuncName()).append("()\n");
                         }
                         else{
-                            if(judge_isParamsNumLegal(func.getParams_num())){
-                                deal_withfunc(func, vl, is_funcInfunc);
-                                this.answer.append("    %").append(++this.reg_seq).append(" = call void @").append(func.getFuncName()).append("(").append(this.funcstr.toString()).append(")\n");
-                            }
+                            deal_withfunc(func, vl, is_funcInfunc);
+                            this.answer.append("    %").append(++this.reg_seq).append(" = call void @").append(func.getFuncName()).append("(").append(this.funcstr.toString()).append(")\n");
                         }
                     }
                     //返回值为int类型
                     else{
                         if(func.getParams_num() == 0){
-                            if(judge_isParamsNumLegal(func.getParams_num()))
-                                this.answer.append("    %").append(++this.reg_seq).append(" = call i32 @").append(func.getFuncName()).append("()\n");
+                            this.answer.append("    %").append(++this.reg_seq).append(" = call i32 @").append(func.getFuncName()).append("()\n");
                         }
                         else{
-                            if(judge_isParamsNumLegal(func.getParams_num())){
-                                deal_withfunc(func, vl, is_funcInfunc);
-                                this.answer.append("    %").append(++this.reg_seq).append(" = call i32 @").append(func.getFuncName()).append("(").append(this.funcstr.toString()).append(")\n");
-                            }
+                            deal_withfunc(func, vl, is_funcInfunc);
+                            this.answer.append("    %").append(++this.reg_seq).append(" = call i32 @").append(func.getFuncName()).append("(").append(this.funcstr.toString()).append(")\n");
                         }
                     }
                     funcstr.delete(funcstr.length() - 2, funcstr.length());
@@ -2258,7 +2265,9 @@ public class Grammar {
             //part13中加入putarray 和 getarray
             else if(this.tokenList.peek() instanceof function){
                 function f = (function)this.tokenList.poll();
+               //System.out.println("YYYYYYYY" + f.getFuncName());
                 if(this.funclist.containsKey(f.getFuncName())){
+                    //System.out.println("houhou");
                     String func_name = f.getFuncName();
                     //如果函数是getarray
                     //且解决的是getarray单独出现的情况
@@ -2271,6 +2280,7 @@ public class Grammar {
                             else flag = false;
                     }
                     //处理putint和putch
+                    /*
                     else if(Objects.equals(func_name, "putint") || Objects.equals(func_name, "putch")){
                         dealWithFuncInExp(this.listnum, vl, 1);
                         flag = isExp(vl, 0, 0, 0, 0, 0);
@@ -2315,41 +2325,35 @@ public class Grammar {
                         }
                         else flag = false;
                     }
+                    */
+
                     //处理一般函数,包括putarray
+                    //加上对putint和putch的支持
                     else{
                         //返回值为void类型的函数
                         //不会加入表达式
                         System.out.println(f.getFuncName());
                         f = this.ff.get(f.getFuncName());
                         if (Objects.equals(f.getTypeOfRetValue(), "void")) {
-
+                            //System.out.println("LALA");
                             //函数不需要传参
                             if(f.getParams_num() == 0){
-                                if(judge_isParamsNumLegal(f.getParams_num()))
-                                    this.answer.append("    call void @").append(f.getFuncName()).append("()\n");
-                                else flag= false;
+                                this.answer.append("    call void @").append(f.getFuncName()).append("()\n");
                             }
                             else{
-                                if(judge_isParamsNumLegal(f.getParams_num())){
-                                    flag = deal_withfunc(f, vl, 0);
-                                    this.answer.append("    call void @").append(f.getFuncName()).append("(").append(this.funcstr.toString()).append(")\n");
-                                }
-                                else flag = false;
+                                //System.out.println("LALA");
+                                flag = deal_withfunc(f, vl, 0);
+                                this.answer.append("    call void @").append(f.getFuncName()).append("(").append(this.funcstr.toString()).append(")\n");
                             }
                         }
                         //返回值为int类型
                         else{
                             if(f.getParams_num() == 0){
-                                if(judge_isParamsNumLegal(f.getParams_num()))
-                                    this.answer.append("    %").append(++this.reg_seq).append(" = call i32 @").append(f.getFuncName()).append("()\n");
-                                else flag= false;
+                                this.answer.append("    %").append(++this.reg_seq).append(" = call i32 @").append(f.getFuncName()).append("()\n");
                             }
                             else{
-                                if(judge_isParamsNumLegal(f.getParams_num())){
-                                    flag = deal_withfunc(f, vl, 0);
-                                    this.answer.append("    %").append(++this.reg_seq).append(" = call i32 @").append(f.getFuncName()).append("(").append(this.funcstr.toString()).append(")\n");
-                                }
-                                else flag = false;
+                                flag = deal_withfunc(f, vl, 0);
+                                this.answer.append("    %").append(++this.reg_seq).append(" = call i32 @").append(f.getFuncName()).append("(").append(this.funcstr.toString()).append(")\n");
                             }
                         }
                     }
@@ -2483,6 +2487,8 @@ public class Grammar {
                     }
                     //函数定义块结束
                     else if(is_one == 5 && isfuncdecl){
+                        if(Objects.equals(this.func_now.getTypeOfRetValue(), "void"))
+                            this.answer.append("    ret void\n");
                         this.answer.append("}\n");
                         //this.answer_decl.append(this.answer.toString().substring(func_sign));
                         //this.answer.delete(func_sign, this.answer.length());
@@ -2508,11 +2514,13 @@ public class Grammar {
         this.funcstr.delete(0, funcstr.length());
         if(this.tokenList.peek() instanceof operator op && Objects.equals(op.getOperator(), "(")){
             //弹出"(“
+            //System.out.println("kokokoko");
             this.tokenList.poll();
+            forBug(this.tokenList);
             while(cnt < n && flag){
                 if(cnt > 0)
                     this.tokenList.poll();
-                //dealWithFuncInExp(this.listnum, vl, 1);
+                dealWithFuncInExp(this.listnum, vl, 1);
                 flag = isExp(vl, 0, 0, cnt == n - 1 ? 1 : 0, is_funcInfunc, 1);
                 //System.out.println(this.answer);
                 //forBug();
@@ -2569,6 +2577,7 @@ public class Grammar {
         return flag;
     }
     //以逗号分隔
+    /*
     public boolean judge_isParamsNumLegal(int n){
         int cnt = 0, i = 0;
         //先判断没有参数的情况
@@ -2580,7 +2589,11 @@ public class Grammar {
             //v1 -> 逗号分隔，)结束
             while(true){
                 if(this.tokenList.get(i) instanceof operator op && Objects.equals(op.getOperator(), ")"))
-                    break;
+                {
+                    if(this.tokenList.get(i - 1) instanceof operator opp && !Objects.equals(opp.getOperator(), "(")){
+                        break;
+                    }
+                }
                 else if(this.tokenList.get(i) instanceof operator opp && Objects.equals(opp.getOperator(), ","))
                     cnt++;
                 i++;
@@ -2588,7 +2601,7 @@ public class Grammar {
             cnt += 1;
         }
         return cnt == n;
-    }
+    }*/
     public boolean isReturn(HashMap<String, Integer> sub_var_list){
         boolean flag = true;
         if(this.tokenList.peek() instanceof ident){
@@ -2661,6 +2674,9 @@ public class Grammar {
             }
             else if(l.get(i) instanceof number nu){
                 System.out.print(nu.getValue());
+            }
+            else if(l.get(i) instanceof function func){
+                System.out.print(func.getFuncName());
             }
         }
         System.out.println();
