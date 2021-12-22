@@ -5,4 +5,5 @@ public class operator extends token{
         this.operator = c;
     }
     public String getOperator(){return this.operator;}
+    public void setOperator(String op){this.operator = op;}
 }

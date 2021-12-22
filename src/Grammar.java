@@ -668,6 +668,7 @@ public class Grammar {
     }
     public boolean isExp(HashMap<String, Integer> vl, int is_global, int isArray, int is_func_last, int is_funcInfunc){
         boolean flag = true;
+        int situa = 0;
         token check = null;
         this.expList.clear();
         if(is_func_last == 1){
@@ -766,9 +767,19 @@ public class Grammar {
                 }
                 else{
                     this.expList.offer(this.tokenList.poll());
-                    if(check instanceof operator){
-                        if(((operator) check).getOperator().charAt(0) == ';'|| ((operator) check).getOperator().charAt(0) == ',') break;
-                        else if(((operator) check).getOperator().charAt(0) == '}' && isArray == 1){
+                    if(check instanceof operator ch){
+                        if(ch.getOperator().charAt(0) == ';'|| ch.getOperator().charAt(0) == ',') break;
+                        //part13对于表达式中的函数调用做特殊处理
+                        else if(is_func_last == 1 && !Objects.equals(ch.getOperator(), ";")  && !Objects.equals(ch.getOperator(), ",") && !Objects.equals(ch.getOperator(), ")")){
+                            this.expList.removeLast();
+                            operator o = new operator(";", "Op", 31);
+                            this.expList.offer(o);
+                            //this.tokenList.addFirst(ch);
+                            situa = 1;
+                            //((operator) check).setOperator(";");
+                            break;
+                        }
+                        else if(ch.getOperator().charAt(0) == '}' && isArray == 1){
                             this.expList.removeLast();
                             operator o = new operator(";", "Op", 31);
                             this.expList.offer(o);
@@ -793,7 +804,7 @@ public class Grammar {
                 }
             }
         }
-        if(check instanceof operator && (Objects.equals(((operator) check).getOperator(), ";") || Objects.equals(((operator) check).getOperator(), ",")) || (((operator) check).getOperator().charAt(0) == '}' && isArray == 1)){
+        if((check instanceof operator && (Objects.equals(((operator) check).getOperator(), ";") || Objects.equals(((operator) check).getOperator(), ",")) || (((operator) check).getOperator().charAt(0) == '}' && isArray == 1)) || (situa == 1)){
             if(is_funcInfunc == 1 && is_func_last == 1){
                 expList.remove(expList.size() - 2);
             }
@@ -801,8 +812,8 @@ public class Grammar {
             exper.getExp(expList);
             exper.setFinal_layer(this.listnum);
             exper.getMap(vl, reglist, reg_seq, answer);
-            System.out.println(expList);
-            flag = exper.dealExp(((operator) check).getOperator().charAt(0) == '}' ? ';': ((operator) check).getOperator().charAt(0), expList, false);
+            char end = ((operator) check).getOperator().charAt(0) == '}' ? ';': ((operator) check).getOperator().charAt(0);
+            flag = exper.dealExp(situa == 1 ? ';' : end, expList, false);
             if(flag){
                 this.ans = exper.passAns();
                 this.reg_seq = exper.passRegSeq();
@@ -1427,7 +1438,6 @@ public class Grammar {
             }
         }
         if(check instanceof operator && (Objects.equals(((operator) check).getOperator(), "{"))){
-            System.out.println("Opps");
             exper.getExp(expList);
             exper.setFinal_layer(this.listnum);
             exper.getMap(vl, reglist, reg_seq, answer);
@@ -1742,12 +1752,10 @@ public class Grammar {
                     funcstr.delete(funcstr.length() - 2, funcstr.length());
                     reg.setSeq(this.reg_seq);
                     this.reglist.put(temp.getId() + ln,  reg);
-                    //this.tokenList.remove(i);
-                    this.tokenList.add(i, temp);
+                    this.tokenList.addFirst(temp);
                     while(!token_home.isEmpty()){
                         this.tokenList.addFirst(token_home.pop());
                     }
-                    //System.out.println("youyou" + this.tokenList);
                 }
             }
         }
@@ -2419,7 +2427,6 @@ public class Grammar {
         boolean flag = true;
         int cnt = 0, j = 0, n = f.getParams_num();
         LinkedList<String> temp = f.getFuncVar();
-        System.out.println(temp.size());
         this.funcstr.delete(0, funcstr.length());
         if(this.tokenList.peek() instanceof operator op && Objects.equals(op.getOperator(), "(")){
             //弹出"(“
@@ -2459,7 +2466,9 @@ public class Grammar {
                                 this.funcstr.append("i32 %").append(this.reg_seq).append(", ");
                             }
                         }
-                        else flag= false;
+                        else{
+                            flag= false;
+                        }
                     }
                     else{
                         if(Objects.equals(temp.get(j), "one_var")){
@@ -2502,6 +2511,8 @@ public class Grammar {
             if(Objects.equals(((ident) this.tokenList.peek()).getId(), "return")){
                 this.tokenList.poll();
                 int old_value = this.reg_seq;
+                dealWithFuncInExp(this.listnum, sub_var_list, 0);
+                forBug();
                 flag = isExp(sub_var_list, 0, 0, 0, 0);
                 if(this.tokenList.peek() instanceof operator && flag){
                     operator temp_op_2 = (operator) this.tokenList.peek();
@@ -2511,7 +2522,7 @@ public class Grammar {
                             this.answer.append("    ret i32 ");
                             this.answer.append(ans).append("\n");
                         }
-                        else if(t_judge instanceof ident id && this.reglist.containsKey(id.getId() + forJudgeNum(id))){
+                        else if(t_judge instanceof ident id && this.reglist.containsKey(id.getId() + forJudgeNum(id)) && this.reglist.get(id.getId() + forJudgeNum(id)).getCreatedWhenOp() == 0){
                             if(!this.reglist.get(id.getId() + forJudgeNum(id)).getIsArray()){
                                 if(!this.reglist.get(id.getId() + forJudgeNum(id)).getIsGlobal()){
                                     int s = this.reglist.get(((ident) t_judge).getId() + forJudgeNum((ident)t_judge)).getSeq();
@@ -2555,4 +2566,20 @@ public class Grammar {
     }
     public StringBuilder getAnswer(){return this.answer;}
     public void setContent(String c){this.content = c;}
+    public void forBug(){
+        int i;
+        System.out.println("Yeah");
+        for(i = 0; i < this.tokenList.size(); i++){
+            if(this.tokenList.get(i) instanceof operator op){
+                System.out.print(op.getOperator());
+            }
+            else if(this.tokenList.get(i) instanceof ident id){
+                System.out.print(id.getId());
+            }
+            else if(this.tokenList.get(i) instanceof number nu){
+                System.out.print(nu.getValue());
+            }
+        }
+        System.out.println();
+    }
 }

@@ -291,7 +291,6 @@ public class Lexer {
                     String ret_type = id.getId();
                     int params_decl = numofParams(k);
                     //for debug
-                    System.out.println(ret_type + "||" + params_decl);
                     symbol = 11;
                     function func = new function(ident, ret_type, "Function", symbol);
                     func.setSelfDecl(true);
