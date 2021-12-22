@@ -1397,9 +1397,24 @@ public class Grammar {
         else flag = false;
         return flag;
     }
+    public boolean get_IsEndBlock(int is_one){
+        int i;
+        boolean flag = false;
+        if(is_one == 1){
+            for(i = 0; i < this.tokenList.size(); i++){
+                if(this.tokenList.get(i) instanceof operator op && Objects.equals(op.getOperator(), "}")){
+                    if(this.tokenList.get(i + 1) instanceof operator opp && Objects.equals(opp.getOperator(), "}")){
+                        flag = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return flag;
+    }
     //mark_isElseIf = 1表示是elseif
     //mark_isElseIf = 0表示是if
-    public boolean isCondExp(int mark_isElseIf, boolean hasFollowingElse, HashMap<String, Integer> vl){
+    public boolean isCondExp(int mark_isElseIf, boolean hasFollowingElse, HashMap<String, Integer> vl, int is_one){
         boolean flag = true;
         token check = null;
         this.expList.clear();
@@ -1520,18 +1535,18 @@ public class Grammar {
                     }
                     //只有一个if statement
                     else{
-                        if(this.three.isEmpty()){
+                        if(get_IsEndBlock(is_one)){
+                            addLabel(1); String temp1 = label;
+                            dstANDstr temp = new dstANDstr(temp1, this.three.peek().getDst(), this.three.peek().getDst());
+                            this.three.push(temp);
+                            this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(temp1).append(", label %").append(this.three.peek().getDst());
+                        }
+                        else{
                             addLabel(1); String temp1 = label;
                             addLabel(1); String temp2 = label;
                             dstANDstr temp = new dstANDstr(temp1, "x0", temp2);
                             this.three.push(temp);
                             this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(temp1).append(", label %").append(temp2);
-                        }
-                        else{
-                            addLabel(1); String temp1 = label;
-                            dstANDstr temp = new dstANDstr(temp1, this.three.peek().getDst(), this.three.peek().getDst());
-                            this.three.push(temp);
-                            this.answer.append("    br i1 %").append(this.reg_seq).append(",label %").append(temp1).append(", label %").append(this.three.peek().getDst());
                         }
                     }
                 }
@@ -1697,12 +1712,12 @@ public class Grammar {
         }
         return false;
     }
-    public boolean isIf(int mark_isElseIf, int tab, HashMap<String, Integer> vl){
+    public boolean isIf(int mark_isElseIf, int tab, HashMap<String, Integer> vl, int is_one){
         boolean flag = true;
         //if中表达式处理，包括两个跳转地址压栈、一个块跳转地址压栈
         //设置three
         boolean hasFollowingElse = checkFollowingElse(tab);
-        flag = isCondExp(mark_isElseIf, hasFollowingElse, vl);
+        flag = isCondExp(mark_isElseIf, hasFollowingElse, vl, is_one);
         if(flag){
             this.strblockeach.push(this.three.peek().getIf_seq());
             flag = isLbrace(1, 0, mark_isElseIf, hasFollowingElse, false);
@@ -2346,7 +2361,7 @@ public class Grammar {
             else if(this.tokenList.peek() instanceof cond){
                 cond temp = (cond)this.tokenList.poll();
                 if(Objects.equals(temp.getCondid(), "if")){
-                    flag = isIf(mark_isElseIf, temp.getTabnums(), vl);
+                    flag = isIf(mark_isElseIf, temp.getTabnums(), vl, is_one);
                     if(mark_isElseIf == 1) return flag;
                 }
                 else if(Objects.equals(temp.getCondid(), "else if")){
@@ -2414,7 +2429,7 @@ public class Grammar {
                         }
                         else{
                             if(mr == 1){
-                                if(this.three.size() < 2){
+                                if(this.three.size() <= 2){
                                     this.answer.append(this.three.pop().getDst()).append(":").append("\n");
                                     return flag;
                                 }
@@ -2428,7 +2443,6 @@ public class Grammar {
                                         this.answer.append("    br label %").append(this.three.peek().getDst() + "\n");
                                     this.answer.append(this.three.pop().getDst()).append(":").append("\n");
                                 }
-
                                 else{
                                     this.three.pop();
                                 }
