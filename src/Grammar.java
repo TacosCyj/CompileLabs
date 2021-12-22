@@ -548,7 +548,7 @@ public class Grammar {
                 if(Objects.equals(temp_op.getOperator(), "}")){
                     checkForFunc();
                     this.reg_seq = 0;
-                    this.answer.append(this.answer_decl.toString());
+                    //this.answer.append(this.answer_decl.toString());
                     return isInt();
                 }
                 else{
@@ -2292,7 +2292,7 @@ public class Grammar {
                         System.out.println(f.getFuncName());
                         f = this.ff.get(f.getFuncName());
                         if (Objects.equals(f.getTypeOfRetValue(), "void")) {
-                            System.out.println("hahahahah");
+
                             //函数不需要传参
                             if(f.getParams_num() == 0){
                                 if(judge_isParamsNumLegal(f.getParams_num()))
@@ -2302,7 +2302,7 @@ public class Grammar {
                             else{
                                 if(judge_isParamsNumLegal(f.getParams_num())){
                                     flag = deal_withfunc(f, vl, 0);
-                                    this.answer.append("    %").append(++this.reg_seq).append(" = call void @").append(f.getFuncName()).append("(").append(this.funcstr.toString()).append(")\n");
+                                    this.answer.append("    call void @").append(f.getFuncName()).append("(").append(this.funcstr.toString()).append(")\n");
                                 }
                                 else flag = false;
                             }
@@ -2455,9 +2455,9 @@ public class Grammar {
                     //函数定义块结束
                     else if(is_one == 5 && isfuncdecl){
                         this.answer.append("}\n");
-                        this.answer_decl.append(this.answer.toString().substring(func_sign));
-                        this.answer.delete(func_sign, this.answer.length());
-                        func_sign = 0;
+                        //this.answer_decl.append(this.answer.toString().substring(func_sign));
+                        //this.answer.delete(func_sign, this.answer.length());
+                        //func_sign = 0;
                         this.deletelist(key_sub_varlist);
                         this.reg_seq = 0;
                     }
