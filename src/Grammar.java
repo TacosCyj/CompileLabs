@@ -229,6 +229,11 @@ public class Grammar {
                 else if(Objects.equals(((function) temp).getFuncName(), "putarray") && !this.funclist.containsKey("putarray")){
                     this.answer.append("\ndeclare i32 @putarray()\n");
                     this.funclist.put("putarray", 6);
+                    function f = new function("putarray", "void", "Function", 11);
+                    f.setParams_num(2);
+                    f.setFuncVar("one_var");
+                    f.setFuncVar("one_Array");
+                    this.ff.put("putarray", f);
                 }
             }
         }
@@ -404,7 +409,7 @@ public class Grammar {
             int x = getdemension(isArray, 1, vl), y = getdemension(isArray, 2, vl);
             if(x <= 0 || (isArray == 2 && y <= 0)){
                 System.out.println(this.content);
-                System.out.println(this.answer);
+                //System.out.println(this.answer);
                 System.exit(8);
             }
             vl.put(temp_token.getId(), -1);
@@ -843,7 +848,7 @@ public class Grammar {
             exper.setFinal_layer(this.listnum);
             exper.getMap(vl, reglist, reg_seq, answer);
             char end = ((operator) check).getOperator().charAt(0) == '}' ? ';': ((operator) check).getOperator().charAt(0);
-            System.out.println(end);
+            //System.out.println(end);
             flag = exper.dealExp(situa == 1 ? ';' : end, expList, false);
             if(flag){
                 this.ans = exper.passAns();
@@ -1393,7 +1398,7 @@ public class Grammar {
                 if(Array != this.reglist.get(id.getId() + forJudgeNum(id)).getDemension()){
                     //System.out.println(this.reglist.get(id.getId() + forJudgeNum(id)).getDemension());
                     System.out.println(this.content);
-                    System.out.println(this.answer);
+                    //System.out.println(this.answer);
                     System.exit(8);
                 }
                 x = getdemension(Array, 1, vl);
@@ -1552,7 +1557,7 @@ public class Grammar {
                 int Array = isArray();
                 if(Array != this.reglist.get(id.getId() + forJudgeNum(id)).getDemension()){
                     System.out.println(this.content);
-                    System.out.println(this.answer);
+                    //System.out.println(this.answer);
                     System.exit(8);
                 }
                 x = getdemension(Array, 1, vl);
@@ -1982,7 +1987,7 @@ public class Grammar {
                             int Array = isArray();
                             if(Array != this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getDemension()) {
                                 System.out.println(this.content);
-                                System.out.println(this.answer);
+                                //System.out.println(this.answer);
                                 System.exit(8);
                             }
                             x = getdemension(Array, 1, vl);
@@ -2122,7 +2127,7 @@ public class Grammar {
                             int Array = isArray();
                             if(Array != this.reglist.get(temp_ident.getId() + loc_list).getDemension()) {
                                 System.out.println(this.content);
-                                System.out.println(this.answer);
+                                //System.out.println(this.answer);
                                 System.exit(8);
                             }
                             x = getdemension(Array, 1, vl);
@@ -2287,6 +2292,7 @@ public class Grammar {
                         System.out.println(f.getFuncName());
                         f = this.ff.get(f.getFuncName());
                         if (Objects.equals(f.getTypeOfRetValue(), "void")) {
+                            System.out.println("hahahahah");
                             //函数不需要传参
                             if(f.getParams_num() == 0){
                                 if(judge_isParamsNumLegal(f.getParams_num()))
@@ -2478,7 +2484,7 @@ public class Grammar {
                     this.tokenList.poll();
                 //dealWithFuncInExp(this.listnum, vl, 1);
                 flag = isExp(vl, 0, 0, cnt == n - 1 ? 1 : 0, is_funcInfunc, 1);
-                System.out.println(this.answer);
+                //System.out.println(this.answer);
                 //forBug();
                 if(flag){
                     if(t_judge instanceof number num){
@@ -2490,7 +2496,7 @@ public class Grammar {
                         else flag= false;
                     }
                     else if(t_judge instanceof ident id && this.reglist.containsKey(id.getId() + forJudgeNum(id))){
-                        System.out.println(temp.get(j));
+                        //System.out.println(temp.get(j));
                         if(this.reglist.get(id.getId() + forJudgeNum(id)).getIsArray() && this.reglist.get(id.getId() + forJudgeNum(id)).getDemension() == 1 && Objects.equals(temp.get(j), "one_Array")){
                             cnt++;
                             j++;

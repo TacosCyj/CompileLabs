@@ -252,8 +252,11 @@ public class Lexer {
                 f = true;
             }
             else if(Objects.equals(ident, "putarray") && checkFuncRParamsNum(k, 2)){
+                //System.out.println("youyouyouoyuoyu");
                 symbol = 11;
                 function func = new function("putarray", "void", "Function", symbol);
+                func.setSelfDecl(true);
+                func.setParams_num(2);
                 this.tokenList.offer(func);
                 f = true;
             }
