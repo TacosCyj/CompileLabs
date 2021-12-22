@@ -8,8 +8,8 @@ public class Analysis {
         StringBuilder input_file = new StringBuilder();
         StringBuilder output_file = new StringBuilder();
         LinkedList<token> tokenlist;
-        input_file.append("E:\\编译原理\\lab8\\testfile\\a1.txt");
-        output_file.append("E:\\编译原理\\lab8\\testfile\\b.txt");
+        input_file.append(args[0]);
+        output_file.append(args[1]);
         Lexer lexer = Lexer.getLexerInstance();
         lexer.setFile(input_file);
         lexer.getContent();
