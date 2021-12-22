@@ -1730,12 +1730,12 @@ public class Grammar {
                     else{
                         if(func.getParams_num() == 0){
                             if(judge_isParamsNumLegal(func.getParams_num()))
-                                this.answer.append("    %").append(++this.reg_seq).append(" = call void @").append(func.getFuncName()).append("()\n");
+                                this.answer.append("    %").append(++this.reg_seq).append(" = call i32 @").append(func.getFuncName()).append("()\n");
                         }
                         else{
                             if(judge_isParamsNumLegal(func.getParams_num())){
                                 deal_withfunc(func, vl, is_funcInfunc);
-                                this.answer.append("    %").append(++this.reg_seq).append(" = call void @").append(func.getFuncName()).append("(").append(this.funcstr.toString()).append(")\n");
+                                this.answer.append("    %").append(++this.reg_seq).append(" = call i32 @").append(func.getFuncName()).append("(").append(this.funcstr.toString()).append(")\n");
                             }
                         }
                     }
@@ -2256,13 +2256,13 @@ public class Grammar {
                         else{
                             if(f.getParams_num() == 0){
                                 if(judge_isParamsNumLegal(f.getParams_num()))
-                                    this.answer.append("    %").append(++this.reg_seq).append(" = call void @").append(f.getFuncName()).append("()\n");
+                                    this.answer.append("    %").append(++this.reg_seq).append(" = call i32 @").append(f.getFuncName()).append("()\n");
                                 else flag= false;
                             }
                             else{
                                 if(judge_isParamsNumLegal(f.getParams_num())){
                                     flag = deal_withfunc(f, vl, 0);
-                                    this.answer.append("    %").append(++this.reg_seq).append(" = call void @").append(f.getFuncName()).append("(").append(this.funcstr.toString()).append(")\n");
+                                    this.answer.append("    %").append(++this.reg_seq).append(" = call i32 @").append(f.getFuncName()).append("(").append(this.funcstr.toString()).append(")\n");
                                 }
                                 else flag = false;
                             }
