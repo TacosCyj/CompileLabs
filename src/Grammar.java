@@ -326,14 +326,14 @@ public class Grammar {
         HashMap<String, Integer> vl = this.blocklist.get("var" + target);
         String name = obj.getId() + target;
         //变量赋值
-        if (!this.reglist.get(name).getIsConst() && isExp(vl, 1, 0, 0, 0)) {
+        if (!this.reglist.get(name).getIsConst() && isExp(vl, 1, 0, 0, 0, 0)) {
             register reg = this.reglist.get(obj.getId() + target);
             reg.setValueOfReg(ans);
             reg.setHasValue();
             reg.setGlobalname("@" + obj.getId());
         }
         //未赋值的常量赋值
-        else if (this.reglist.get(name).getIsConst() && !this.reglist.get(name).getHasValue() && isExp(vl, 1, 0, 0, 0)) {
+        else if (this.reglist.get(name).getIsConst() && !this.reglist.get(name).getHasValue() && isExp(vl, 1, 0, 0, 0, 0)) {
             register reg = this.reglist.get(obj.getId() + target);
             reg.setValueOfReg(ans);
             reg.setHasValue();
@@ -401,7 +401,7 @@ public class Grammar {
             }
         }
         else if((vl.isEmpty() || !vl.containsKey(temp_token.getId())) && isArray > 0) {
-            int x = getdemension(isArray, 1), y = getdemension(isArray, 2);
+            int x = getdemension(isArray, 1, vl), y = getdemension(isArray, 2, vl);
             if(x <= 0 || (isArray == 2 && y <= 0)){
                 System.out.println(this.content);
                 System.out.println(this.answer);
@@ -666,7 +666,7 @@ public class Grammar {
         else flag = false;
         return flag;
     }
-    public boolean isExp(HashMap<String, Integer> vl, int is_global, int isArray, int is_func_last, int is_funcInfunc){
+    public boolean isExp(HashMap<String, Integer> vl, int is_global, int isArray, int is_func_last, int is_funcInfunc, int dealparams){
         boolean flag = true;
         int situa = 0;
         token check = null;
@@ -680,78 +680,107 @@ public class Grammar {
                 check = this.tokenList.peek();
                 //是一个数组元素
                 if(check instanceof ident id && this.reglist.get(id.getId() + forJudgeNum(id)).getIsArray()){
-                    this.tokenList.poll();
-                    int x, y;
-                    int Array = isArray();
-                    if(Array != this.reglist.get(id.getId() + forJudgeNum(id)).getDemension()){
-                        System.out.println(this.content);
-                        System.out.println(this.answer);
-                        System.exit(8);
-                    }
-                    x = getdemension(Array, 1);
-                    //使用全局数据的准备工作
-                    if(Array == 2){
-                        int temp_n_x = -1, temp_reg_x = -1;
-                        int temp_n_y = -1, temp_reg_y = -1;
-                        if(t_judge instanceof number n)
-                            temp_n_x = n.getValue();
-                        else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
-                            temp_reg_x = ++this.reg_seq;
-                            if(!this.reglist.get(d.getId()+forJudgeNum(d)).getIsGlobal())
-                                this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
-                            else
-                                this.answer.append("    %" + this.reg_seq + " = load i32, i32* " + this.reglist.get(d.getId() + forJudgeNum(d)).getGlobalname() + "\n");
+                    if(dealparams == 0){
+                        this.tokenList.poll();
+                        int x, y;
+                        int Array = isArray();
+                        if(Array != this.reglist.get(id.getId() + forJudgeNum(id)).getDemension()){
+                            System.exit(8);
                         }
-                        else temp_reg_x = this.reg_seq;
-                        y = getdemension(Array, 2);
-                        if(t_judge instanceof number n)
-                            temp_n_y = n.getValue();
-                        else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
-                            temp_reg_y = ++this.reg_seq;
-                            if(!this.reglist.get(d.getId()+forJudgeNum(d)).getIsGlobal())
-                                this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
-                            else
-                                this.answer.append("    %" + this.reg_seq + " = load i32, i32* " + this.reglist.get(d.getId() + forJudgeNum(d)).getGlobalname() + "\n");
-                        }
-                        else temp_reg_y = this.reg_seq;
-                        String str_x = temp_n_x == -1 ? ("%" + temp_reg_x) : String.valueOf(temp_n_x);
-                        String str_y = temp_n_y == -1 ? ("%" + temp_reg_y) : String.valueOf(temp_n_y);
-                        this.answer.append("    %").append(++this.reg_seq).append(" = ").append(this.reglist.get(id.getId() + forJudgeNum(id)).getArray_DD());
-                        this.answer.append("    %").append(++this.reg_seq).append(" = ").append(this.reglist.get(id.getId() + forJudgeNum(id)).getArray_ONE_in_DD(this.reg_seq - 1)).append("i32 " + str_x + ", i32 " +  str_y +"\n");
-                    }
-                    else{
-                        if(this.reglist.get(id.getId() + forJudgeNum(id)).getIsGlobal()){
-                            dealWithGlobalArray(id);
-                        }
-                        int old_seq = this.reg_seq;
-                        this.reg_seq++;
-                        if(t_judge instanceof number n){
-                            this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 " + n.getValue() + "\n");
-                        }
-                        //本来是一个已经被定义过的变量，而不是计算时产生的变量
-                        else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
-                            if(!this.reglist.get(d.getId()+forJudgeNum(d)).getIsGlobal())
-                                this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
-                            else
-                                this.answer.append("    %" + this.reg_seq + " = load i32, i32* " + this.reglist.get(d.getId() + forJudgeNum(d)).getGlobalname() + "\n");
-                            this.answer.append("    %" + (++this.reg_seq) + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + (this.reg_seq - 1) + "\n");
+                        x = getdemension(Array, 1, vl);
+                        //使用全局数据的准备工作
+                        if(Array == 2){
+                            int temp_n_x = -1, temp_reg_x = -1;
+                            int temp_n_y = -1, temp_reg_y = -1;
+                            if(t_judge instanceof number n)
+                                temp_n_x = n.getValue();
+                            else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
+                                temp_reg_x = ++this.reg_seq;
+                                if(!this.reglist.get(d.getId()+forJudgeNum(d)).getIsGlobal())
+                                    this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                                else
+                                    this.answer.append("    %" + this.reg_seq + " = load i32, i32* " + this.reglist.get(d.getId() + forJudgeNum(d)).getGlobalname() + "\n");
+                            }
+                            else temp_reg_x = this.reg_seq;
+                            y = getdemension(Array, 2, vl);
+                            if(t_judge instanceof number n)
+                                temp_n_y = n.getValue();
+                            else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
+                                temp_reg_y = ++this.reg_seq;
+                                if(this.reglist.get(d.getId() + forJudgeNum(d)).getCreatedWhenOp() == 0){
+                                    if(!this.reglist.get(d.getId()+forJudgeNum(d)).getIsGlobal())
+                                        this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                                    else
+                                        this.answer.append("    %" + this.reg_seq + " = load i32, i32* " + this.reglist.get(d.getId() + forJudgeNum(d)).getGlobalname() + "\n");
+                                }
+                            }
+                            else temp_reg_y = this.reg_seq;
+                            String str_x = temp_n_x == -1 ? ("%" + temp_reg_x) : String.valueOf(temp_n_x);
+                            String str_y = temp_n_y == -1 ? ("%" + temp_reg_y) : String.valueOf(temp_n_y);
+                            this.answer.append("    %").append(++this.reg_seq).append(" = ").append(this.reglist.get(id.getId() + forJudgeNum(id)).getArray_DD());
+                            this.answer.append("    %").append(++this.reg_seq).append(" = ").append(this.reglist.get(id.getId() + forJudgeNum(id)).getArray_ONE_in_DD(this.reg_seq - 1)).append("i32 " + str_x + ", i32 " +  str_y +"\n");
                         }
                         else{
-                            this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + old_seq + "\n");
+                            if(this.reglist.get(id.getId() + forJudgeNum(id)).getIsGlobal()){
+                                dealWithGlobalArray(id);
+                            }
+                            int old_seq = this.reg_seq;
+                            this.reg_seq++;
+                            if(t_judge instanceof number n){
+                                this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 " + n.getValue() + "\n");
+                            }
+                            //本来是一个已经被定义过的变量，而不是计算时产生的变量
+                            else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
+                                if(this.reglist.get(d.getId() + forJudgeNum(d)).getCreatedWhenOp() == 0){
+                                    if(!this.reglist.get(d.getId()+forJudgeNum(d)).getIsGlobal())
+                                        this.answer.append("    %" + this.reg_seq + " = load i32, i32* %" + this.reglist.get(d.getId() + forJudgeNum(d)).getSeq() + "\n");
+                                    else
+                                        this.answer.append("    %" + this.reg_seq + " = load i32, i32* " + this.reglist.get(d.getId() + forJudgeNum(d)).getGlobalname() + "\n");
+                                    this.answer.append("    %" + (++this.reg_seq) + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + (this.reg_seq - 1) + "\n");
+                                }
+                                else
+                                    this.answer.append("    %" + (this.reg_seq) + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + (this.reg_seq - 1) + "\n");
+                            }
+                            else{
+                                this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + old_seq + "\n");
+                            }
                         }
+                        ident idd = new ident(getArrayName(), "Ident", 9, 1, 1);
+                        register reg = new register();
+                        reg.setSeq(this.reg_seq);
+                        reg.setIsConst(false);
+                        reg.setHasValue();
+                        //数组型变量在表达式中使用，需要被load出来
+                        reg.setCreatedWhenOp(0);
+                        this.reglist.put(idd.getId() + this.listnum, reg);
+                        this.expList.offer(idd);
                     }
-                    ident idd = new ident(getArrayName(), "Ident", 9, 1, 1);
-                    register reg = new register();
-                    reg.setSeq(this.reg_seq);
-                    reg.setIsConst(false);
-                    reg.setHasValue();
-                    //数组型变量在表达式中使用，需要被load出来
-                    reg.setCreatedWhenOp(0);
-                    this.reglist.put(idd.getId() + this.listnum, reg);
-                    this.expList.offer(idd);
+                    else if(this.tokenList.get(1) instanceof operator op && (Objects.equals(op.getOperator(), ",") || Objects.equals(op.getOperator(), ")"))){
+                        //System.out.println("youyouyouyou");
+                        //参数先处理一维数组情况
+                        this.tokenList.poll();
+                        if(this.reglist.get(id.getId() + forJudgeNum(id)).getDemension() == 1){
+                            if(this.reglist.get(id.getId() + forJudgeNum(id)).getIsGlobal()){
+                                dealWithGlobalArray(id);
+                            }
+                            this.reg_seq++;
+                            this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() + "\n");
+                        }
+                        ident idd = new ident(getArrayName(), "Ident", 9, 1, 1);
+                        register reg = new register();
+                        reg.setSeq(this.reg_seq);
+                        reg.setIsConst(false);
+                        reg.setIsArray(true);
+                        reg.setHasValue();
+                        reg.setDemension(1);
+                        //数组型变量在表达式中使用，需要被load出来
+                        reg.setCreatedWhenOp(0);
+                        this.reglist.put(idd.getId() + this.listnum, reg);
+                        this.expList.offer(idd);
+                    }
                 }
                 else if(check instanceof function fc && Objects.equals(fc.getFuncName(), "getarray")) {
-                    System.out.println("Hello");
+                    //System.out.println("Hello");
                     this.tokenList.poll();
                     deal_getarray(true);
                     ident temp = new ident("func" + this.func_var, "Ident", 11, 1, 1);
@@ -809,10 +838,12 @@ public class Grammar {
                 expList.remove(expList.size() - 2);
             }
             String temp_ans = this.answer.toString();
+            forBug(this.expList);
             exper.getExp(expList);
             exper.setFinal_layer(this.listnum);
             exper.getMap(vl, reglist, reg_seq, answer);
             char end = ((operator) check).getOperator().charAt(0) == '}' ? ';': ((operator) check).getOperator().charAt(0);
+            System.out.println(end);
             flag = exper.dealExp(situa == 1 ? ';' : end, expList, false);
             if(flag){
                 this.ans = exper.passAns();
@@ -831,7 +862,9 @@ public class Grammar {
                 exper.clearExp();
             }
         }
-        else flag = false;
+        else {
+            flag = false;
+        }
         return flag;
     }
     public boolean isGiveValueOld(ident obj, int target){
@@ -840,7 +873,7 @@ public class Grammar {
         HashMap<String, Integer> vl = this.blocklist.get("var" + target);
         String name = obj.getId() + target;
         //变量赋值
-        if(!this.reglist.get(name).getIsConst() && isExp(vl, 0, 0, 0, 0)){
+        if(!this.reglist.get(name).getIsConst() && isExp(vl, 0, 0, 0, 0, 0)){
             register reg = this.reglist.get(obj.getId() + target);
             reg.setValueOfReg(ans);
             reg.setHasValue();
@@ -906,7 +939,7 @@ public class Grammar {
             }
         }
         //未赋值的常量赋值
-        else if(this.reglist.get(name).getIsConst() && !this.reglist.get(name).getHasValue() && isExp(vl, 0, 0, 0, 0)){
+        else if(this.reglist.get(name).getIsConst() && !this.reglist.get(name).getHasValue() && isExp(vl, 0, 0, 0, 0, 0)){
             register reg = this.reglist.get(obj.getId() + target);
             reg.setValueOfReg(ans);
             reg.setHasValue();
@@ -955,14 +988,14 @@ public class Grammar {
                 if(Array != this.reglist.get(id.getId() + forJudgeNum(id)).getDemension()){
                     System.exit(8);
                 }
-                x = getdemension(Array, 1);
+                x = getdemension(Array, 1, new HashMap<String, Integer>());
                 //使用全局数据的准备工作
                 if(this.reglist.get(id.getId() + forJudgeNum(id)).getIsGlobal()){
                     dealWithGlobalArray(id);
                 }
                 //如果是二维
                 if(Array == 2){
-                    y = getdemension(Array, 2);
+                    y = getdemension(Array, 2, new HashMap<String, Integer>());
                     this.reg_seq++;
                     this.answer.append("    %" + this.reg_seq + " =" + this.reglist.get(id.getId() + forJudgeNum(id)).getArray_certainaddr(x, y));
                 }
@@ -1040,13 +1073,17 @@ public class Grammar {
         return flag;
     }
     //在数组初始化的时候求数组各维度的长度
-    public int getdemension(int d, int target){
+    public int getdemension(int d, int target, HashMap<String, Integer> vl){
         boolean flag = true;
         if(target == 1){
             //弹出'['
             this.tokenList.poll();
+            dealWithFuncInExp(this.listnum, vl, 0);
+            //System.out.print("Sign || ");
+            //this.forBug();
             flag = isArrayExp(new LinkedList<token>());
             if(!flag){
+                //System.out.println(this.answer);
                 System.exit(7);
             }
             //arr_len是isArrayExp计算出来的值
@@ -1057,8 +1094,12 @@ public class Grammar {
             else{
                 //弹出'['
                 this.tokenList.poll();
+                dealWithFuncInExp(this.listnum, vl, 0);
+                //System.out.print("Sign || ");
+                //this.forBug();
                 flag = isArrayExp(new LinkedList<token>());
                 if(!flag){
+                    //System.out.println(this.answer);
                     System.exit(7);
                 }
                 return arr_len;
@@ -1116,7 +1157,7 @@ public class Grammar {
                         this.tokenList.poll();
                     }
                     else{
-                        flag = isExp(null, is_global ? 1 : 0, 1, 0, 0);
+                        flag = isExp(null, is_global ? 1 : 0, 1, 0, 0, 0);
                         if(flag){
                             if(!is_global){
                                 int old2 = this.reg_seq;
@@ -1140,7 +1181,7 @@ public class Grammar {
                     }
                 }
                 else{
-                    flag = isExp(null, is_global ? 1 : 0, 1, 0, 0);
+                    flag = isExp(null, is_global ? 1 : 0, 1, 0, 0, 0);
                     if(flag){
                         if(!is_global){
                             int old2 = this.reg_seq;
@@ -1272,7 +1313,7 @@ public class Grammar {
         //数组型变量
         else if(this.tokenList.peek() instanceof ident && isArray > 0){
             ident temp_token = (ident) this.tokenList.poll();
-            int x = getdemension(isArray, 1), y = getdemension(isArray, 2);
+            int x = getdemension(isArray, 1, vl), y = getdemension(isArray, 2, vl);
             if(x <= 0 || (isArray == 2 && y <= 0)) {
                 System.exit(8);
             }
@@ -1355,7 +1396,7 @@ public class Grammar {
                     System.out.println(this.answer);
                     System.exit(8);
                 }
-                x = getdemension(Array, 1);
+                x = getdemension(Array, 1, vl);
                 //使用全局数据的准备工作
                 if(Array == 2){
                     int temp_n_x = -1, temp_reg_x = -1;
@@ -1370,7 +1411,7 @@ public class Grammar {
                             this.answer.append("    %" + this.reg_seq + " = load i32, i32* " + this.reglist.get(d.getId() + forJudgeNum(d)).getGlobalname() + "\n");
                     }
                     else temp_reg_x = this.reg_seq;
-                    y = getdemension(Array, 2);
+                    y = getdemension(Array, 2, vl);
                     if(t_judge instanceof number n)
                         temp_n_y = n.getValue();
                     else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
@@ -1514,7 +1555,7 @@ public class Grammar {
                     System.out.println(this.answer);
                     System.exit(8);
                 }
-                x = getdemension(Array, 1);
+                x = getdemension(Array, 1, vl);
                 //使用全局数据的准备工作
                 if(Array == 2){
                     int temp_n_x = -1, temp_reg_x = -1;
@@ -1529,7 +1570,7 @@ public class Grammar {
                             this.answer.append("    %" + this.reg_seq + " = load i32, i32* " + this.reglist.get(d.getId() + forJudgeNum(d)).getGlobalname() + "\n");
                     }
                     else temp_reg_x = this.reg_seq;
-                    y = getdemension(Array, 2);
+                    y = getdemension(Array, 2, vl);
                     if(t_judge instanceof number n)
                         temp_n_y = n.getValue();
                     else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
@@ -1799,7 +1840,7 @@ public class Grammar {
                 //如果数组是二维
                 else{
                     this.tokenList.poll();
-                    getdemension(1, 1);
+                    getdemension(1, 1, new HashMap<String, Integer>());
                     if(this.reglist.get(id.getId() + forJudgeNum(id)).getIsGlobal())
                         dealWithGlobalArray(id);
                     if(t_judge instanceof number n){
@@ -1919,7 +1960,7 @@ public class Grammar {
                                 }
                                 else{
                                     this.tokenList.addFirst(back);
-                                    flag = isExp(vl, 0, 0, 0, 0);
+                                    flag = isExp(vl, 0, 0, 0, 0, 0);
                                     if(this.tokenList.peek() instanceof operator && flag){
                                         operator temp_op_2 = (operator) this.tokenList.peek();
                                         if(Objects.equals(temp_op_2.getOperator(), ";")){
@@ -1944,7 +1985,7 @@ public class Grammar {
                                 System.out.println(this.answer);
                                 System.exit(8);
                             }
-                            x = getdemension(Array, 1);
+                            x = getdemension(Array, 1, vl);
                             //如果是二维
                             if(Array == 2){
                                 int temp_n_x = -1, temp_reg_x = -1;
@@ -1959,7 +2000,7 @@ public class Grammar {
                                         this.answer.append("    %" + this.reg_seq + " = load i32, i32* " + this.reglist.get(d.getId() + forJudgeNum(d)).getGlobalname() + "\n");
                                 }
                                 else temp_reg_x = this.reg_seq;
-                                y = getdemension(Array, 2);
+                                y = getdemension(Array, 2, vl);
                                 if(t_judge instanceof number n)
                                     temp_n_y = n.getValue();
                                 else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
@@ -2024,7 +2065,7 @@ public class Grammar {
                                     reg.setCreatedWhenOp(0);
                                     this.reglist.put(id.getId() + this.listnum, reg);
                                     this.tokenList.addFirst(id);
-                                    flag = isExp(vl, 0, 0, 0, 0);
+                                    flag = isExp(vl, 0, 0, 0, 0, 0);
                                     if(this.tokenList.peek() instanceof operator && flag){
                                         operator temp_op_2 = (operator) this.tokenList.peek();
                                         if(Objects.equals(temp_op_2.getOperator(), ";")){
@@ -2059,7 +2100,7 @@ public class Grammar {
                                 }
                                 else{
                                     this.tokenList.addFirst(back);
-                                    flag = isExp(vl, 0, 0, 0, 0);
+                                    flag = isExp(vl, 0, 0, 0, 0, 0);
                                     if(this.tokenList.peek() instanceof operator && flag){
                                         operator temp_op_2 = (operator) this.tokenList.peek();
                                         if(Objects.equals(temp_op_2.getOperator(), ";")){
@@ -2084,7 +2125,7 @@ public class Grammar {
                                 System.out.println(this.answer);
                                 System.exit(8);
                             }
-                            x = getdemension(Array, 1);
+                            x = getdemension(Array, 1, vl);
                             if(Array == 2){
                                 int temp_n_x = -1, temp_reg_x = -1;
                                 int temp_n_y = -1, temp_reg_y = -1;
@@ -2098,7 +2139,7 @@ public class Grammar {
                                         this.answer.append("    %" + this.reg_seq + " = load i32, i32* " + this.reglist.get(d.getId() + forJudgeNum(d)).getGlobalname() + "\n");
                                 }
                                 else temp_reg_x = this.reg_seq;
-                                y = getdemension(Array, 2);
+                                y = getdemension(Array, 2, vl);
                                 if(t_judge instanceof number n)
                                     temp_n_y = n.getValue();
                                 else if(t_judge instanceof ident d && this.reglist.containsKey(d.getId()+forJudgeNum(d))){
@@ -2161,7 +2202,7 @@ public class Grammar {
                                     reg.setCreatedWhenOp(0);
                                     this.reglist.put(id.getId() + this.listnum, reg);
                                     this.tokenList.addFirst(id);
-                                    flag = isExp(vl, 0, 0, 0, 0);
+                                    flag = isExp(vl, 0, 0, 0, 0, 0);
                                     if(this.tokenList.peek() instanceof operator && flag){
                                         operator temp_op_2 = (operator) this.tokenList.peek();
                                         if(Objects.equals(temp_op_2.getOperator(), ";")){
@@ -2197,7 +2238,7 @@ public class Grammar {
                     //处理putint和putch
                     else if(Objects.equals(func_name, "putint") || Objects.equals(func_name, "putch")){
                         dealWithFuncInExp(this.listnum, vl, 1);
-                        flag = isExp(vl, 0, 0, 0, 0);
+                        flag = isExp(vl, 0, 0, 0, 0, 0);
                         if(flag && this.tokenList.peek() instanceof operator){
                             operator temp_opp = (operator) this.tokenList.peek();
                             if(Objects.equals(temp_opp.getOperator(), ";")){
@@ -2300,7 +2341,7 @@ public class Grammar {
             }
             //一行只有一个表达式
             else if(this.tokenList.peek() instanceof number){
-                flag = isExp(vl, 0, 0, 0, 0);
+                flag = isExp(vl, 0, 0, 0, 0, 0);
                 if(flag && this.tokenList.peek() instanceof operator){
                     operator temp_opp = (operator) this.tokenList.peek();
                     if(Objects.equals(temp_opp.getOperator(), ";")){
@@ -2316,7 +2357,7 @@ public class Grammar {
                 if(Objects.equals(op.getOperator(), ";"))
                     this.tokenList.poll();
                 else if(Objects.equals(op.getOperator(), "+") || Objects.equals(op.getOperator(), "-") || Objects.equals(op.getOperator(), "(")){
-                    flag = isExp(vl, 0, 0, 0, 0);
+                    flag = isExp(vl, 0, 0, 0, 0, 0);
                     if(flag && this.tokenList.peek() instanceof operator){
                         operator temp_opp = (operator) this.tokenList.peek();
                         if(Objects.equals(temp_opp.getOperator(), ";")){
@@ -2426,13 +2467,19 @@ public class Grammar {
     public boolean deal_withfunc(function f, HashMap<String, Integer> vl, int is_funcInfunc){
         boolean flag = true;
         int cnt = 0, j = 0, n = f.getParams_num();
+        //System.out.println("number: " + n);
         LinkedList<String> temp = f.getFuncVar();
         this.funcstr.delete(0, funcstr.length());
         if(this.tokenList.peek() instanceof operator op && Objects.equals(op.getOperator(), "(")){
             //弹出"(“
             this.tokenList.poll();
             while(cnt < n && flag){
-                flag = isExp(vl, 0, 0, cnt == n - 1 ? 1 : 0, is_funcInfunc);
+                if(cnt > 0)
+                    this.tokenList.poll();
+                //dealWithFuncInExp(this.listnum, vl, 1);
+                flag = isExp(vl, 0, 0, cnt == n - 1 ? 1 : 0, is_funcInfunc, 1);
+                System.out.println(this.answer);
+                //forBug();
                 if(flag){
                     if(t_judge instanceof number num){
                         if(Objects.equals(temp.get(j), "one_var")){
@@ -2443,12 +2490,13 @@ public class Grammar {
                         else flag= false;
                     }
                     else if(t_judge instanceof ident id && this.reglist.containsKey(id.getId() + forJudgeNum(id))){
+                        System.out.println(temp.get(j));
                         if(this.reglist.get(id.getId() + forJudgeNum(id)).getIsArray() && this.reglist.get(id.getId() + forJudgeNum(id)).getDemension() == 1 && Objects.equals(temp.get(j), "one_Array")){
                             cnt++;
                             j++;
                             this.funcstr.append("i32* %").append(this.reg_seq).append(", ");
                         }
-                        else if(this.reglist.get(id.getId() + forJudgeNum(id)).getIsArray() && this.reglist.get(id.getId() + forJudgeNum(id)).getDemension() == 1 && Objects.equals(temp.get(j), "two_Array")){
+                        else if(this.reglist.get(id.getId() + forJudgeNum(id)).getIsArray() && this.reglist.get(id.getId() + forJudgeNum(id)).getDemension() == 2 && Objects.equals(temp.get(j), "two_Array")){
                             cnt++;
                             j++;
                             this.funcstr.append("i32* %").append(this.reg_seq).append(", ");
@@ -2512,8 +2560,7 @@ public class Grammar {
                 this.tokenList.poll();
                 int old_value = this.reg_seq;
                 dealWithFuncInExp(this.listnum, sub_var_list, 0);
-                forBug();
-                flag = isExp(sub_var_list, 0, 0, 0, 0);
+                flag = isExp(sub_var_list, 0, 0, 0, 0, 0);
                 if(this.tokenList.peek() instanceof operator && flag){
                     operator temp_op_2 = (operator) this.tokenList.peek();
                     if(Objects.equals(temp_op_2.getOperator(), ";")){
@@ -2566,17 +2613,17 @@ public class Grammar {
     }
     public StringBuilder getAnswer(){return this.answer;}
     public void setContent(String c){this.content = c;}
-    public void forBug(){
+    public void forBug(LinkedList<token> l){
         int i;
         System.out.println("Yeah");
-        for(i = 0; i < this.tokenList.size(); i++){
-            if(this.tokenList.get(i) instanceof operator op){
+        for(i = 0; i < l.size(); i++){
+            if(l.get(i) instanceof operator op){
                 System.out.print(op.getOperator());
             }
-            else if(this.tokenList.get(i) instanceof ident id){
+            else if(l.get(i) instanceof ident id){
                 System.out.print(id.getId());
             }
-            else if(this.tokenList.get(i) instanceof number nu){
+            else if(l.get(i) instanceof number nu){
                 System.out.print(nu.getValue());
             }
         }
