@@ -223,11 +223,11 @@ public class Grammar {
                     this.funclist.put("putch", 4);
                 }
                 if(Objects.equals(((function) temp).getFuncName(), "getarray") && !this.funclist.containsKey("getarray")){
-                    this.answer.append("\ndeclare i32 @getarray()\n");
+                    this.answer.append("\ndeclare i32 @getarray(i32*)\n");
                     this.funclist.put("getarray", 5);
                 }
                 else if(Objects.equals(((function) temp).getFuncName(), "putarray") && !this.funclist.containsKey("putarray")){
-                    this.answer.append("\ndeclare i32 @putarray()\n");
+                    this.answer.append("\ndeclare void @putarray(i32, i32*)\n");
                     this.funclist.put("putarray", 6);
                     function f = new function("putarray", "void", "Function", 11);
                     f.setParams_num(2);
@@ -843,7 +843,7 @@ public class Grammar {
                 expList.remove(expList.size() - 2);
             }
             String temp_ans = this.answer.toString();
-            forBug(this.expList);
+            //forBug(this.expList);
             exper.getExp(expList);
             exper.setFinal_layer(this.listnum);
             exper.getMap(vl, reglist, reg_seq, answer);
