@@ -13,6 +13,7 @@ public class Analysis {
         Lexer lexer = Lexer.getLexerInstance();
         lexer.setFile(input_file);
         lexer.getContent();
+        System.out.println(lexer.getcon().toString());
         if(lexer.lexerAnalysis()){
             //for debug
             //System.exit(0);
