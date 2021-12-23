@@ -704,9 +704,9 @@ public class expression {
                     n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
                     r.setCreatedWhenOp(1);
                     numstack.push(n);
-                    varlist.put(String.valueOf(id_name), b / a);
+                    varlist.put(String.valueOf(id_name), 0);
                     r.setHasValue();
-                    r.setValueOfReg(b / a);
+                    //r.setValueOfReg(b / a);
                     this.reglist.put(String.valueOf(id_name), r);
                     this.ans.append("    %" + this.reg_seq + " = " + "sdiv " + "i32 " + "%" + old2 + ", " + "%" + old1 + "\n");
                 }
@@ -714,9 +714,9 @@ public class expression {
                     n = new ident(String.valueOf(id_name), "Ident", 15, 1, 1);
                     r.setCreatedWhenOp(1);
                     numstack.push(n);
-                    varlist.put(String.valueOf(id_name), b * a);
+                    varlist.put(String.valueOf(id_name), 0);
                     r.setHasValue();
-                    r.setValueOfReg(b % a);
+                    //r.setValueOfReg(b % a);
                     this.reglist.put(String.valueOf(id_name), r);
                     this.ans.append("    %" + this.reg_seq + " = " + "srem " + "i32 " + "%" + old2 + ", " + "%" + old1 + "\n");
                 }
@@ -1012,7 +1012,7 @@ public class expression {
                     numstack.push(n);
                     varlist.put(String.valueOf(id_name), b / a);
                     r.setHasValue();
-                    r.setValueOfReg(b / a);
+                    //r.setValueOfReg(b / a);
                     this.reglist.put(String.valueOf(id_name), r);
                     this.ans.append("    %" + this.reg_seq + " = " + "sdiv " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", " + a + "\n");
                 }
@@ -1022,7 +1022,7 @@ public class expression {
                     numstack.push(n);
                     varlist.put(String.valueOf(id_name), b * a);
                     r.setHasValue();
-                    r.setValueOfReg(b % a);
+                    //r.setValueOfReg(b % a);
                     this.reglist.put(String.valueOf(id_name), r);
                     this.ans.append("    %" + this.reg_seq + " = " + "srem " + "i32 " + "%" + this.reglist.get(id2).getSeq() + ", " + a + "\n");
                 }
@@ -1721,7 +1721,7 @@ public class expression {
                 int tail2 = getRegTail(t2);
                 a = this.reglist.get(t1.getId() + (tail1 == -1 ? "" : tail1)).getValueofreg() * ((ident) temp_t1).getIs_neg();
                 b = this.reglist.get(t2.getId() + (tail2 == -1 ? "" : tail2)).getValueofreg() * ((ident) temp_t2).getIs_neg();
-                if(isDivZero(a, this.opstack.peek().getOperator()) && this.reglist.get(t1.getId() + (tail1 == -1 ? "" : tail1)).getHasValue() && this.reglist.get(t1.getId() + (tail1 == -1 ? "" : tail1)).getHasValue()){
+                if(/*isDivZero(a, this.opstack.peek().getOperator()) && */this.reglist.get(t1.getId() + (tail1 == -1 ? "" : tail1)).getHasValue() && this.reglist.get(t1.getId() + (tail1 == -1 ? "" : tail1)).getHasValue()){
                     sign = this.reglist.get(t1.getId() + (tail1 == -1 ? "" : tail1)).getCreatedWhenOp();
                     sign2 = this.reglist.get(t2.getId() + (tail2 == -1 ? "" : tail2)).getCreatedWhenOp();
                     tail1= getRegTail((ident) temp_t1);
