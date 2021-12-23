@@ -658,7 +658,7 @@ public class Lexer {
         StringBuilder temp = new StringBuilder();
         int i = 0, j = 0;
         for(i = 0; i < this.content.length() && this.content.charAt(i) != '#'; ){
-            System.out.println(this.content.charAt(i) + "||");
+            //System.out.println(this.content.charAt(i) + "||");
             if(this.content.charAt(i) == ' ' || this.content.charAt(i) ==  '\t' || this.content.charAt(i) == '\n' || this.content.charAt(i) == '\r') i++;
             //deal with number
             else if(Character.isDigit(this.content.charAt(i))){
