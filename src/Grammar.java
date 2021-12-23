@@ -2280,7 +2280,7 @@ public class Grammar {
                             else flag = false;
                     }
                     //处理putint和putch
-                    /*
+
                     else if(Objects.equals(func_name, "putint") || Objects.equals(func_name, "putch")){
                         dealWithFuncInExp(this.listnum, vl, 1);
                         flag = isExp(vl, 0, 0, 0, 0, 0);
@@ -2325,7 +2325,7 @@ public class Grammar {
                         }
                         else flag = false;
                     }
-                    */
+
 
                     //处理一般函数,包括putarray
                     //加上对putint和putch的支持
