@@ -829,11 +829,14 @@ public class Grammar {
                         if(ch.getOperator().charAt(0) == ';'|| ch.getOperator().charAt(0) == ',') break;
                         //part13对于表达式中的函数调用做特殊处理
                         else if(is_func_last == 1 && !Objects.equals(ch.getOperator(), ";")  && !Objects.equals(ch.getOperator(), ",") && !Objects.equals(ch.getOperator(), ")")){
-                            this.expList.removeLast();
-                            operator o = new operator(";", "Op", 31);
-                            this.expList.offer(o);
-                            situa = 1;
-                            break;
+                            token t = this.expList.get(this.expList.size()  - 2);
+                            if((t instanceof operator p && Objects.equals(p.getOperator(), ")"))){
+                                this.expList.removeLast();
+                                operator o = new operator(";", "Op", 31);
+                                this.expList.offer(o);
+                                situa = 1;
+                                break;
+                            }
                         }
                         else if(ch.getOperator().charAt(0) == '}' && isArray == 1){
                             this.expList.removeLast();
@@ -1814,6 +1817,8 @@ public class Grammar {
                         //函数不需要传参
                         if(func.getParams_num() == 0){
                             this.answer.append("    call void @").append(func.getFuncName()).append("()\n");
+                            this.tokenList.poll();
+                            this.tokenList.poll();
                         }
                         else{
                             deal_withfunc(func, vl, is_funcInfunc);
@@ -1824,6 +1829,8 @@ public class Grammar {
                     else{
                         if(func.getParams_num() == 0){
                             this.answer.append("    %").append(++this.reg_seq).append(" = call i32 @").append(func.getFuncName()).append("()\n");
+                            this.tokenList.poll();
+                            this.tokenList.poll();
                         }
                         else{
                             deal_withfunc(func, vl, is_funcInfunc);
@@ -2331,13 +2338,16 @@ public class Grammar {
                     else{
                         //返回值为void类型的函数
                         //不会加入表达式
-                        System.out.println(f.getFuncName());
+                        System.out.println(f.getFuncName() + f.getParams_num());
                         f = this.ff.get(f.getFuncName());
                         if (Objects.equals(f.getTypeOfRetValue(), "void")) {
                             //System.out.println("LALA");
                             //函数不需要传参
                             if(f.getParams_num() == 0){
                                 this.answer.append("    call void @").append(f.getFuncName()).append("()\n");
+                                //弹出两个括号
+                                this.tokenList.poll();
+                                this.tokenList.poll();
                             }
                             else{
                                 //System.out.println("LALA");
@@ -2349,6 +2359,8 @@ public class Grammar {
                         else{
                             if(f.getParams_num() == 0){
                                 this.answer.append("    %").append(++this.reg_seq).append(" = call i32 @").append(f.getFuncName()).append("()\n");
+                                this.tokenList.poll();
+                                this.tokenList.poll();
                             }
                             else{
                                 flag = deal_withfunc(f, vl, 0);
@@ -2519,7 +2531,7 @@ public class Grammar {
                 if(cnt > 0)
                     this.tokenList.poll();
                 dealWithFuncInExp(this.listnum, vl, 0);
-                flag = isExp(vl, 0, 0, cnt == n - 1 ? 1 : 0, is_funcInfunc, 1);
+                flag = isExp(vl, 0, 0, (cnt == n - 1) ? 1 : 0, is_funcInfunc, 1);
                 forBug(this.expList);
                 System.out.println(flag);
                 if(flag){
@@ -2605,6 +2617,11 @@ public class Grammar {
         if(this.tokenList.peek() instanceof ident){
             if(Objects.equals(((ident) this.tokenList.peek()).getId(), "return")){
                 this.tokenList.poll();
+                if(this.tokenList.peek() instanceof operator op && Objects.equals(op.getOperator(), ";")){
+                    this.tokenList.poll();
+                    this.answer.append("    ret void\n");
+                    return true;
+                }
                 dealWithFuncInExp(this.listnum, sub_var_list, 0);
                 flag = isExp(sub_var_list, 0, 0, 0, 0, 0);
                 if(this.tokenList.peek() instanceof operator && flag){
