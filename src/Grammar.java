@@ -1419,9 +1419,12 @@ public class Grammar {
             for(i = 0; i < this.tokenList.size(); i++){
                 if(this.tokenList.get(i) instanceof operator op && Objects.equals(op.getOperator(), "}")){
                     if(this.tokenList.get(i + 1) instanceof operator opp && Objects.equals(opp.getOperator(), "}")){
+                        //System.out.println("OKOK");
+                        //forBug(this.tokenList);
                         flag = true;
                         break;
                     }
+                    else break;
                 }
             }
         }
