@@ -832,9 +832,7 @@ public class Grammar {
                             this.expList.removeLast();
                             operator o = new operator(";", "Op", 31);
                             this.expList.offer(o);
-                            //this.tokenList.addFirst(ch);
                             situa = 1;
-                            //((operator) check).setOperator(";");
                             break;
                         }
                         else if(ch.getOperator().charAt(0) == '}' && isArray == 1){
@@ -864,6 +862,7 @@ public class Grammar {
         }
         if((check instanceof operator && (Objects.equals(((operator) check).getOperator(), ";") || Objects.equals(((operator) check).getOperator(), ",")) || (((operator) check).getOperator().charAt(0) == '}' && isArray == 1)) || (situa == 1)){
             if(is_funcInfunc == 1 && is_func_last == 1){
+                //System.out.println("hello");
                 expList.remove(expList.size() - 2);
             }
             String temp_ans = this.answer.toString();
@@ -1831,7 +1830,7 @@ public class Grammar {
                             this.answer.append("    %").append(++this.reg_seq).append(" = call i32 @").append(func.getFuncName()).append("(").append(this.funcstr.toString()).append(")\n");
                         }
                     }
-                    funcstr.delete(funcstr.length() - 2, funcstr.length());
+                    funcstr.delete(0, funcstr.length());
                     reg.setSeq(this.reg_seq);
                     this.reglist.put(temp.getId() + ln,  reg);
                     this.tokenList.addFirst(temp);
@@ -2514,16 +2513,15 @@ public class Grammar {
         this.funcstr.delete(0, funcstr.length());
         if(this.tokenList.peek() instanceof operator op && Objects.equals(op.getOperator(), "(")){
             //弹出"(“
-            //System.out.println("kokokoko");
             this.tokenList.poll();
-            forBug(this.tokenList);
+           // forBug(this.tokenList);
             while(cnt < n && flag){
                 if(cnt > 0)
                     this.tokenList.poll();
-                dealWithFuncInExp(this.listnum, vl, 1);
+                dealWithFuncInExp(this.listnum, vl, 0);
                 flag = isExp(vl, 0, 0, cnt == n - 1 ? 1 : 0, is_funcInfunc, 1);
-                //System.out.println(this.answer);
-                //forBug();
+                forBug(this.expList);
+                System.out.println(flag);
                 if(flag){
                     if(t_judge instanceof number num){
                         if(Objects.equals(temp.get(j), "one_var")){
@@ -2534,7 +2532,6 @@ public class Grammar {
                         else flag= false;
                     }
                     else if(t_judge instanceof ident id && this.reglist.containsKey(id.getId() + forJudgeNum(id))){
-                        //System.out.println(temp.get(j));
                         if(this.reglist.get(id.getId() + forJudgeNum(id)).getIsArray() && this.reglist.get(id.getId() + forJudgeNum(id)).getDemension() == 1 && Objects.equals(temp.get(j), "one_Array")){
                             cnt++;
                             j++;
@@ -2549,7 +2546,8 @@ public class Grammar {
                             cnt++;
                             j++;
                             if(!this.reglist.get(id.getId() + forJudgeNum(id)).getIsGlobal()){
-                                this.answer.append("    %").append(++this.reg_seq).append(" = load i32, i32* %").append(this.reglist.get(id.getId() + forJudgeNum(id)).getSeq()).append("\n");
+                                if(this.reglist.get(id.getId() + forJudgeNum(id)).getCreatedWhenOp() == 0)
+                                   this.answer.append("    %").append(++this.reg_seq).append(" = load i32, i32* %").append(this.reglist.get(id.getId() + forJudgeNum(id)).getSeq()).append("\n");
                                 this.funcstr.append("i32 %").append(this.reg_seq).append(", ");
                             }
                             else{
@@ -2607,7 +2605,6 @@ public class Grammar {
         if(this.tokenList.peek() instanceof ident){
             if(Objects.equals(((ident) this.tokenList.peek()).getId(), "return")){
                 this.tokenList.poll();
-                int old_value = this.reg_seq;
                 dealWithFuncInExp(this.listnum, sub_var_list, 0);
                 flag = isExp(sub_var_list, 0, 0, 0, 0, 0);
                 if(this.tokenList.peek() instanceof operator && flag){
