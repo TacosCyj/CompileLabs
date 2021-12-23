@@ -2478,12 +2478,22 @@ public class Grammar {
                     //else 块结束
                     else if(is_one == 2){
                         if(mr == 1){
-                            this.answer.append(this.three.pop().getDst()).append(":").append("\n");
+                            if(this.tokenList.peek() instanceof operator p && Objects.equals(p.getOperator(), "}")){
+                                this.three.pop();
+                            }
+                            else{
+                                this.answer.append(this.three.pop().getDst()).append(":").append("\n");
+                            }
                         }
                         else{
                             if(!has_jump)
                                 this.answer.append("    br label %").append(this.three.peek().getDst() + "\n");
-                            this.answer.append(this.three.pop().getDst()).append(":").append("\n");
+                            if(this.tokenList.peek() instanceof operator p && Objects.equals(p.getOperator(), "}")){
+                                this.three.pop();
+                            }
+                            else{
+                                this.answer.append(this.three.pop().getDst()).append(":").append("\n");
+                            }
                         }
                         this.deletelist(key_sub_varlist);
                     }
