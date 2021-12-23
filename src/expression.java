@@ -1751,7 +1751,7 @@ public class expression {
                 a = ((number) temp_t1).getValue();
                 this.ans.append("    %" + (this.reg_seq) + " = icmp eq i32 %" + a + ", 0\n");
                 int old = this.reg_seq;
-                this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + old +" to i32\n");
+                //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + old +" to i32\n");
                 id_name++;
                 r.setSeq(this.reg_seq);
                 r.setValueOfReg(a == 0 ? 1 : -1);
@@ -1768,7 +1768,7 @@ public class expression {
                     a = this.reglist.get(t1.getId() + (tail == -1 ? "" : tail)).getSeq();
                     this.ans.append("    %" + (++this.reg_seq) + " = icmp eq i32 %" + a + ", 0\n");
                     int old = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + old +" to i32\n");
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + old +" to i32\n");
                     id_name++;
                     r.setSeq(this.reg_seq);
                     r.setValueOfReg(a == 0 ? 1 : -1);
@@ -1784,7 +1784,7 @@ public class expression {
                     this.ans.append("    %" + (++this.reg_seq) + " = load i32, i32* %" + a + "\n");
                     this.ans.append("    %" + (++this.reg_seq) + " = icmp eq i32 %" + (this.reg_seq - 1) + ", 0\n");
                     int old = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + old +" to i32\n");
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + old +" to i32\n");
                     id_name++;
                     r.setSeq(this.reg_seq);
                     r.setValueOfReg(a == 0 ? 1 : -1);
@@ -1800,7 +1800,7 @@ public class expression {
                     this.ans.append("    %" + (++this.reg_seq) + " = load i32, i32* %" + aa + "\n");
                     this.ans.append("    %" + (++this.reg_seq) + " = icmp eq i32 %" + (this.reg_seq - 1) + ", 0\n");
                     int old = this.reg_seq;
-                    this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + old +" to i32\n");
+                    //this.ans.append("    %" + (++this.reg_seq) + " = zext i1 %" + old +" to i32\n");
                     id_name++;
                     r.setSeq(this.reg_seq);
                     r.setValueOfReg(a == 0 ? 1 : -1);
