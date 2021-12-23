@@ -1477,10 +1477,10 @@ public class Grammar {
                     this.answer.append("    %").append(++this.reg_seq).append(" = ").append(this.reglist.get(id.getId() + forJudgeNum(id)).getArray_ONE_in_DD(this.reg_seq - 1)).append("i32 " + str_x + ", i32 " +  str_y +"\n");
                 }
                 else{
+                    int old_seq = this.reg_seq;
                     if(this.reglist.get(id.getId() + forJudgeNum(id)).getIsGlobal()){
                         dealWithGlobalArray(id);
                     }
-                    int old_seq = this.reg_seq;
                     this.reg_seq++;
                     if(t_judge instanceof number n){
                         this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 " + n.getValue() + "\n");
@@ -1494,7 +1494,12 @@ public class Grammar {
                         this.answer.append("    %" + (++this.reg_seq) + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + (this.reg_seq - 1) + "\n");
                     }
                     else{
-                        this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + old_seq + "\n");
+                        if(!this.reglist.get(id.getId() + forJudgeNum(id)).getIsGlobal()){
+                            this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + old_seq + "\n");
+                        }
+                        else{
+                            this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(id.getId() + forJudgeNum(id)).getUseaddr() +  ", i32 %" + old_seq + "\n");
+                        }
                     }
                 }
                 ident idd = new ident(getArrayName(), "Ident", 9, 1, 1);
@@ -2067,10 +2072,10 @@ public class Grammar {
                                 this.reglist.get(temp_ident.getId() + this.listnum).setPresent_use(this.reg_seq);
                             }
                             else{
+                                int old_seq = this.reg_seq;
                                 if(this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getIsGlobal()){
                                     dealWithGlobalArray(temp_ident);
                                 }
-                                int old_seq = this.reg_seq;
                                 this.reg_seq++;
                                 if(t_judge instanceof number n){
                                     this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getUseaddr() +  ", i32 " + n.getValue() + "\n");
@@ -2207,10 +2212,10 @@ public class Grammar {
                                 this.reglist.get(temp_ident.getId() + loc_list).setPresent_use(this.reg_seq);
                             }
                             else{
+                                int old_seq = this.reg_seq;
                                 if(this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getIsGlobal()){
                                     dealWithGlobalArray(temp_ident);
                                 }
-                                int old_seq = this.reg_seq;
                                 this.reg_seq++;
                                 if(t_judge instanceof number n){
                                     this.answer.append("    %" + this.reg_seq + " = getelementptr i32, i32* %" + this.reglist.get(temp_ident.getId() + forJudgeNum(temp_ident)).getUseaddr() +  ", i32 " + n.getValue() + "\n");
