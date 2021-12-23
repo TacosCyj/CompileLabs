@@ -215,7 +215,7 @@ public class Lexer {
         // a function call
         this.jump_i = i;
         //part13 加入对函数ident的识别
-        if(this.content.charAt(j) == '(' || (this.content.charAt(j + 1) == '(' && this.content.charAt(j) == ' ') || findLbrace(i)){
+        if((this.content.charAt(j) == '(' || (this.content.charAt(j + 1) == '(' && this.content.charAt(j) == ' ') || findLbrace(i)) && !Objects.equals(ident, "return")){
             int k;
             boolean f = false;
             if(this.content.charAt(j) == '(') k = j;
@@ -235,12 +235,16 @@ public class Lexer {
             else if(Objects.equals(ident, "putint") && checkFuncRParamsNum(k, 1)){
                 symbol = 17;
                 function func = new function("putint", "void","Function", symbol);
+                func.setSelfDecl(true);
+                func.setParams_num(1);
                 this.tokenList.offer(func);
                 f = true;
             }
             else if(Objects.equals(ident, "putch") && checkFuncRParamsNum(k, 1)){
                 symbol = 18;
                 function func = new function("putch", "void", "Function", symbol);
+                func.setSelfDecl(true);
+                func.setParams_num(1);
                 this.tokenList.offer(func);
                 f = true;
             }
@@ -654,6 +658,7 @@ public class Lexer {
         StringBuilder temp = new StringBuilder();
         int i = 0, j = 0;
         for(i = 0; i < this.content.length() && this.content.charAt(i) != '#'; ){
+            System.out.println(this.content.charAt(i) + "||");
             if(this.content.charAt(i) == ' ' || this.content.charAt(i) ==  '\t' || this.content.charAt(i) == '\n' || this.content.charAt(i) == '\r') i++;
             //deal with number
             else if(Character.isDigit(this.content.charAt(i))){
