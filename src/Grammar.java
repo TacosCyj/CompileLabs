@@ -524,6 +524,7 @@ public class Grammar {
                         this.funclist.put(f.getFuncName(), ++this.func_seq);
                         this.ff.put(f.getFuncName(), f);
                         func_sign = this.answer.length() == 0 ? 0 : this.answer.length() - 1;
+                        this.reg_seq = 0;
                         declfunc(f.getTypeOfRetValue(), f.getFuncName());
                         this.tokenList.poll();
                         dealwithParams(f);
@@ -553,6 +554,7 @@ public class Grammar {
                     if(this.tokenList.peek() instanceof function f){
                         this.funclist.put(f.getFuncName(), ++this.func_seq);
                         this.ff.put(f.getFuncName(), f);
+                        this.reg_seq = 0;
                         declfunc(f.getTypeOfRetValue(), f.getFuncName());
                         this.tokenList.poll();
                         dealwithParams(f);
